@@ -22,6 +22,8 @@ lazy val root = (project in file("."))
       // Time handling library
       "com.github.nscala-time" %% "nscala-time" % "2.32.0",
       // JSON library for potential data export/import
-      "org.json4s" %% "json4s-native" % "4.0.6"
+      "org.json4s" %% "json4s-native" % "4.0.6",
+      // SQLite database driver
+      "org.xerial" % "sqlite-jdbc" % "3.43.2.2"
     )
   )
