@@ -1,11 +1,11 @@
-import gui.CommunityEngagementApp
+import gui.ModularCommunityEngagementApp
 
 /**
  * Main application entry point
- * Delegates to the CommunityEngagementApp GUI application
+ * Delegates to the ModularCommunityEngagementApp GUI application
  */
 object MyApp {
   def main(args: Array[String]): Unit = {
-    CommunityEngagementApp.main(args)
+    ModularCommunityEngagementApp.main(args)
   }
 }
