@@ -22,8 +22,7 @@ class CommunityEngagementService {
    */
   
   def login(username: String, password: String): Option[User] = {
-    // For now, we'll use simple authentication (in production, use proper password hashing)
-    val user = dbService.findUserByUsername(username)
+    val user = dbService.authenticateUser(username, password)
     currentUser = user
     user
   }
@@ -36,14 +35,19 @@ class CommunityEngagementService {
   
   def isLoggedIn: Boolean = currentUser.isDefined
   
-  def registerUser(username: String, email: String, name: String, contactInfo: String, isAdmin: Boolean = false): Boolean = {
+  def registerUser(username: String, email: String, name: String, contactInfo: String, password: String, isAdmin: Boolean = false): Boolean = {
     val userId = UUID.randomUUID().toString
     val user = if (isAdmin) {
       new AdminUser(userId, username, email, name, contactInfo)
     } else {
       new CommunityMember(userId, username, email, name, contactInfo)
     }
-    dbService.saveUser(user)
+    
+    if (user.setPassword(password)) {
+      dbService.saveUser(user)
+    } else {
+      false
+    }
   }
   
   /**
@@ -397,6 +401,12 @@ class CommunityEngagementService {
     currentUser.exists { user =>
       user.updateProfile(newName, newContactInfo)
       dbService.updateUser(user)
+    }
+  }
+  
+  def resetPassword(currentPassword: String, newPassword: String): Boolean = {
+    currentUser.exists { user =>
+      dbService.resetUserPassword(user.userId, currentPassword, newPassword)
     }
   }
 }
