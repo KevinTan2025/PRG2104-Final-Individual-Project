@@ -1,5 +1,7 @@
 package database
 
+import util.PasswordHasher
+
 /**
  * Database schema initialization and management
  */
@@ -185,7 +187,10 @@ object DatabaseSchema {
     import java.time.LocalDateTime
     import java.util.UUID
     
-    // Insert sample users
+    // Insert sample users with default passwords
+    val defaultPassword = "Password123!"  // Demo password for all sample users
+    val defaultPasswordHash = PasswordHasher.hashPassword(defaultPassword)
+    
     val sampleUsers = List(
       ("admin1", "admin", "admin@community.org", "System Administrator", "admin@community.org", true),
       ("user1", "john_doe", "john@example.com", "John Doe", "john@example.com", false),
@@ -195,9 +200,9 @@ object DatabaseSchema {
     sampleUsers.foreach { case (userId, username, email, name, contactInfo, isAdmin) =>
       DatabaseConnection.executeUpdate(
         """INSERT OR IGNORE INTO users 
-           (user_id, username, email, name, contact_info, is_admin, created_at, updated_at) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-        userId, username, email, name, contactInfo, isAdmin,
+           (user_id, username, email, name, contact_info, is_admin, password_hash, created_at, updated_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        userId, username, email, name, contactInfo, isAdmin, defaultPasswordHash,
         DatabaseConnection.formatDateTime(LocalDateTime.now()),
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
@@ -295,6 +300,8 @@ object DatabaseSchema {
     )
     
     println("Sample data inserted successfully!")
+    println("Sample users created with default password: 'Password123!'")
+    println("Available users: admin/john_doe/jane_smith")
   }
   
   /**

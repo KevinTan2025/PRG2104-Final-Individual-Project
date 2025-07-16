@@ -15,10 +15,10 @@ class UserDAO {
     try {
       val rowsAffected = DatabaseConnection.executeUpdate(
         """INSERT INTO users 
-           (user_id, username, email, name, contact_info, is_admin, created_at, updated_at) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+           (user_id, username, email, name, contact_info, is_admin, password_hash, created_at, updated_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         user.userId, user.username, user.email, user.name, user.contactInfo, 
-        user.hasAdminPrivileges,
+        user.hasAdminPrivileges, user.getPasswordHash,
         DatabaseConnection.formatDateTime(user.registrationDate),
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
@@ -94,9 +94,9 @@ class UserDAO {
     try {
       val rowsAffected = DatabaseConnection.executeUpdate(
         """UPDATE users 
-           SET name = ?, contact_info = ?, updated_at = ? 
+           SET name = ?, contact_info = ?, password_hash = ?, updated_at = ? 
            WHERE user_id = ?""",
-        user.name, user.contactInfo,
+        user.name, user.contactInfo, user.getPasswordHash,
         DatabaseConnection.formatDateTime(LocalDateTime.now()),
         user.userId
       )
@@ -104,6 +104,20 @@ class UserDAO {
     } catch {
       case e: Exception =>
         println(s"Error updating user: ${e.getMessage}")
+        false
+    }
+  }
+  
+  def updatePassword(userId: String, newPasswordHash: String): Boolean = {
+    try {
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        """UPDATE users SET password_hash = ?, updated_at = ? WHERE user_id = ?""",
+        newPasswordHash, DatabaseConnection.formatDateTime(LocalDateTime.now()), userId
+      )
+      rowsAffected > 0
+    } catch {
+      case e: Exception =>
+        println(s"Error updating password: ${e.getMessage}")
         false
     }
   }
@@ -154,16 +168,19 @@ class UserDAO {
     val name = rs.getString("name")
     val contactInfo = rs.getString("contact_info")
     val isAdmin = rs.getBoolean("is_admin")
+    val passwordHash = rs.getString("password_hash")
     val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
     
-    if (isAdmin) {
-      new AdminUser(userId, username, email, name, contactInfo) {
+    val user = if (isAdmin) {
+      new AdminUser(userId, username, email, name, contactInfo, passwordHash) {
         override val registrationDate: LocalDateTime = createdAt
       }
     } else {
-      new CommunityMember(userId, username, email, name, contactInfo) {
+      new CommunityMember(userId, username, email, name, contactInfo, passwordHash) {
         override val registrationDate: LocalDateTime = createdAt
       }
     }
+    
+    user
   }
 }
