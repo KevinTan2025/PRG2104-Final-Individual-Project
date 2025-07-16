@@ -3,15 +3,27 @@ package database
 import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet, SQLException}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.io.File
 
 /**
  * Database connection manager for SQLite
  * Implements singleton pattern to ensure single database connection
  */
 object DatabaseConnection {
-  private val DB_PATH = "community_platform.db"
+  // Place database in src/main/resources directory
+  private val DB_DIR = "src/main/resources"
+  private val DB_NAME = "community_platform.db"
+  private val DB_PATH = s"$DB_DIR/$DB_NAME"
   private val DB_URL = s"jdbc:sqlite:$DB_PATH"
   private var connection: Option[Connection] = None
+  
+  // Ensure database directory exists
+  private def ensureDbDirectoryExists(): Unit = {
+    val dbDir = new File(DB_DIR)
+    if (!dbDir.exists()) {
+      dbDir.mkdirs()
+    }
+  }
   
   /**
    * Get database connection, create if not exists
@@ -21,6 +33,7 @@ object DatabaseConnection {
       case Some(conn) if !conn.isClosed => conn
       case _ =>
         try {
+          ensureDbDirectoryExists()
           Class.forName("org.sqlite.JDBC")
           val conn = DriverManager.getConnection(DB_URL)
           connection = Some(conn)
