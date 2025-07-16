@@ -49,6 +49,26 @@ class DatabaseService {
     userDAO.delete(userId)
   }
   
+  def resetUserPassword(userId: String, currentPassword: String, newPassword: String): Boolean = {
+    findUserById(userId) match {
+      case Some(user) =>
+        if (user.resetPassword(currentPassword, newPassword)) {
+          userDAO.updatePassword(userId, user.getPasswordHash)
+        } else {
+          false
+        }
+      case None => false
+    }
+  }
+  
+  def authenticateUser(username: String, password: String): Option[User] = {
+    findUserByUsername(username) match {
+      case Some(user) =>
+        if (user.verifyPassword(password)) Some(user) else None
+      case None => None
+    }
+  }
+  
   def getUserCount: Int = {
     userDAO.count()
   }

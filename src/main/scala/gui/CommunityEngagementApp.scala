@@ -85,7 +85,7 @@ object CommunityEngagementApp extends JFXApp3 {
           alignment = Pos.Center
           children = Seq(loginButton, registerButton)
         },
-        new Label("Demo credentials: admin/password, john_doe/password") {
+        new Label("Demo credentials: admin/Admin123*, john_doe/Password123!") {
           style = "-fx-font-size: 12px; -fx-text-fill: gray;"
         }
       )
@@ -108,6 +108,8 @@ object CommunityEngagementApp extends JFXApp3 {
     val emailField = new TextField { promptText = "Email" }
     val nameField = new TextField { promptText = "Full Name" }
     val contactField = new TextField { promptText = "Contact Info" }
+    val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
+    val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
     val adminCheckBox = new CheckBox("Register as Administrator")
     
     val registerButton = new Button("Register") {
@@ -116,10 +118,16 @@ object CommunityEngagementApp extends JFXApp3 {
         val email = emailField.text.value
         val name = nameField.text.value
         val contact = contactField.text.value
+        val password = passwordField.text.value
+        val confirmPassword = confirmPasswordField.text.value
         val isAdmin = adminCheckBox.selected.value
         
-        if (username.nonEmpty && email.nonEmpty && name.nonEmpty) {
-          if (service.registerUser(username, email, name, contact, isAdmin)) {
+        if (username.nonEmpty && email.nonEmpty && name.nonEmpty && password.nonEmpty) {
+          if (password != confirmPassword) {
+            showAlert(Alert.AlertType.Error, "Password Mismatch", "Password and confirmation do not match.")
+          } else if (!util.PasswordHasher.isPasswordValid(password)) {
+            showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+          } else if (service.registerUser(username, email, name, contact, password, isAdmin)) {
             showAlert(Alert.AlertType.Information, "Registration Successful", "Account created successfully!")
             stage.scene = createLoginScene()
           } else {
@@ -148,6 +156,8 @@ object CommunityEngagementApp extends JFXApp3 {
         emailField,
         nameField,
         contactField,
+        passwordField,
+        confirmPasswordField,
         adminCheckBox,
         new HBox {
           spacing = 10
@@ -1453,11 +1463,50 @@ ${notification.message}
         
         val regDateLabel = new Label(user.registrationDate.toLocalDate.toString)
         
+        // Password change section
+        val currentPasswordField = new PasswordField {
+          promptText = "Current Password"
+        }
+        
+        val newPasswordField = new PasswordField {
+          promptText = "New Password (8+ chars, letter, digit, special char)"
+        }
+        
+        val confirmPasswordField = new PasswordField {
+          promptText = "Confirm New Password"
+        }
+        
+        val changePasswordButton = new Button("Change Password") {
+          onAction = _ => {
+            val currentPass = currentPasswordField.text.value
+            val newPass = newPasswordField.text.value
+            val confirmPass = confirmPasswordField.text.value
+            
+            if (currentPass.isEmpty || newPass.isEmpty || confirmPass.isEmpty) {
+              showAlert(Alert.AlertType.Warning, "Missing Fields", "Please fill in all password fields.")
+            } else if (newPass != confirmPass) {
+              showAlert(Alert.AlertType.Error, "Password Mismatch", "New password and confirmation do not match.")
+            } else if (!util.PasswordHasher.isPasswordValid(newPass)) {
+              showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+            } else {
+              if (service.resetPassword(currentPass, newPass)) {
+                showAlert(Alert.AlertType.Information, "Success", "Password changed successfully!")
+                currentPasswordField.text = ""
+                newPasswordField.text = ""
+                confirmPasswordField.text = ""
+              } else {
+                showAlert(Alert.AlertType.Error, "Failed", "Failed to change password. Please check your current password.")
+              }
+            }
+          }
+        }
+        
         val grid = new GridPane {
           hgap = 10
           vgap = 10
           padding = Insets(20)
           
+          // Profile information
           add(new Label("Username:"), 0, 0)
           add(new Label(user.username) { style = "-fx-font-weight: bold;" }, 1, 0)
           add(new Label("Email:"), 0, 1)
@@ -1470,6 +1519,17 @@ ${notification.message}
           add(roleLabel, 1, 4)
           add(new Label("Registration Date:"), 0, 5)
           add(regDateLabel, 1, 5)
+          
+          // Password change section
+          add(new Separator(), 0, 6, 2, 1)
+          add(new Label("Change Password") { style = "-fx-font-weight: bold; -fx-font-size: 14px;" }, 0, 7, 2, 1)
+          add(new Label("Current Password:"), 0, 8)
+          add(currentPasswordField, 1, 8)
+          add(new Label("New Password:"), 0, 9)
+          add(newPasswordField, 1, 9)
+          add(new Label("Confirm Password:"), 0, 10)
+          add(confirmPasswordField, 1, 10)
+          add(changePasswordButton, 1, 11)
         }
         
         dialog.dialogPane().content = grid
