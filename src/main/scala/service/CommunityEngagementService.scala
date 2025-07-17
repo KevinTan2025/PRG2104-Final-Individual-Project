@@ -35,22 +35,37 @@ class CommunityEngagementService {
   
   def isLoggedIn: Boolean = currentUser.isDefined
   
+  def isUsernameAvailable(username: String): Boolean = {
+    dbService.findUserByUsername(username).isEmpty
+  }
+  
+  def isEmailAvailable(email: String): Boolean = {
+    dbService.findUserByEmail(email).isEmpty
+  }
+  
   def registerUser(username: String, email: String, name: String, contactInfo: String, password: String, isAdmin: Boolean = false): Boolean = {
+    // Check for existing username and email
+    if (!isUsernameAvailable(username)) {
+      return false
+    }
+    
+    if (!isEmailAvailable(email)) {
+      return false
+    }
+    
     val userId = UUID.randomUUID().toString
     val user = if (isAdmin) {
       new AdminUser(userId, username, email, name, contactInfo)
     } else {
       new CommunityMember(userId, username, email, name, contactInfo)
     }
-    
+
     if (user.setPassword(password)) {
       dbService.saveUser(user)
     } else {
       false
     }
-  }
-  
-  /**
+  }  /**
    * Announcement Operations
    */
   

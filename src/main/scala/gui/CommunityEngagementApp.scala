@@ -104,37 +104,78 @@ object CommunityEngagementApp extends JFXApp3 {
    * Create the registration scene
    */
   private def createRegistrationScene(): Scene = {
-    val usernameField = new TextField { promptText = "Username" }
-    val emailField = new TextField { promptText = "Email" }
-    val nameField = new TextField { promptText = "Full Name" }
-    val contactField = new TextField { promptText = "Contact Info" }
+    val usernameField = new gui.components.EnhancedTextField("Username")
+    val emailField = new gui.components.EnhancedTextField("Email")
+    val nameField = new gui.components.EnhancedTextField("Full Name")
+    val contactField = new gui.components.EnhancedTextField("Contact Info")
     val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
     val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
-    val adminCheckBox = new CheckBox("Register as Administrator")
+    
+    // Pending registration data for OTP verification
+    var pendingRegistration: Option[RegistrationData] = None
+    
+    case class RegistrationData(
+      username: String,
+      email: String,
+      name: String,
+      contact: String,
+      password: String
+    )
     
     val registerButton = new Button("Register") {
       onAction = (_: ActionEvent) => {
-        val username = usernameField.text.value
-        val email = emailField.text.value
-        val name = nameField.text.value
-        val contact = contactField.text.value
+        val username = usernameField.getUserInput
+        val email = emailField.getUserInput
+        val name = nameField.getUserInput
+        val contact = contactField.getUserInput
         val password = passwordField.text.value
         val confirmPassword = confirmPasswordField.text.value
-        val isAdmin = adminCheckBox.selected.value
         
-        if (username.nonEmpty && email.nonEmpty && name.nonEmpty && password.nonEmpty) {
-          if (password != confirmPassword) {
-            showAlert(Alert.AlertType.Error, "Password Mismatch", "Password and confirmation do not match.")
-          } else if (!util.PasswordHasher.isPasswordValid(password)) {
-            showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
-          } else if (service.registerUser(username, email, name, contact, password, isAdmin)) {
-            showAlert(Alert.AlertType.Information, "Registration Successful", "Account created successfully!")
-            stage.scene = createLoginScene()
-          } else {
-            showAlert(Alert.AlertType.Error, "Registration Failed", "Username or email already exists.")
-          }
-        } else {
+        // Basic validation
+        if (username.isEmpty || email.isEmpty || name.isEmpty || password.isEmpty) {
           showAlert(Alert.AlertType.Warning, "Incomplete Information", "Please fill in all required fields.")
+        } else if (!isValidEmail(email)) {
+          showAlert(Alert.AlertType.Error, "Invalid Email", "Please enter a valid email address.")
+        } else if (password != confirmPassword) {
+          showAlert(Alert.AlertType.Error, "Password Mismatch", "Password and confirmation do not match.")
+        } else if (!util.PasswordHasher.isPasswordValid(password)) {
+          showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+        } else if (!service.isUsernameAvailable(username)) {
+          showAlert(Alert.AlertType.Error, "Username Taken", s"The username '$username' is already taken. Please choose a different one.")
+        } else if (!service.isEmailAvailable(email)) {
+          showAlert(Alert.AlertType.Error, "Email Already Registered", s"The email '$email' is already registered. Please use a different email or try logging in.")
+        } else {
+          // Store registration data and start OTP verification
+          pendingRegistration = Some(RegistrationData(username, email, name, contact, password))
+          
+          val otpDialog = new gui.dialogs.OTPVerificationDialog(stage, email)
+          otpDialog.show(
+            onSuccess = () => {
+              pendingRegistration match {
+                case Some(data) =>
+                  if (service.registerUser(data.username, data.email, data.name, data.contact, data.password, isAdmin = false)) {
+                    showAlert(Alert.AlertType.Information, "Registration Successful", "Account created successfully! You can now log in.")
+                    // Clear form
+                    usernameField.clearInput()
+                    emailField.clearInput()
+                    nameField.clearInput()
+                    contactField.clearInput()
+                    passwordField.clear()
+                    confirmPasswordField.clear()
+                    stage.scene = createLoginScene()
+                  } else {
+                    showAlert(Alert.AlertType.Error, "Registration Failed", "An error occurred during registration. Please try again.")
+                  }
+                  pendingRegistration = None
+                case None =>
+                  showAlert(Alert.AlertType.Error, "Registration Error", "Registration data not found. Please try again.")
+              }
+            },
+            onFailure = () => {
+              pendingRegistration = None
+              showAlert(Alert.AlertType.Warning, "Registration Cancelled", "Email verification was cancelled. Please try again.")
+            }
+          )
         }
       }
     }
@@ -158,7 +199,6 @@ object CommunityEngagementApp extends JFXApp3 {
         contactField,
         passwordField,
         confirmPasswordField,
-        adminCheckBox,
         new HBox {
           spacing = 10
           alignment = Pos.Center
@@ -1688,5 +1728,13 @@ User Activity:
     dialog.dialogPane().buttonTypes = Seq(ButtonType.Close)
     
     dialog.showAndWait()
+  }
+  
+  /**
+   * Validate email format
+   */
+  private def isValidEmail(email: String): Boolean = {
+    val emailRegex = """^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$""".r
+    emailRegex.matches(email)
   }
 }

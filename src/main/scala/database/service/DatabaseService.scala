@@ -33,6 +33,10 @@ class DatabaseService {
     userDAO.findByUsername(username)
   }
   
+  def findUserByEmail(email: String): Option[User] = {
+    userDAO.findByEmail(email)
+  }
+  
   def findUserById(userId: String): Option[User] = {
     userDAO.findById(userId)
   }

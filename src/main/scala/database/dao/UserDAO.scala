@@ -51,6 +51,27 @@ class UserDAO {
     }
   }
   
+  def findByEmail(email: String): Option[User] = {
+    try {
+      val rs = DatabaseConnection.executeQuery(
+        "SELECT * FROM users WHERE email = ?", email
+      )
+      
+      if (rs.next()) {
+        val user = resultSetToUser(rs)
+        rs.close()
+        Some(user)
+      } else {
+        rs.close()
+        None
+      }
+    } catch {
+      case e: Exception =>
+        println(s"Error finding user by email: ${e.getMessage}")
+        None
+    }
+  }
+  
   def findById(userId: String): Option[User] = {
     try {
       val rs = DatabaseConnection.executeQuery(
