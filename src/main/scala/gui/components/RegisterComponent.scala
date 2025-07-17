@@ -6,12 +6,13 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import scalafx.stage.Stage
+import scalafx.application.Platform
 import gui.utils.GuiUtils
-import gui.dialogs.OTPVerificationDialog
 import gui.components.EnhancedTextField
+import scala.util.Random
 
 /**
- * Registration form component with OTP verification
+ * Registration form component with integrated OTP verification
  */
 class RegisterComponent(
   onRegistrationSuccess: () => Unit,
@@ -25,16 +26,73 @@ class RegisterComponent(
   private val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
   private val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
   
-  // Pending registration data
-  private var pendingRegistration: Option[RegistrationData] = None
+  // OTP verification components
+  private val otpField = new TextField {
+    promptText = "Enter 6-digit OTP"
+    maxWidth = 150
+    style = "-fx-font-size: 14px; -fx-text-alignment: center;"
+    disable = true
+  }
   
-  case class RegistrationData(
-    username: String,
-    email: String,
-    name: String,
-    contact: String,
-    password: String
-  )
+  private val sendOtpButton = new Button("Send OTP") {
+    prefWidth = 100
+    disable = true
+  }
+  
+  private val verifyOtpButton = new Button("Verify") {
+    prefWidth = 80
+    disable = true
+  }
+  
+  // Status labels
+  private val emailStatusLabel = new Label("") {
+    style = "-fx-font-size: 12px;"
+  }
+  
+  private val otpStatusLabel = new Label("") {
+    style = "-fx-font-size: 12px;"
+  }
+  
+  // OTP state
+  private var generatedOtp: Option[String] = None
+  private var isEmailVerified = false
+  
+  // Initialize component
+  setupEventHandlers()
+  
+  private def setupEventHandlers(): Unit = {
+    // Email field changes
+    emailField.text.onChange { (_, _, _) =>
+      val email = emailField.getUserInput
+      val isValidEmail = email.nonEmpty && isValidEmailFormat(email)
+      sendOtpButton.disable = !isValidEmail
+      
+      if (isValidEmail) {
+        emailStatusLabel.text = "✓ Valid email format"
+        emailStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: green;"
+      } else if (email.nonEmpty) {
+        emailStatusLabel.text = "✗ Invalid email format"
+        emailStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: red;"
+      } else {
+        emailStatusLabel.text = ""
+      }
+      
+      if (!isValidEmail) {
+        resetOTPState()
+      }
+    }
+    
+    // Send OTP button
+    sendOtpButton.onAction = (_: ActionEvent) => sendOTP()
+    
+    // Verify OTP button
+    verifyOtpButton.onAction = (_: ActionEvent) => verifyOTP()
+    
+    // OTP field changes
+    otpField.text.onChange { (_, _, newValue) =>
+      verifyOtpButton.disable = newValue.length != 6 || !newValue.forall(_.isDigit)
+    }
+  }
   
   override def build(): Region = {
     val registerButton = new Button("Register") {
@@ -45,6 +103,28 @@ class RegisterComponent(
       onAction = (_: ActionEvent) => onBackClick()
     }
     
+    // Email verification section
+    val emailVerificationBox = new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label("Email:"),
+        emailField,
+        sendOtpButton
+      )
+    }
+    
+    // OTP verification section
+    val otpVerificationBox = new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label("OTP:"),
+        otpField,
+        verifyOtpButton
+      )
+    }
+    
     val formBox = new VBox {
       spacing = 15
       alignment = Pos.Center
@@ -53,24 +133,115 @@ class RegisterComponent(
           style = "-fx-font-size: 20px; -fx-font-weight: bold;"
         },
         usernameField,
-        emailField,
         nameField,
         contactField,
         passwordField,
         confirmPasswordField,
+        new Separator(),
+        new Label("Email Verification") {
+          style = "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2196F3;"
+        },
+        emailVerificationBox,
+        emailStatusLabel,
+        otpVerificationBox,
+        otpStatusLabel,
+        new Separator(),
         new HBox {
           spacing = 10
           alignment = Pos.Center
           children = Seq(registerButton, backButton)
         }
       )
-      padding = Insets(50)
+      padding = Insets(30)
     }
     
     new BorderPane {
       center = formBox
       style = "-fx-background-color: #f5f5f5;"
     }
+  }
+  
+  private def sendOTP(): Unit = {
+    val email = emailField.getUserInput
+    
+    if (!isValidEmailFormat(email)) {
+      GuiUtils.showError("Invalid Email", "Please enter a valid email address.")
+      return
+    }
+    
+    // Check if email is already registered
+    if (!service.isEmailAvailable(email)) {
+      GuiUtils.showError("Email Already Registered", s"The email '$email' is already registered. Please use a different email or try logging in.")
+      return
+    }
+    
+    // Generate OTP
+    generatedOtp = Some(generateOTP())
+    
+    // Enable OTP field and verify button
+    otpField.disable = false
+    verifyOtpButton.disable = false
+    sendOtpButton.disable = true
+    sendOtpButton.text = "Sent"
+    
+    // Show simulated notification
+    Platform.runLater {
+      val notification = new Alert(Alert.AlertType.Information) {
+        title = "OTP Sent"
+        headerText = "Verification Code Sent"
+        contentText = s"A 6-digit OTP has been sent to $email\n\n[SIMULATED] Your OTP: ${generatedOtp.get}"
+      }
+      notification.showAndWait()
+    }
+    
+    otpStatusLabel.text = "OTP sent to your email"
+    otpStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: blue;"
+    
+    // Focus on OTP field
+    Platform.runLater {
+      otpField.requestFocus()
+    }
+  }
+  
+  private def verifyOTP(): Unit = {
+    val enteredOtp = otpField.text.value.trim
+    
+    generatedOtp match {
+      case Some(correctOtp) if enteredOtp == correctOtp =>
+        isEmailVerified = true
+        otpField.disable = true
+        verifyOtpButton.disable = true
+        otpStatusLabel.text = "✓ Email verified successfully!"
+        otpStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: green;"
+        
+        GuiUtils.showInfo("Email Verified", "Your email has been verified successfully!")
+        
+      case Some(_) =>
+        otpStatusLabel.text = "✗ Invalid OTP. Please try again."
+        otpStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: red;"
+        otpField.clear()
+        otpField.requestFocus()
+        
+      case None =>
+        GuiUtils.showError("No OTP", "Please send OTP first.")
+    }
+  }
+  
+  private def resetOTPState(): Unit = {
+    generatedOtp = None
+    isEmailVerified = false
+    otpField.clear()
+    otpField.disable = true
+    verifyOtpButton.disable = true
+    sendOtpButton.disable = true
+    sendOtpButton.text = "Send OTP"
+    emailStatusLabel.text = ""
+    otpStatusLabel.text = ""
+  }
+  
+  private def generateOTP(): String = {
+    val random = new Random()
+    (100000 + random.nextInt(900000)).toString
   }
   
   private def handleRegistration(): Unit = {
@@ -88,8 +259,14 @@ class RegisterComponent(
     }
     
     // Email format validation
-    if (!isValidEmail(email)) {
+    if (!isValidEmailFormat(email)) {
       GuiUtils.showError("Invalid Email", "Please enter a valid email address.")
+      return
+    }
+    
+    // Email verification check
+    if (!isEmailVerified) {
+      GuiUtils.showWarning("Email Not Verified", "Please verify your email address first by clicking 'Send OTP' and entering the verification code.")
       return
     }
     
@@ -110,44 +287,13 @@ class RegisterComponent(
       return
     }
     
-    // Check for existing email
-    if (!service.isEmailAvailable(email)) {
-      GuiUtils.showError("Email Already Registered", s"The email '$email' is already registered. Please use a different email or try logging in.")
-      return
-    }
-    
-    // Store registration data and start OTP verification
-    pendingRegistration = Some(RegistrationData(username, email, name, contact, password))
-    showOTPVerification(email)
-  }
-  
-  private def showOTPVerification(email: String): Unit = {
-    // Get the parent stage from the scene
-    val parentStage = usernameField.scene.value.window.value.asInstanceOf[Stage]
-    
-    val otpDialog = new OTPVerificationDialog(parentStage, email)
-    otpDialog.show(
-      onSuccess = () => completeRegistration(),
-      onFailure = () => {
-        pendingRegistration = None
-        GuiUtils.showWarning("Registration Cancelled", "Email verification was cancelled. Please try again.")
-      }
-    )
-  }
-  
-  private def completeRegistration(): Unit = {
-    pendingRegistration match {
-      case Some(data) =>
-        if (service.registerUser(data.username, data.email, data.name, data.contact, data.password, isAdmin = false)) {
-          GuiUtils.showInfo("Registration Successful", "Account created successfully! You can now log in.")
-          clearForm()
-          onRegistrationSuccess()
-        } else {
-          GuiUtils.showError("Registration Failed", "An error occurred during registration. Please try again.")
-        }
-        pendingRegistration = None
-      case None =>
-        GuiUtils.showError("Registration Error", "Registration data not found. Please try again.")
+    // Register user (email availability was already checked during OTP sending)
+    if (service.registerUser(username, email, name, contact, password, isAdmin = false)) {
+      GuiUtils.showInfo("Registration Successful", "Account created successfully! You can now log in.")
+      clearForm()
+      onRegistrationSuccess()
+    } else {
+      GuiUtils.showError("Registration Failed", "An error occurred during registration. Please try again.")
     }
   }
   
@@ -158,9 +304,10 @@ class RegisterComponent(
     contactField.clearInput()
     passwordField.clear()
     confirmPasswordField.clear()
+    resetOTPState()
   }
   
-  private def isValidEmail(email: String): Boolean = {
+  private def isValidEmailFormat(email: String): Boolean = {
     val emailRegex = """^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$""".r
     emailRegex.matches(email)
   }
