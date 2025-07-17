@@ -3,100 +3,63 @@ package gui.components
 import scalafx.scene.control.TextField
 import scalafx.Includes._
 import scalafx.beans.property.StringProperty
-import scalafx.scene.paint.Color
 
 /**
  * Enhanced TextField with improved placeholder behavior
- * The placeholder remains visible when focused and only disappears when user starts typing
+ * Uses proper promptText that remains visible when focused until user starts typing
  */
 class EnhancedTextField(placeholderText: String) extends TextField {
   
-  private val placeholderProperty = StringProperty(placeholderText)
-  private var isPlaceholderVisible = true
+  // Use the built-in promptText property for proper placeholder behavior
+  promptText = placeholderText
+  
+  // Track if user has actually typed anything
   private var hasUserInput = false
   
-  // Set initial state
-  text = placeholderText
-  style = "-fx-text-fill: #999999;" // Gray color for placeholder
+  // Enhanced style for better UX
+  style = "-fx-prompt-text-fill: #999999;"
   
-  // Handle focus events
+  // Handle focus events for visual feedback
   focused.onChange { (_, _, newValue) =>
     if (newValue) {
-      // When gaining focus, keep placeholder visible if no user input
-      if (!hasUserInput) {
-        // Keep placeholder visible but change color to indicate focus
-        style = "-fx-text-fill: #BBBBBB;"
-      }
+      // When focused, make prompt text slightly lighter to show it's active
+      style = "-fx-prompt-text-fill: #BBBBBB;"
     } else {
-      // When losing focus, show placeholder if field is empty
-      if (text.value.trim.isEmpty || text.value == placeholderText) {
-        showPlaceholder()
-      }
+      // When focus lost, return to normal prompt text color
+      style = "-fx-prompt-text-fill: #999999;"
     }
   }
   
-  // Handle text changes
-  text.onChange { (_, oldValue, newValue) =>
-    // If user is typing (not just setting placeholder)
-    if (focused.value) {
-      if (isPlaceholderVisible && newValue != placeholderText) {
-        // User started typing, remove placeholder
-        if (newValue.length > placeholderText.length || 
-            !placeholderText.startsWith(newValue)) {
-          hidePlaceholder()
-          text = newValue.replace(placeholderText, "")
-          hasUserInput = true
-        }
-      } else if (!isPlaceholderVisible) {
-        // User is typing normal text
-        hasUserInput = newValue.trim.nonEmpty
-        if (!hasUserInput) {
-          showPlaceholder()
-        }
-      }
-    }
-  }
-  
-  private def showPlaceholder(): Unit = {
-    isPlaceholderVisible = true
-    hasUserInput = false
-    text = placeholderText
-    style = "-fx-text-fill: #999999;"
-  }
-  
-  private def hidePlaceholder(): Unit = {
-    isPlaceholderVisible = false
-    style = "-fx-text-fill: black;"
+  // Track actual user input
+  text.onChange { (_, _, newValue) =>
+    hasUserInput = newValue.trim.nonEmpty
   }
   
   /**
-   * Get the actual user input (excluding placeholder)
+   * Get the actual user input
    */
   def getUserInput: String = {
-    if (isPlaceholderVisible || text.value == placeholderText) {
-      ""
-    } else {
-      text.value
-    }
+    text.value.trim
   }
   
   /**
    * Set the user input programmatically
    */
   def setUserInput(value: String): Unit = {
-    if (value.trim.nonEmpty) {
-      hidePlaceholder()
-      text = value
-      hasUserInput = true
-    } else {
-      showPlaceholder()
-    }
+    text = value.trim
+    hasUserInput = value.trim.nonEmpty
   }
   
   /**
-   * Clear the field and reset to placeholder state
+   * Clear the field
    */
   def clearInput(): Unit = {
-    showPlaceholder()
+    text = ""
+    hasUserInput = false
   }
+  
+  /**
+   * Check if user has entered any input
+   */
+  def hasInput: Boolean = hasUserInput
 }
