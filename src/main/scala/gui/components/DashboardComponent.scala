@@ -121,6 +121,12 @@ class DashboardComponent extends BaseTabComponent {
                 val dialog = new EventDialog(() => refresh())
                 dialog.showAndWait()
               }
+            },
+            new Button("Refresh Dashboard") {
+              onAction = (_: ActionEvent) => {
+                import gui.utils.GuiUtils
+                GuiUtils.showInfo("Dashboard Refresh", "Dashboard data is automatically updated. Please reload the application for the latest statistics.")
+              }
             }
           )
         }

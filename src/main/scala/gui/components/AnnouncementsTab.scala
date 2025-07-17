@@ -16,6 +16,9 @@ class AnnouncementsTab extends BaseTabComponent {
   private val announcementsList = new ListView[String]()
   
   override def build(): Tab = {
+    // 初始加载数据
+    refreshAnnouncements()
+    
     val createButton = new Button("Create Announcement") {
       onAction = (_: ActionEvent) => {
         val dialog = new AnnouncementDialog(() => refreshAnnouncements())
@@ -39,10 +42,14 @@ class AnnouncementsTab extends BaseTabComponent {
       onAction = (_: ActionEvent) => likeAnnouncement()
     }
     
+    val refreshButton = new Button("Refresh") {
+      onAction = (_: ActionEvent) => refreshAnnouncements()
+    }
+    
     val topControls = new HBox {
       spacing = 10
       padding = Insets(10)
-      children = Seq(createButton, searchField, searchButton, addCommentButton, likeButton)
+      children = Seq(createButton, searchField, searchButton, addCommentButton, likeButton, refreshButton)
     }
     
     val tabContent = new BorderPane {

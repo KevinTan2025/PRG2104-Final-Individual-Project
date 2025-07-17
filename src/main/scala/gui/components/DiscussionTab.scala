@@ -57,10 +57,14 @@ class DiscussionTab extends BaseTabComponent {
       onAction = (_: ActionEvent) => handleSearchTopics()
     }
     
+    val refreshButton = new Button("Refresh") {
+      onAction = (_: ActionEvent) => refreshTopics()
+    }
+    
     val topControls = new HBox {
       spacing = 10
       padding = Insets(10)
-      children = Seq(createTopicButton, categoryCombo, filterButton, replyButton, likeButton, moderateButton)
+      children = Seq(createTopicButton, categoryCombo, filterButton, replyButton, likeButton, moderateButton, refreshButton)
     }
     
     val searchControls = new HBox {

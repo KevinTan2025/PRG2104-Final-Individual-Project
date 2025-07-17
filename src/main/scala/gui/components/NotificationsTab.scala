@@ -41,6 +41,10 @@ class NotificationsTab extends BaseTabComponent {
       onAction = (_: ActionEvent) => handleViewDetails()
     }
     
+    val refreshButton = new Button("Refresh") {
+      onAction = (_: ActionEvent) => refreshNotifications()
+    }
+    
     // Stats display
     val unreadCount = service.getUnreadNotificationCount
     val statsLabel = new Label(s"Unread notifications: $unreadCount") {
@@ -50,7 +54,7 @@ class NotificationsTab extends BaseTabComponent {
     val topControls = new HBox {
       spacing = 10
       padding = Insets(10)
-      children = Seq(markReadButton, markAllReadButton, viewUnreadButton, viewAllButton, deleteButton, viewDetailsButton)
+      children = Seq(markReadButton, markAllReadButton, viewUnreadButton, viewAllButton, deleteButton, viewDetailsButton, refreshButton)
     }
     
     val statsBox = new HBox {

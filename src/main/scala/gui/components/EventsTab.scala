@@ -48,10 +48,14 @@ class EventsTab extends BaseTabComponent {
       onAction = (_: ActionEvent) => handleSearchEvents()
     }
     
+    val refreshButton = new Button("Refresh") {
+      onAction = (_: ActionEvent) => refreshEvents()
+    }
+    
     val topControls = new HBox {
       spacing = 10
       padding = Insets(10)
-      children = Seq(createEventButton, rsvpButton, cancelRsvpButton, viewMyEventsButton, viewAllButton)
+      children = Seq(createEventButton, rsvpButton, cancelRsvpButton, viewMyEventsButton, viewAllButton, refreshButton)
     }
     
     val searchControls = new HBox {

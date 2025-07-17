@@ -55,10 +55,14 @@ class FoodSharingTab extends BaseTabComponent {
       onAction = (_: ActionEvent) => handleSearchFoodPosts()
     }
     
+    val refreshButton = new Button("Refresh") {
+      onAction = (_: ActionEvent) => refreshFoodPosts()
+    }
+    
     val topControls = new HBox {
       spacing = 10
       padding = Insets(10)
-      children = Seq(createButton, filterCombo, filterButton, acceptButton)
+      children = Seq(createButton, filterCombo, filterButton, acceptButton, refreshButton)
     }
     
     val searchControls = new HBox {
