@@ -16,7 +16,8 @@ class MainTabPane extends BaseComponent {
         new FoodSharingTab().build(),
         new DiscussionTab().build(),
         new EventsTab().build(),
-        new NotificationsTab().build()
+        new NotificationsTab().build(),
+        new AppInfoTab().build()
       )
     }
   }
