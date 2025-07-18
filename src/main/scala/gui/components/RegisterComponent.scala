@@ -23,8 +23,14 @@ class RegisterComponent(
   private val emailField = new EnhancedTextField("Email")
   private val nameField = new EnhancedTextField("Full Name")
   private val contactField = new EnhancedTextField("Contact Info")
-  private val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
-  private val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
+  private val passwordField = new PasswordField { 
+    promptText = "Password (8+ chars, letter, digit, special characters)" 
+    style = "-fx-prompt-text-fill: #999999;"
+  }
+  private val confirmPasswordField = new PasswordField { 
+    promptText = "Confirm Password" 
+    style = "-fx-prompt-text-fill: #999999;"
+  }
   
   // OTP verification components
   private val otpField = new TextField {
@@ -45,12 +51,18 @@ class RegisterComponent(
   }
   
   // Status labels
+  private val usernameStatusLabel = new Label("") {
+    style = "-fx-font-size: 11px; -fx-padding: 0 0 2 5;"
+    visible = false
+    managed = false
+  }
+  
   private val emailStatusLabel = new Label("") {
-    style = "-fx-font-size: 12px;"
+    style = "-fx-font-size: 11px; -fx-padding: 2 0 0 5;"
   }
   
   private val otpStatusLabel = new Label("") {
-    style = "-fx-font-size: 12px;"
+    style = "-fx-font-size: 11px; -fx-padding: 2 0 0 5;"
   }
   
   // OTP state
@@ -61,6 +73,28 @@ class RegisterComponent(
   setupEventHandlers()
   
   private def setupEventHandlers(): Unit = {
+    // Username field changes - real-time duplicate check
+    usernameField.text.onChange { (_, _, _) =>
+      val username = usernameField.getUserInput
+      if (username.nonEmpty) {
+        if (!service.isUsernameAvailable(username)) {
+          usernameStatusLabel.text = "✗ Username already taken"
+          usernameStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-font-weight: bold; -fx-padding: 0 0 2 5;"
+          usernameStatusLabel.visible = true
+          usernameStatusLabel.managed = true
+        } else {
+          usernameStatusLabel.text = "✓ Username available"
+          usernameStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 0 0 2 5;"
+          usernameStatusLabel.visible = true
+          usernameStatusLabel.managed = true
+        }
+      } else {
+        usernameStatusLabel.text = ""
+        usernameStatusLabel.visible = false
+        usernameStatusLabel.managed = false
+      }
+    }
+    
     // Email field changes
     emailField.text.onChange { (_, _, _) =>
       val email = emailField.getUserInput
@@ -69,16 +103,34 @@ class RegisterComponent(
       
       if (isValidEmail) {
         emailStatusLabel.text = "✓ Valid email format"
-        emailStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: green;"
+        emailStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
       } else if (email.nonEmpty) {
         emailStatusLabel.text = "✗ Invalid email format"
-        emailStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: red;"
+        emailStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
       } else {
         emailStatusLabel.text = ""
       }
       
       if (!isValidEmail) {
         resetOTPState()
+      }
+    }
+    
+    // Password field focus events for better UX
+    passwordField.focused.onChange { (_, _, newValue) =>
+      if (newValue) {
+        passwordField.style = "-fx-prompt-text-fill: #BBBBBB;"
+      } else {
+        passwordField.style = "-fx-prompt-text-fill: #999999;"
+      }
+    }
+    
+    // Confirm password field focus events
+    confirmPasswordField.focused.onChange { (_, _, newValue) =>
+      if (newValue) {
+        confirmPasswordField.style = "-fx-prompt-text-fill: #BBBBBB;"
+      } else {
+        confirmPasswordField.style = "-fx-prompt-text-fill: #999999;"
       }
     }
     
@@ -103,61 +155,108 @@ class RegisterComponent(
       onAction = (_: ActionEvent) => onBackClick()
     }
     
-    // Email verification section
-    val emailVerificationBox = new HBox {
-      spacing = 10
+    // Username section with integrated status
+    val usernameSection = new VBox {
+      spacing = 5
       alignment = Pos.CenterLeft
       children = Seq(
-        new Label("Email:"),
-        emailField,
-        sendOtpButton
+        usernameStatusLabel,
+        usernameField
+      )
+    }
+    
+    // Email verification section
+    val emailSection = new VBox {
+      spacing = 5
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new HBox {
+          spacing = 10
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Label("Email:") { 
+              style = "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" 
+            },
+            emailField,
+            sendOtpButton
+          )
+        },
+        emailStatusLabel
       )
     }
     
     // OTP verification section
-    val otpVerificationBox = new HBox {
-      spacing = 10
+    val otpSection = new VBox {
+      spacing = 5
       alignment = Pos.CenterLeft
       children = Seq(
-        new Label("OTP:"),
-        otpField,
-        verifyOtpButton
+        new HBox {
+          spacing = 10
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Label("OTP:") { 
+              style = "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" 
+            },
+            otpField,
+            verifyOtpButton
+          )
+        },
+        otpStatusLabel
       )
     }
     
     val formBox = new VBox {
-      spacing = 15
+      spacing = 18
       alignment = Pos.Center
       children = Seq(
         new Label("Register New Account") {
-          style = "-fx-font-size: 20px; -fx-font-weight: bold;"
+          style = "-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #333333;"
         },
-        usernameField,
-        nameField,
-        contactField,
-        passwordField,
-        confirmPasswordField,
-        new Separator(),
-        new Label("Email Verification") {
-          style = "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2196F3;"
+        new VBox {
+          spacing = 12
+          children = Seq(
+            usernameSection,
+            nameField,
+            contactField
+          )
         },
-        emailVerificationBox,
-        emailStatusLabel,
-        otpVerificationBox,
-        otpStatusLabel,
-        new Separator(),
+        new VBox {
+          spacing = 12
+          children = Seq(
+            passwordField,
+            confirmPasswordField
+          )
+        },
+        new Separator() {
+          style = "-fx-background-color: #E0E0E0;"
+        },
+        new VBox {
+          spacing = 15
+          children = Seq(
+            new Label("Email Verification") {
+              style = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2196F3;"
+            },
+            emailSection,
+            otpSection
+          )
+        },
+        new Separator() {
+          style = "-fx-background-color: #E0E0E0;"
+        },
         new HBox {
-          spacing = 10
+          spacing = 15
           alignment = Pos.Center
           children = Seq(registerButton, backButton)
         }
       )
-      padding = Insets(30)
+      padding = Insets(40, 50, 40, 50)
+      style = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);"
     }
     
     new BorderPane {
       center = formBox
-      style = "-fx-background-color: #f5f5f5;"
+      style = "-fx-background-color: #f8f9fa;"
+      padding = Insets(30)
     }
   }
   
@@ -195,7 +294,7 @@ class RegisterComponent(
     }
     
     otpStatusLabel.text = "OTP sent to your email"
-    otpStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: blue;"
+    otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #3182CE; -fx-padding: 2 0 0 5;"
     
     // Focus on OTP field
     Platform.runLater {
@@ -212,13 +311,13 @@ class RegisterComponent(
         otpField.disable = true
         verifyOtpButton.disable = true
         otpStatusLabel.text = "✓ Email verified successfully!"
-        otpStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: green;"
+        otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
         
         GuiUtils.showInfo("Email Verified", "Your email has been verified successfully!")
         
       case Some(_) =>
         otpStatusLabel.text = "✗ Invalid OTP. Please try again."
-        otpStatusLabel.style = "-fx-font-size: 12px; -fx-text-fill: red;"
+        otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
         otpField.clear()
         otpField.requestFocus()
         
@@ -304,6 +403,9 @@ class RegisterComponent(
     contactField.clearInput()
     passwordField.clear()
     confirmPasswordField.clear()
+    usernameStatusLabel.text = ""
+    usernameStatusLabel.visible = false
+    usernameStatusLabel.managed = false
     resetOTPState()
   }
   
