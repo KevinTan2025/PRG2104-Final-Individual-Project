@@ -33,7 +33,7 @@ class UserDAO {
   def findByUsername(username: String): Option[User] = {
     try {
       val rs = DatabaseConnection.executeQuery(
-        "SELECT * FROM users WHERE username = ?", username
+        "SELECT * FROM users WHERE LOWER(username) = LOWER(?)", username
       )
       
       if (rs.next()) {

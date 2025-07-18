@@ -44,7 +44,7 @@ class CommunityEngagementService {
   }
   
   def registerUser(username: String, email: String, name: String, contactInfo: String, password: String, isAdmin: Boolean = false): Boolean = {
-    // Check for existing username and email
+    // Check for existing username and email (case-insensitive for username)
     if (!isUsernameAvailable(username)) {
       return false
     }
@@ -54,6 +54,7 @@ class CommunityEngagementService {
     }
     
     val userId = UUID.randomUUID().toString
+    // Store username with original case but validation is case-insensitive
     val user = if (isAdmin) {
       new AdminUser(userId, username, email, name, contactInfo)
     } else {
