@@ -32,22 +32,11 @@ class RegisterComponent(
     style = "-fx-prompt-text-fill: #999999;"
   }
   
-  // OTP verification components
-  private val otpField = new TextField {
-    promptText = "Enter 6-digit OTP"
-    maxWidth = 150
-    style = "-fx-font-size: 14px; -fx-text-alignment: center;"
+  // OTP verification components (simplified since verification moved to dialog)
+  private val sendOtpButton = new Button("📧 Send Verification Email") {
+    prefWidth = 180
     disable = true
-  }
-  
-  private val sendOtpButton = new Button("Send OTP") {
-    prefWidth = 100
-    disable = true
-  }
-  
-  private val verifyOtpButton = new Button("Verify") {
-    prefWidth = 80
-    disable = true
+    style = "-fx-background-color: #17a2b8; -fx-text-fill: white;"
   }
   
   // Status labels
@@ -137,13 +126,7 @@ class RegisterComponent(
     // Send OTP button
     sendOtpButton.onAction = (_: ActionEvent) => sendOTP()
     
-    // Verify OTP button
-    verifyOtpButton.onAction = (_: ActionEvent) => verifyOTP()
-    
-    // OTP field changes
-    otpField.text.onChange { (_, _, newValue) =>
-      verifyOtpButton.disable = newValue.length != 6 || !newValue.forall(_.isDigit)
-    }
+    // Remove verify OTP button handler since verification is now in dialog
   }
   
   override def build(): Region = {
@@ -181,26 +164,7 @@ class RegisterComponent(
             sendOtpButton
           )
         },
-        emailStatusLabel
-      )
-    }
-    
-    // OTP verification section
-    val otpSection = new VBox {
-      spacing = 5
-      alignment = Pos.CenterLeft
-      children = Seq(
-        new HBox {
-          spacing = 10
-          alignment = Pos.CenterLeft
-          children = Seq(
-            new Label("OTP:") { 
-              style = "-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #555555;" 
-            },
-            otpField,
-            verifyOtpButton
-          )
-        },
+        emailStatusLabel,
         otpStatusLabel
       )
     }
@@ -236,8 +200,7 @@ class RegisterComponent(
             new Label("Email Verification") {
               style = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2196F3;"
             },
-            emailSection,
-            otpSection
+            emailSection
           )
         },
         new Separator() {
@@ -274,66 +237,52 @@ class RegisterComponent(
       return
     }
     
-    // Generate OTP
-    generatedOtp = Some(generateOTP())
+    // Get parent stage for dialog
+    val parentStage = sendOtpButton.scene.value.window.value.asInstanceOf[javafx.stage.Stage]
     
-    // Enable OTP field and verify button
-    otpField.disable = false
-    verifyOtpButton.disable = false
-    sendOtpButton.disable = true
-    sendOtpButton.text = "Sent"
+    // Create and show the enhanced OTP dialog
+    val otpDialog = new gui.dialogs.OTPVerificationDialog(
+      new scalafx.stage.Stage(parentStage), 
+      email
+    )
     
-    // Show simulated notification
-    Platform.runLater {
-      val notification = new Alert(Alert.AlertType.Information) {
-        title = "OTP Sent"
-        headerText = "Verification Code Sent"
-        contentText = s"A 6-digit OTP has been sent to $email\n\n[SIMULATED] Your OTP: ${generatedOtp.get}"
+    otpDialog.show(
+      onSuccess = () => {
+        // OTP verification successful
+        isEmailVerified = true
+        generatedOtp = Some("verified") // Mark as verified
+        sendOtpButton.disable = true
+        sendOtpButton.text = "✅ Verified"
+        sendOtpButton.style = "-fx-background-color: #28a745; -fx-text-fill: white;"
+        otpStatusLabel.text = "✓ Email verified successfully!"
+        otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
+      },
+      onFailure = () => {
+        // OTP verification failed or cancelled
+        resetOTPState()
+        otpStatusLabel.text = "Verification cancelled"
+        otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
       }
-      notification.showAndWait()
-    }
+    )
     
-    otpStatusLabel.text = "OTP sent to your email"
+    // Update UI to show OTP is being sent
+    sendOtpButton.disable = true
+    sendOtpButton.text = "Sending..."
+    otpStatusLabel.text = "Sending verification email..."
     otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #3182CE; -fx-padding: 2 0 0 5;"
-    
-    // Focus on OTP field
-    Platform.runLater {
-      otpField.requestFocus()
-    }
   }
   
   private def verifyOTP(): Unit = {
-    val enteredOtp = otpField.text.value.trim
-    
-    generatedOtp match {
-      case Some(correctOtp) if enteredOtp == correctOtp =>
-        isEmailVerified = true
-        otpField.disable = true
-        verifyOtpButton.disable = true
-        otpStatusLabel.text = "✓ Email verified successfully!"
-        otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
-        
-        GuiUtils.showInfo("Email Verified", "Your email has been verified successfully!")
-        
-      case Some(_) =>
-        otpStatusLabel.text = "✗ Invalid OTP. Please try again."
-        otpStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
-        otpField.clear()
-        otpField.requestFocus()
-        
-      case None =>
-        GuiUtils.showError("No OTP", "Please send OTP first.")
-    }
+    // This method is now handled by the OTPVerificationDialog
+    // Keeping for backward compatibility but functionality moved to dialog
+    GuiUtils.showInfo("Use Email Verification", "Please use the 'Send OTP' button to verify your email.")
   }
   
   private def resetOTPState(): Unit = {
     generatedOtp = None
     isEmailVerified = false
-    otpField.clear()
-    otpField.disable = true
-    verifyOtpButton.disable = true
     sendOtpButton.disable = true
-    sendOtpButton.text = "Send OTP"
+    sendOtpButton.text = "📧 Send Verification Email"
     emailStatusLabel.text = ""
     otpStatusLabel.text = ""
   }
