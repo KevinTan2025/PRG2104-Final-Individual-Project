@@ -3,13 +3,15 @@ package gui.scenes
 import scalafx.scene.Scene
 import scalafx.scene.layout.BorderPane
 import scalafx.stage.Stage
-import gui.components._
+import gui.components.auth.{LoginComponent, RegisterComponent}
+import gui.components.layout.{MenuBarComponent, MainTabPane}
 import gui.utils.GuiUtils
+import service.CommunityEngagementService
 
 /**
  * Scene manager for handling different application scenes
  */
-class SceneManager(stage: Stage) {
+class SceneManager(stage: Stage, private val service: CommunityEngagementService) {
   
   GuiUtils.setMainStage(stage)
   
