@@ -12,9 +12,12 @@ import service.CommunityEngagementService
 
 /**
  * Food Sharing tab component for managing food posts
- * 安全级别: USER - 注册用户可以分享和请求食物
+ * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以分享和请求食物
  */
-class FoodSharingTab extends BaseTabComponent {
+class FoodSharingTab(
+  readOnlyMode: Boolean = false,
+  onLoginPrompt: () => Unit = () => {}
+) extends BaseTabComponent {
   
   private val foodPostsList = new ListView[String]()
   private val filterCombo = new ComboBox[String] {
@@ -30,8 +33,12 @@ class FoodSharingTab extends BaseTabComponent {
     
     val createButton = new Button("Create Food Post") {
       onAction = (_: ActionEvent) => {
-        val dialog = new FoodPostDialog(() => refreshFoodPosts())
-        dialog.showAndWait()
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          val dialog = new FoodPostDialog(() => refreshFoodPosts())
+          dialog.showAndWait()
+        }
       }
     }
     
@@ -51,7 +58,13 @@ class FoodSharingTab extends BaseTabComponent {
     }
     
     val acceptButton = new Button("Accept Selected") {
-      onAction = (_: ActionEvent) => handleAcceptFoodPost()
+      onAction = (_: ActionEvent) => {
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          handleAcceptFoodPost()
+        }
+      }
     }
     
     val searchButton = new Button("Search") {
@@ -60,6 +73,12 @@ class FoodSharingTab extends BaseTabComponent {
     
     val refreshButton = new Button("Refresh") {
       onAction = (_: ActionEvent) => refreshFoodPosts()
+    }
+    
+    // 在只读模式下修改按钮文本
+    if (readOnlyMode) {
+      createButton.text = "🔒 Login to Post"
+      acceptButton.text = "🔒 Login to Accept"
     }
     
     val topControls = new HBox {
@@ -82,7 +101,7 @@ class FoodSharingTab extends BaseTabComponent {
     }
     
     new Tab {
-      text = "Food Sharing"
+      text = if (readOnlyMode) "🍕 Food Sharing" else "Food Sharing"
       content = mainContent
       closable = false
     }

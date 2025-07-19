@@ -12,9 +12,12 @@ import service.CommunityEngagementService
 
 /**
  * Events tab component for managing community events
- * 安全级别: USER - 注册用户可以查看和创建活动
+ * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以创建和参与活动
  */
-class EventsTab extends BaseTabComponent {
+class EventsTab(
+  readOnlyMode: Boolean = false,
+  onLoginPrompt: () => Unit = () => {}
+) extends BaseTabComponent {
   
   private val eventsList = new ListView[String]()
   private val searchField = new TextField {
@@ -26,21 +29,43 @@ class EventsTab extends BaseTabComponent {
     
     val createEventButton = new Button("Create Event") {
       onAction = (_: ActionEvent) => {
-        val dialog = new EventDialog(() => refreshEvents())
-        dialog.showAndWait()
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          val dialog = new EventDialog(() => refreshEvents())
+          dialog.showAndWait()
+        }
       }
     }
     
     val rsvpButton = new Button("RSVP to Event") {
-      onAction = (_: ActionEvent) => handleRSVP()
+      onAction = (_: ActionEvent) => {
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          handleRSVP()
+        }
+      }
     }
     
     val cancelRsvpButton = new Button("Cancel RSVP") {
-      onAction = (_: ActionEvent) => handleCancelRSVP()
+      onAction = (_: ActionEvent) => {
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          handleCancelRSVP()
+        }
+      }
     }
     
     val viewMyEventsButton = new Button("My Events") {
-      onAction = (_: ActionEvent) => handleViewMyEvents()
+      onAction = (_: ActionEvent) => {
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          handleViewMyEvents()
+        }
+      }
     }
     
     val viewAllButton = new Button("All Events") {
@@ -53,6 +78,14 @@ class EventsTab extends BaseTabComponent {
     
     val refreshButton = new Button("Refresh") {
       onAction = (_: ActionEvent) => refreshEvents()
+    }
+    
+    // 在只读模式下修改按钮文本
+    if (readOnlyMode) {
+      createEventButton.text = "🔒 Login to Create Event"
+      rsvpButton.text = "🔒 Login to RSVP"
+      cancelRsvpButton.text = "🔒 Login to Cancel RSVP"
+      viewMyEventsButton.text = "🔒 Login to View My Events"
     }
     
     val topControls = new HBox {
@@ -75,7 +108,7 @@ class EventsTab extends BaseTabComponent {
     }
     
     new Tab {
-      text = "Events"
+      text = if (readOnlyMode) "📅 Events" else "Events"
       content = mainContent
       closable = false
     }

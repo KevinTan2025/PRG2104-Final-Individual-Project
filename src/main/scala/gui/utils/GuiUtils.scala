@@ -52,6 +52,32 @@ object GuiUtils {
   }
   
   /**
+   * Show a login prompt dialog for anonymous users
+   */
+  def showLoginPrompt(onLoginClick: () => Unit, onRegisterClick: () => Unit): Unit = {
+    import scalafx.scene.control.ButtonType
+    import scalafx.scene.control.ButtonBar.ButtonData
+    
+    val loginButton = new ButtonType("Login", ButtonData.OKDone)
+    val registerButton = new ButtonType("Register", ButtonData.Other)
+    val cancelButton = new ButtonType("Cancel", ButtonData.CancelClose)
+    
+    val alert = new Alert(AlertType.Confirmation) {
+      title = "Login Required"
+      headerText = "🔐 Account Required"
+      contentText = "This feature requires an account. Would you like to login or create a new account?"
+      buttonTypes = Seq(loginButton, registerButton, cancelButton)
+    }
+    
+    val result = alert.showAndWait()
+    result match {
+      case Some(btn) if btn == loginButton => onLoginClick()
+      case Some(btn) if btn == registerButton => onRegisterClick()
+      case _ => // Cancel - do nothing
+    }
+  }
+  
+  /**
    * Generic alert method
    */
   private def showAlert(alertType: AlertType, alertTitle: String, message: String): Unit = {

@@ -17,6 +17,9 @@ class CommunityEngagementService {
   // Current logged-in user
   private var currentUser: Option[User] = None
   
+  // Anonymous mode flag
+  private var isAnonymousMode: Boolean = false
+  
   /**
    * User Authentication
    */
@@ -24,16 +27,36 @@ class CommunityEngagementService {
   def login(username: String, password: String): Option[User] = {
     val user = dbService.authenticateUser(username, password)
     currentUser = user
+    if (user.isDefined) {
+      isAnonymousMode = false
+    }
     user
   }
   
   def logout(): Unit = {
     currentUser = None
+    isAnonymousMode = false
+  }
+  
+  def enableAnonymousMode(): Unit = {
+    isAnonymousMode = true
+    currentUser = None
+  }
+  
+  def disableAnonymousMode(): Unit = {
+    isAnonymousMode = false
   }
   
   def getCurrentUser: Option[User] = currentUser
   
   def isLoggedIn: Boolean = currentUser.isDefined
+  
+  def isInAnonymousMode: Boolean = isAnonymousMode
+  
+  def canPerformAction(requiresLogin: Boolean): Boolean = {
+    if (!requiresLogin) true
+    else isLoggedIn
+  }
   
   def isUsernameAvailable(username: String): Boolean = {
     dbService.findUserByUsername(username).isEmpty

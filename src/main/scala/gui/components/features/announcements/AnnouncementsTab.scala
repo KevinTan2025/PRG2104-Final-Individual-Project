@@ -12,9 +12,12 @@ import service.CommunityEngagementService
 
 /**
  * Announcements tab component
- * 安全级别: USER - 注册用户可以查看和创建公告
+ * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以创建公告
  */
-class AnnouncementsTab extends BaseTabComponent {
+class AnnouncementsTab(
+  readOnlyMode: Boolean = false,
+  onLoginPrompt: () => Unit = () => {}
+) extends BaseTabComponent {
   
   private val announcementsList = new ListView[String]()
   
@@ -24,8 +27,12 @@ class AnnouncementsTab extends BaseTabComponent {
     
     val createButton = new Button("Create Announcement") {
       onAction = (_: ActionEvent) => {
-        val dialog = new AnnouncementDialog(() => refreshAnnouncements())
-        dialog.showAndWait()
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          val dialog = new AnnouncementDialog(() => refreshAnnouncements())
+          dialog.showAndWait()
+        }
       }
     }
     
@@ -38,15 +45,34 @@ class AnnouncementsTab extends BaseTabComponent {
     }
     
     val addCommentButton = new Button("Add Comment") {
-      onAction = (_: ActionEvent) => addComment()
+      onAction = (_: ActionEvent) => {
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          addComment()
+        }
+      }
     }
     
     val likeButton = new Button("Like") {
-      onAction = (_: ActionEvent) => likeAnnouncement()
+      onAction = (_: ActionEvent) => {
+        if (readOnlyMode) {
+          onLoginPrompt()
+        } else {
+          likeAnnouncement()
+        }
+      }
     }
     
     val refreshButton = new Button("Refresh") {
       onAction = (_: ActionEvent) => refreshAnnouncements()
+    }
+    
+    // 在只读模式下禁用或修改某些按钮
+    if (readOnlyMode) {
+      createButton.text = "🔒 Login to Create"
+      addCommentButton.text = "🔒 Login to Comment"
+      likeButton.text = "🔒 Login to Like"
     }
     
     val topControls = new HBox {
@@ -61,7 +87,7 @@ class AnnouncementsTab extends BaseTabComponent {
     }
     
     new Tab {
-      text = "Announcements"
+      text = if (readOnlyMode) "📢 Announcements" else "Announcements"
       content = tabContent
       closable = false
     }
