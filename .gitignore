@@ -1,3 +1,7 @@
+# Temporary ignore md files
+*.md
+pathway/
+
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
