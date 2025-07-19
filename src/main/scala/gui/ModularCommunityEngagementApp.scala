@@ -20,7 +20,8 @@ object ModularCommunityEngagementApp extends JFXApp3 {
     }
     
     try {
-      val sceneManager = new SceneManager(stage)
+      val communityService = new service.CommunityEngagementService()
+      val sceneManager = new SceneManager(stage, communityService)
       sceneManager.showLoginScene()
       stage.centerOnScreen()
     } catch {

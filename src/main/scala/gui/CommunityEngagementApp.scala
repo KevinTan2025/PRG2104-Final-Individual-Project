@@ -104,10 +104,10 @@ object CommunityEngagementApp extends JFXApp3 {
    * Create the registration scene
    */
   private def createRegistrationScene(): Scene = {
-    val usernameField = new gui.components.EnhancedTextField("Username")
-    val emailField = new gui.components.EnhancedTextField("Email")
-    val nameField = new gui.components.EnhancedTextField("Full Name")
-    val contactField = new gui.components.EnhancedTextField("Contact Info")
+    val usernameField = new gui.components.common.public.EnhancedTextField("Username")
+    val emailField = new gui.components.common.public.EnhancedTextField("Email")
+    val nameField = new gui.components.common.public.EnhancedTextField("Full Name")
+    val contactField = new gui.components.common.public.EnhancedTextField("Contact Info")
     val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
     val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
     
@@ -294,9 +294,9 @@ object CommunityEngagementApp extends JFXApp3 {
   private def createDashboardTab(): Tab = {
     service.getCurrentUser match {
       case Some(user) if user.getUserRole == "AdminUser" =>
-        new gui.components.AdminDashboard(service).build()
+        new gui.components.dashboards.AdminDashboard(service).build()
       case _ =>
-        new gui.components.UserDashboard(service).build()
+        new gui.components.dashboards.UserDashboard(service).build()
     }
   }
 
