@@ -3,190 +3,289 @@ package gui.components.features.anonymous
 import scalafx.scene.control._
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
-import scalafx.event.ActionEvent
 import scalafx.Includes._
-import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
 
 /**
- * Dashboard component for anonymous users
- * 安全级别: PUBLIC - 匿名用户的仪表板
+ * Anonymous Dashboard component with Facebook-style social media feed
+ * 安全级别: PUBLIC - 匿名用户可以浏览的仪表板组件
  */
-class AnonymousDashboardComponent(
-  onLoginPrompt: () => Unit
-) extends BaseTabComponent {
+class AnonymousDashboardComponent(onLoginPrompt: () => Unit) extends BaseTabComponent {
   
-  def build(): Tab = {
-    val welcomeCard = createWelcomeCard()
-    val featuresCard = createFeaturesCard()
-    val statsCard = createStatsCard()
-    val joinCard = createJoinCard()
+  override def build(): Tab = {
+    val mainContent = new HBox {
+      spacing = 20
+      padding = Insets(20)
+      children = Seq(
+        createActivityFeed(),
+        createSidePanel()
+      )
+    }
     
     val scrollContent = new ScrollPane {
       fitToWidth = true
-      content = new VBox {
-        spacing = 20
-        padding = Insets(20)
-        children = Seq(
-          new HBox {
-            spacing = 20
-            children = Seq(welcomeCard, joinCard)
-          },
-          new HBox {
-            spacing = 20
-            children = Seq(featuresCard, statsCard)
-          }
-        )
-      }
+      content = mainContent
     }
     
     new Tab {
-      text = "🏠 Welcome"
+      text = "🏠 Home"
       content = scrollContent
       closable = false
     }
   }
   
-  override def refresh(): Unit = {
-    // Nothing to refresh for anonymous dashboard
-  }
-  
-  override def initialize(): Unit = {
-    // Nothing to initialize for anonymous dashboard
-  }
-  
-  private def createWelcomeCard(): Region = {
-    new VBox {
+  private def createActivityFeed(): VBox = {
+    val feedTitle = new Label("🔥 Community Activity Feed") {
+      style = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1877f2;"
+    }
+    
+    val activityFeed = new VBox {
       spacing = 15
-      padding = Insets(20)
-      style = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);"
-      prefWidth = 400
+      padding = Insets(0, 20, 0, 0)
+      prefWidth = 500
+      
       children = Seq(
-        new Label("👋 Welcome to Our Community!") {
-          style = "-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
-        },
-        new Label("You are currently browsing in anonymous mode.") {
-          style = "-fx-font-size: 14px; -fx-text-fill: #7f8c8d;"
-        },
-        new Separator(),
-        new Label("🔍 What you can explore:") {
-          style = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;"
-        },
-        new VBox {
-          spacing = 8
+        feedTitle,
+        createPostCard("📢 System Announcement", "Welcome Week activities start tomorrow!", "Community Admin", "2 hours ago"),
+        createPostCard("🍕 Food Share", "Free pizza available in the main lobby - first come first served!", "Sarah Chen", "3 hours ago"),
+        createPostCard("🎉 Event Reminder", "Movie night this Friday at 7 PM in Room 301. Popcorn provided!", "Events Team", "5 hours ago"),
+        createPostCard("🍜 Food Share", "Homemade soup available - perfect for this cold weather!", "Mike Johnson", "6 hours ago"),
+        createPostCard("📅 New Event", "Study group for final exams - all subjects welcome!", "Student Council", "1 day ago"),
+        createJoinPromptCard()
+      )
+    }
+    
+    activityFeed
+  }
+  
+  private def createPostCard(category: String, content: String, author: String, time: String): VBox = {
+    val postCard = new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new HBox {
+          spacing = 10
+          alignment = Pos.CenterLeft
           children = Seq(
-            new Label("• Browse community announcements") {
-              style = "-fx-font-size: 13px; -fx-text-fill: #555555;"
+            new Label(category) {
+              style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
             },
-            new Label("• View food sharing opportunities") {
-              style = "-fx-font-size: 13px; -fx-text-fill: #555555;"
+            new Region { HBox.setHgrow(this, Priority.Always) },
+            new Label(time) {
+              style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
+            }
+          )
+        },
+        new Label(content) {
+          style = "-fx-font-size: 14px; -fx-text-fill: #050505;"
+          wrapText = true
+        },
+        new HBox {
+          spacing = 5
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Label("by") {
+              style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
             },
-            new Label("• Read community discussions") {
-              style = "-fx-font-size: 13px; -fx-text-fill: #555555;"
+            new Label(author) {
+              style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
+            }
+          )
+        },
+        new HBox {
+          spacing = 20
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Button("👍 Like") {
+              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
+              onAction = _ => onLoginPrompt()
             },
-            new Label("• Check upcoming events") {
-              style = "-fx-font-size: 13px; -fx-text-fill: #555555;"
+            new Button("💬 Comment") {
+              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
+              onAction = _ => onLoginPrompt()
             },
-            new Label("• Learn about our platform") {
-              style = "-fx-font-size: 13px; -fx-text-fill: #555555;"
+            new Button("📤 Share") {
+              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
+              onAction = _ => onLoginPrompt()
             }
           )
         }
       )
     }
+    
+    postCard
   }
   
-  private def createFeaturesCard(): Region = {
-    new VBox {
-      spacing = 15
-      padding = Insets(20)
-      style = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);"
-      prefWidth = 400
+  private def createJoinPromptCard(): VBox = {
+    val joinCard = new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: linear-gradient(to right, #1877f2, #42b883); -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);"
+      
       children = Seq(
-        new Label("✨ Platform Features") {
-          style = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
+        new Label("🌟 Join Our Community!") {
+          style = "-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 16px;"
         },
-        new GridPane {
-          hgap = 15
-          vgap = 10
-          add(new Label("🍕") { style = "-fx-font-size: 20px;" }, 0, 0)
-          add(new Label("Food Sharing") { style = "-fx-font-weight: bold;" }, 1, 0)
-          add(new Label("Share surplus food with neighbors") { style = "-fx-font-size: 12px; -fx-text-fill: #666;" }, 1, 1)
-          
-          add(new Label("💬") { style = "-fx-font-size: 20px;" }, 0, 2)
-          add(new Label("Community Chat") { style = "-fx-font-weight: bold;" }, 1, 2)
-          add(new Label("Connect and discuss with community") { style = "-fx-font-size: 12px; -fx-text-fill: #666;" }, 1, 3)
-          
-          add(new Label("📅") { style = "-fx-font-size: 20px;" }, 0, 4)
-          add(new Label("Events") { style = "-fx-font-weight: bold;" }, 1, 4)
-          add(new Label("Organize and join community events") { style = "-fx-font-size: 12px; -fx-text-fill: #666;" }, 1, 5)
+        new Label("Create posts, share food, organize events, and connect with your community!") {
+          style = "-fx-text-fill: white; -fx-font-size: 12px;"
+          wrapText = true
+        },
+        new Button("Join Now - It's Free!") {
+          style = "-fx-background-color: white; -fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-background-radius: 6;"
+          onAction = _ => onLoginPrompt()
+        }
+      )
+    }
+    
+    joinCard
+  }
+  
+  private def createSidePanel(): VBox = {
+    new VBox {
+      spacing = 20
+      prefWidth = 300
+      
+      children = Seq(
+        createWelcomeCard(),
+        createStatsCard(),
+        createTrendingCard(),
+        createUpcomingEventsCard()
+      )
+    }
+  }
+  
+  private def createWelcomeCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: linear-gradient(to bottom, #e3f2fd, #f3e5f5); -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("👋 Welcome to our Community!") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        new Label("You're browsing as a guest. Join us to participate fully!") {
+          style = "-fx-text-fill: #424242; -fx-font-size: 12px;"
+          wrapText = true
+        },
+        new Button("Sign Up") {
+          style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6; -fx-pref-width: 200;"
+          onAction = _ => onLoginPrompt()
         }
       )
     }
   }
   
-  private def createStatsCard(): Region = {
-    // In a real app, these would be actual statistics
+  private def createStatsCard(): VBox = {
     new VBox {
-      spacing = 15
-      padding = Insets(20)
-      style = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);"
-      prefWidth = 400
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
       children = Seq(
         new Label("📊 Community Stats") {
-          style = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
         },
-        new GridPane {
-          hgap = 20
-          vgap = 15
-          add(new Label("👥") { style = "-fx-font-size: 24px;" }, 0, 0)
-          add(new Label("Active Members") { style = "-fx-font-weight: bold;" }, 1, 0)
-          add(new Label("1,234+") { style = "-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #3498db;" }, 2, 0)
-          
-          add(new Label("🍽️") { style = "-fx-font-size: 24px;" }, 0, 1)
-          add(new Label("Meals Shared") { style = "-fx-font-weight: bold;" }, 1, 1)
-          add(new Label("5,678+") { style = "-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" }, 2, 1)
-          
-          add(new Label("🌟") { style = "-fx-font-size: 24px;" }, 0, 2)
-          add(new Label("Events Hosted") { style = "-fx-font-weight: bold;" }, 1, 2)
-          add(new Label("890+") { style = "-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #f39c12;" }, 2, 2)
+        createStatRow("Active Members", "245"),
+        createStatRow("Posts Today", "18"),
+        createStatRow("Food Shared", "12"),
+        createStatRow("Events This Week", "7")
+      )
+    }
+  }
+  
+  private def createTrendingCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("🔥 Trending Topics") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createTrendingItem("#StudyGroups", "45 posts"),
+        createTrendingItem("#FreeFood", "32 posts"),
+        createTrendingItem("#MovieNight", "28 posts"),
+        createTrendingItem("#FinalExams", "21 posts")
+      )
+    }
+  }
+  
+  private def createUpcomingEventsCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("📅 Upcoming Events") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createEventItem("Movie Night", "Tomorrow 7:00 PM"),
+        createEventItem("Study Group", "Friday 2:00 PM"),
+        createEventItem("Food Festival", "Next Monday"),
+        new Button("View All Events") {
+          style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6; -fx-pref-width: 200;"
+          onAction = _ => onLoginPrompt()
         }
       )
     }
   }
   
-  private def createJoinCard(): Region = {
-    new VBox {
-      spacing = 15
-      padding = Insets(20)
-      style = "-fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);"
-      prefWidth = 400
+  private def createStatRow(label: String, value: String): HBox = {
+    new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
       children = Seq(
-        new Label("🚀 Ready to Join?") {
-          style = "-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"
+        new Label(label) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
         },
-        new Label("Create your account to unlock all features!") {
-          style = "-fx-font-size: 14px; -fx-text-fill: white; -fx-opacity: 0.9;"
-        },
-        new Separator() {
-          style = "-fx-background-color: rgba(255,255,255,0.3);"
-        },
-        new VBox {
-          spacing = 10
-          children = Seq(
-            new Label("✅ Post food items") { style = "-fx-text-fill: white; -fx-font-size: 13px;" },
-            new Label("✅ Join discussions") { style = "-fx-text-fill: white; -fx-font-size: 13px;" },
-            new Label("✅ Create events") { style = "-fx-text-fill: white; -fx-font-size: 13px;" },
-            new Label("✅ Get notifications") { style = "-fx-text-fill: white; -fx-font-size: 13px;" },
-            new Label("✅ Build your profile") { style = "-fx-text-fill: white; -fx-font-size: 13px;" }
-          )
-        },
-        new Button("Create Account Now! 🎉") {
-          prefWidth = Double.MaxValue
-          style = "-fx-background-color: #fff; -fx-text-fill: #667eea; -fx-font-weight: bold; -fx-background-radius: 5;"
-          onAction = (_: ActionEvent) => onLoginPrompt()
+        new Region { HBox.setHgrow(this, Priority.Always) },
+        new Label(value) {
+          style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
         }
       )
     }
+  }
+  
+  private def createTrendingItem(hashtag: String, count: String): HBox = {
+    new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label(hashtag) {
+          style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
+        },
+        new Region { HBox.setHgrow(this, Priority.Always) },
+        new Label(count) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 10px;"
+        }
+      )
+    }
+  }
+  
+  private def createEventItem(eventName: String, time: String): VBox = {
+    new VBox {
+      spacing = 3
+      children = Seq(
+        new Label(eventName) {
+          style = "-fx-text-fill: #050505; -fx-font-weight: bold; -fx-font-size: 12px;"
+        },
+        new Label(time) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 10px;"
+        }
+      )
+    }
+  }
+  
+  override def refresh(): Unit = {
+    // Refresh feed content
+  }
+  
+  override def initialize(): Unit = {
+    // Initialize component
   }
 }

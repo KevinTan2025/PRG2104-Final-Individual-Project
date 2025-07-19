@@ -9,157 +9,320 @@ import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
 import gui.dialogs._
 import service.CommunityEngagementService
+import model.User
 
 /**
- * Dashboard component for displaying platform statistics and user info
- * 安全级别: USER - 注册用户可以查看的仪表板组件
+ * Enhanced Dashboard component for logged-in users with activity feed
+ * 安全级别: USER - 注册用户可以查看的增强仪表板组件
  */
 class DashboardComponent extends BaseTabComponent {
   
   override def build(): Tab = {
-    val stats = service.getDashboardStatistics
+    val currentUser = service.getCurrentUser
+    val userFeed = createUserActivityFeed(currentUser)
+    val sidePanel = createUserSidePanel(currentUser)
     
-    val statsGrid = new GridPane {
-      hgap = 20
-      vgap = 15
-      padding = Insets(20)
-      
-      // Row 0
-      add(createStatCard("Total Users", stats("totalUsers").toString), 0, 0)
-      add(createStatCard("Community Members", stats("communityMembers").toString), 1, 0)
-      add(createStatCard("Admin Users", stats("adminUsers").toString), 2, 0)
-      
-      // Row 1
-      add(createStatCard("Active Announcements", stats("activeAnnouncements").toString), 0, 1)
-      add(createStatCard("Active Food Posts", stats("activeFoodPosts").toString), 1, 1)
-      add(createStatCard("Upcoming Events", stats("upcomingEvents").toString), 2, 1)
-      
-      // Row 2
-      add(createStatCard("Completed Food Posts", stats("completedFoodPosts").toString), 0, 2)
-      add(createStatCard("Total Events", stats("totalEvents").toString), 1, 2)
-      add(createStatCard("Unread Notifications", stats("unreadNotifications").toString), 2, 2)
-    }
-    
-    val welcomeLabel = service.getCurrentUser match {
-      case Some(user) => 
-        new Label(s"Welcome to the Community Engagement Platform, ${user.name}!") {
-          style = "-fx-font-size: 18px; -fx-font-weight: bold;"
-        }
-      case None => 
-        new Label("Welcome to the Community Engagement Platform!") {
-          style = "-fx-font-size: 18px; -fx-font-weight: bold;"
-        }
-    }
-    
-    val quickActionsPanel = createQuickActionsPanel()
-    val adminPanel = createAdminPanel()
-    
-    val dashboardContent = new VBox {
+    val mainContent = new HBox {
       spacing = 20
       padding = Insets(20)
       children = Seq(
-        welcomeLabel,
-        new Label("Platform Statistics:") {
-          style = "-fx-font-size: 16px; -fx-font-weight: bold;"
-        },
-        statsGrid,
-        quickActionsPanel
-      ) ++ (if (service.isCurrentUserAdmin) Seq(adminPanel) else Seq.empty)
+        userFeed,
+        sidePanel
+      )
+    }
+    
+    val scrollContent = new ScrollPane {
+      fitToWidth = true
+      content = mainContent
     }
     
     new Tab {
-      text = "Dashboard"
-      content = new ScrollPane {
-        content = dashboardContent
-        fitToWidth = true
-      }
+      text = "🏠 Dashboard"
+      content = scrollContent
       closable = false
     }
   }
   
-  private def createStatCard(title: String, value: String): VBox = {
-    new VBox {
-      spacing = 5
-      alignment = Pos.Center
-      children = Seq(
-        new Label(title) {
-          style = "-fx-font-size: 12px; -fx-text-fill: gray;"
-        },
-        new Label(value) {
-          style = "-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2196F3;"
-        }
-      )
-      style = "-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5;"
-      padding = Insets(15)
-      prefWidth = 150
-      prefHeight = 80
+  private def createUserActivityFeed(currentUser: Option[User]): VBox = {
+    val feedTitle = new Label("🔥 Community Activity Feed") {
+      style = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1877f2;"
     }
+    
+    val activityFeed = new VBox {
+      spacing = 15
+      padding = Insets(0, 20, 0, 0)
+      prefWidth = 500
+      
+      children = Seq(
+        feedTitle,
+        createActivityPost("📢 System Announcement", "Welcome Week activities start tomorrow!", "Community Admin", "2 hours ago"),
+        createActivityPost("🍕 Food Share", "Free pizza available in the main lobby", "Sarah Chen", "3 hours ago"),
+        createActivityPost("🎉 Event Reminder", "Movie night this Friday at 7 PM in Room 301", "Events Team", "5 hours ago"),
+        createActivityPost("🍜 Food Share", "Homemade soup available - perfect for cold weather!", "Mike Johnson", "6 hours ago"),
+        createActivityPost("📅 New Event", "Study group for final exams - all welcome!", "Student Council", "1 day ago"),
+        createQuickActionCard(currentUser)
+      )
+    }
+    
+    activityFeed
   }
   
-  private def createQuickActionsPanel(): VBox = {
-    new VBox {
+  private def createActivityPost(category: String, content: String, author: String, time: String): VBox = {
+    val postCard = new VBox {
       spacing = 10
-      padding = Insets(20)
-      style = "-fx-background-color: #e8f5e8; -fx-border-color: #4caf50; -fx-border-radius: 5;"
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
       children = Seq(
-        new Label("Quick Actions") {
-          style = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2e7d32;"
+        new HBox {
+          spacing = 10
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Label(category) {
+              style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+            },
+            new Region { HBox.setHgrow(this, Priority.Always) },
+            new Label(time) {
+              style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
+            }
+          )
+        },
+        new Label(content) {
+          style = "-fx-font-size: 14px; -fx-text-fill: #050505;"
+          wrapText = true
+        },
+        new HBox {
+          spacing = 5
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Label("by") {
+              style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
+            },
+            new Label(author) {
+              style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
+            }
+          )
+        },
+        new HBox {
+          spacing = 20
+          alignment = Pos.CenterLeft
+          children = Seq(
+            new Button("👍 Like") {
+              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
+              onAction = _ => println(s"Liked: $content")
+            },
+            new Button("💬 Comment") {
+              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
+              onAction = _ => println(s"Comment on: $content")
+            },
+            new Button("📤 Share") {
+              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
+              onAction = _ => println(s"Shared: $content")
+            }
+          )
+        }
+      )
+    }
+    
+    postCard
+  }
+  
+  private def createQuickActionCard(currentUser: Option[User]): VBox = {
+    val actionCard = new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: #f0f2f5; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("✨ Quick Actions") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
         },
         new HBox {
           spacing = 10
           children = Seq(
-            new Button("Create Announcement") {
-              onAction = (_: ActionEvent) => {
+            new Button("📢 New Post") {
+              style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6;"
+              onAction = _ => {
                 val dialog = new AnnouncementDialog(() => refresh())
                 dialog.showAndWait()
               }
             },
-            new Button("Create Food Post") {
-              onAction = (_: ActionEvent) => {
+            new Button("🍕 Share Food") {
+              style = "-fx-background-color: #42b883; -fx-text-fill: white; -fx-background-radius: 6;"
+              onAction = _ => {
                 val dialog = new FoodPostDialog(() => refresh())
                 dialog.showAndWait()
               }
             },
-            new Button("Create Event") {
-              onAction = (_: ActionEvent) => {
+            new Button("📅 Create Event") {
+              style = "-fx-background-color: #e1306c; -fx-text-fill: white; -fx-background-radius: 6;"
+              onAction = _ => {
                 val dialog = new EventDialog(() => refresh())
                 dialog.showAndWait()
-              }
-            },
-            new Button("Refresh Dashboard") {
-              onAction = (_: ActionEvent) => {
-                import gui.utils.GuiUtils
-                GuiUtils.showInfo("Dashboard Refresh", "Dashboard data is automatically updated. Please reload the application for the latest statistics.")
               }
             }
           )
         }
       )
     }
+    
+    actionCard
   }
   
-  private def createAdminPanel(): VBox = {
+  private def createUserSidePanel(currentUser: Option[User]): VBox = {
     new VBox {
-      spacing = 10
-      padding = Insets(20)
-      style = "-fx-background-color: #f0f0f0; -fx-border-color: #cccccc; -fx-border-radius: 5;"
+      spacing = 20
+      prefWidth = 300
+      
       children = Seq(
-        new Label("Admin Panel") {
-          style = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #d32f2f;"
-        },
-        new HBox {
+        createUserInfoCard(currentUser),
+        createMyStatsCard(),
+        createTrendingCard(),
+        createUpcomingEventsCard()
+      )
+    }
+  }
+  
+  private def createUserInfoCard(currentUser: Option[User]): VBox = {
+    val userInfo = currentUser match {
+      case Some(user) => 
+        new VBox {
           spacing = 10
+          padding = Insets(15)
+          style = "-fx-background-color: linear-gradient(to bottom, #1877f2, #42b883); -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);"
+          
           children = Seq(
-            new Button("View All Users") {
-              onAction = (_: ActionEvent) => AdminDialogs.showUsersDialog()
+            new Label(s"👤 ${user.name}") {
+              style = "-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 16px;"
             },
-            new Button("System Stats") {
-              onAction = (_: ActionEvent) => AdminDialogs.showSystemStatsDialog()
+            new Label(s"✉️ ${user.email}") {
+              style = "-fx-text-fill: white; -fx-font-size: 12px;"
             },
-            new Button("Moderate Content") {
-              onAction = (_: ActionEvent) => AdminDialogs.showModerationDialog()
+            new Label(s"🎯 Role: ${user.getUserRole}") {
+              style = "-fx-text-fill: white; -fx-font-size: 12px;"
+            },
+            new Label(s"🗓️ Member since: ${user.registrationDate.toLocalDate}") {
+              style = "-fx-text-fill: white; -fx-font-size: 10px;"
             }
           )
+        }
+      case None => 
+        new VBox {
+          spacing = 10
+          padding = Insets(15)
+          style = "-fx-background-color: #f0f2f5; -fx-background-radius: 8;"
+          
+          children = Seq(
+            new Label("👤 Guest User") {
+              style = "-fx-font-weight: bold; -fx-text-fill: #65676b; -fx-font-size: 16px;"
+            }
+          )
+        }
+    }
+    
+    userInfo
+  }
+  
+  private def createMyStatsCard(): VBox = {
+    val stats = service.getDashboardStatistics
+    
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("📊 My Activity") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createStatRow("Posts Created", "12"),
+        createStatRow("Events Joined", "5"),
+        createStatRow("Food Shared", "8"),
+        createStatRow("Comments Made", "24")
+      )
+    }
+  }
+  
+  private def createTrendingCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("🔥 Trending Topics") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createTrendingItem("#StudyGroups", "45 posts"),
+        createTrendingItem("#FreeFood", "32 posts"),
+        createTrendingItem("#MovieNight", "28 posts"),
+        createTrendingItem("#FinalExams", "21 posts")
+      )
+    }
+  }
+  
+  private def createUpcomingEventsCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("📅 Upcoming Events") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createEventItem("Movie Night", "Tomorrow 7:00 PM"),
+        createEventItem("Study Group", "Friday 2:00 PM"),
+        createEventItem("Food Festival", "Next Monday"),
+        new Button("View All Events") {
+          style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6; -fx-pref-width: 200;"
+          onAction = _ => println("View all events")
+        }
+      )
+    }
+  }
+  
+  private def createStatRow(label: String, value: String): HBox = {
+    new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label(label) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
+        },
+        new Region { HBox.setHgrow(this, Priority.Always) },
+        new Label(value) {
+          style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
+        }
+      )
+    }
+  }
+  
+  private def createTrendingItem(hashtag: String, count: String): HBox = {
+    new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label(hashtag) {
+          style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
+        },
+        new Region { HBox.setHgrow(this, Priority.Always) },
+        new Label(count) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 10px;"
+        }
+      )
+    }
+  }
+  
+  private def createEventItem(eventName: String, time: String): VBox = {
+    new VBox {
+      spacing = 3
+      children = Seq(
+        new Label(eventName) {
+          style = "-fx-text-fill: #050505; -fx-font-weight: bold; -fx-font-size: 12px;"
+        },
+        new Label(time) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 10px;"
         }
       )
     }
