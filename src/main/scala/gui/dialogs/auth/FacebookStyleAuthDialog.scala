@@ -314,7 +314,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
           },
           new VBox {
             spacing = 3
-            children = Seq(regUsernameField, usernameStatusLabel)
+            children = Seq(usernameStatusLabel, regUsernameField)
           },
           regNameField,
           regContactField,
