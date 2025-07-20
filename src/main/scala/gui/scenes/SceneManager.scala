@@ -3,7 +3,6 @@ package gui.scenes
 import scalafx.scene.Scene
 import scalafx.scene.layout.BorderPane
 import scalafx.stage.Stage
-import gui.components.auth.{LoginComponent, RegisterComponent, WelcomeComponent}
 import gui.components.layout.{MenuBarComponent, MainTabPane, AnonymousMenuBarComponent, AnonymousMainTabPane}
 import gui.utils.GuiUtils
 import service.CommunityEngagementService
@@ -15,54 +14,42 @@ class SceneManager(stage: Stage, private val service: CommunityEngagementService
   
   GuiUtils.setMainStage(stage)
   
-  def showWelcomeScene(): Unit = {
-    val welcomeComponent = new WelcomeComponent(
-      onLoginClick = () => showLoginScene(),
-      onRegisterClick = () => showRegisterScene(),
-      onBrowseAnonymouslyClick = () => showAnonymousScene()
-    )
-    
-    val scene = new Scene(welcomeComponent.build(), 800, 600)
-    stage.scene = scene
-  }
-  
-  def showLoginScene(): Unit = {
-    val loginComponent = new LoginComponent(
-      onLoginSuccess = () => showMainScene(),
-      onRegisterClick = () => showRegisterScene(),
-      onBrowseAnonymouslyClick = Some(() => showAnonymousScene())
-    )
-    
-    val scene = new Scene(loginComponent.build(), 800, 600)
-    stage.scene = scene
-  }
-  
-  def showRegisterScene(): Unit = {
-    val registerComponent = new RegisterComponent(
-      onRegistrationSuccess = () => showLoginScene(),
-      onBackClick = () => showLoginScene()
-    )
-    
-    val scene = new Scene(registerComponent.build(), 800, 600)
-    stage.scene = scene
-  }
-  
   def showAnonymousScene(): Unit = {
     // Enable anonymous mode in service
     service.enableAnonymousMode()
     
     val menuBar = new AnonymousMenuBarComponent(
-      onLoginClick = () => showLoginScene(),
-      onRegisterClick = () => showRegisterScene(),
+      onLoginClick = () => {}, // These are now handled internally by AnonymousMenuBarComponent
+      onRegisterClick = () => {}, // These are now handled internally by AnonymousMenuBarComponent
       onExitAnonymousMode = () => {
         service.disableAnonymousMode()
-        showLoginScene()
+        // Show auth dialog when exiting anonymous mode
+        val authDialog = new gui.dialogs.auth.FacebookStyleAuthDialog(stage)
+        authDialog.show() match {
+          case gui.dialogs.auth.AuthResult.LoginSuccess =>
+            showMainScene()
+          case gui.dialogs.auth.AuthResult.RegisterSuccess =>
+            showMainScene()
+          case _ =>
+            // Stay in anonymous mode if cancelled
+            showAnonymousScene()
+        }
       }
     )
     
     val tabPane = new AnonymousMainTabPane(
       onLoginPrompt = () => {
-        GuiUtils.showLoginPrompt(() => showLoginScene(), () => showRegisterScene())
+        // Show auth dialog when login is prompted
+        val authDialog = new gui.dialogs.auth.FacebookStyleAuthDialog(stage)
+        authDialog.show() match {
+          case gui.dialogs.auth.AuthResult.LoginSuccess =>
+            showMainScene()
+          case gui.dialogs.auth.AuthResult.RegisterSuccess =>
+            showMainScene()
+          case _ =>
+            // Stay in anonymous mode if cancelled
+            ()
+        }
       }
     )
     
@@ -78,7 +65,8 @@ class SceneManager(stage: Stage, private val service: CommunityEngagementService
   def showMainScene(): Unit = {
     val menuBar = new MenuBarComponent(onLogout = () => {
       service.logout()
-      showLoginScene()
+      // After logout, show anonymous scene
+      showAnonymousScene()
     })
     val tabPane = new MainTabPane()
     

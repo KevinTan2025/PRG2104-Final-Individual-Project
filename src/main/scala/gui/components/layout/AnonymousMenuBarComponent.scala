@@ -21,11 +21,15 @@ class AnonymousMenuBarComponent(
   override def build(): Region = {
     val accountMenu = new Menu("👤 Account") {
       items = Seq(
+        new MenuItem("✨ Login / Register") {
+          onAction = (_: ActionEvent) => showAuthDialog()
+        },
+        new SeparatorMenuItem(),
         new MenuItem("🔐 Login") {
-          onAction = (_: ActionEvent) => onLoginClick()
+          onAction = (_: ActionEvent) => showAuthDialog()
         },
         new MenuItem("📝 Register") {
-          onAction = (_: ActionEvent) => onRegisterClick()
+          onAction = (_: ActionEvent) => showRegisterDialog()
         },
         new SeparatorMenuItem(),
         new MenuItem("🏠 Back to Login") {
@@ -83,6 +87,68 @@ class AnonymousMenuBarComponent(
         children = Seq(statusLabel)
         padding = Insets(5, 10, 5, 0)
       }
+    }
+  }
+  
+  /**
+   * Show authentication dialog (Facebook-style) with all options
+   */
+  private def showAuthDialog(): Unit = {
+    try {
+      GuiUtils.getMainStage match {
+        case Some(mainStage) =>
+          val authDialog = new gui.dialogs.auth.FacebookStyleAuthDialog(mainStage)
+          authDialog.show() match {
+            case gui.dialogs.auth.AuthResult.LoginSuccess =>
+              // User logged in successfully, need to refresh the scene
+              val sceneManager = new gui.scenes.SceneManager(mainStage, service)
+              sceneManager.showMainScene()
+            case gui.dialogs.auth.AuthResult.RegisterSuccess =>
+              // User registered successfully, need to refresh the scene
+              val sceneManager = new gui.scenes.SceneManager(mainStage, service)
+              sceneManager.showMainScene()
+            case _ =>
+              // User cancelled or continued as guest, stay in anonymous mode
+              ()
+          }
+        case None =>
+          GuiUtils.showError("Error", "Main stage not available.")
+      }
+    } catch {
+      case e: Exception =>
+        GuiUtils.showError("Authentication Error", s"Failed to show authentication dialog: ${e.getMessage}")
+        e.printStackTrace()
+    }
+  }
+  
+  /**
+   * Show authentication dialog (Facebook-style) directly in register mode
+   */
+  private def showRegisterDialog(): Unit = {
+    try {
+      GuiUtils.getMainStage match {
+        case Some(mainStage) =>
+          val authDialog = new gui.dialogs.auth.FacebookStyleAuthDialog(mainStage)
+          authDialog.show(gui.dialogs.auth.AuthMode.RegisterMode) match {
+            case gui.dialogs.auth.AuthResult.LoginSuccess =>
+              // User logged in successfully, need to refresh the scene
+              val sceneManager = new gui.scenes.SceneManager(mainStage, service)
+              sceneManager.showMainScene()
+            case gui.dialogs.auth.AuthResult.RegisterSuccess =>
+              // User registered successfully, need to refresh the scene
+              val sceneManager = new gui.scenes.SceneManager(mainStage, service)
+              sceneManager.showMainScene()
+            case _ =>
+              // User cancelled or continued as guest, stay in anonymous mode
+              ()
+          }
+        case None =>
+          GuiUtils.showError("Error", "Main stage not available.")
+      }
+    } catch {
+      case e: Exception =>
+        GuiUtils.showError("Authentication Error", s"Failed to show authentication dialog: ${e.getMessage}")
+        e.printStackTrace()
     }
   }
 }
