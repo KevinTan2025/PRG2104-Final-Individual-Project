@@ -14,7 +14,8 @@ import gui.components.common.public.BaseComponent
  */
 class LoginComponent(
   onLoginSuccess: () => Unit,
-  onRegisterClick: () => Unit
+  onRegisterClick: () => Unit,
+  onBrowseAnonymouslyClick: Option[() => Unit] = None
 ) extends BaseComponent {
   
   private val usernameField = new TextField {
@@ -38,6 +39,39 @@ class LoginComponent(
       onAction = (_: ActionEvent) => onRegisterClick()
     }
     
+    val browseButton = onBrowseAnonymouslyClick.map { callback =>
+      new Button("Browse Anonymously") {
+        prefWidth = 150
+        style = "-fx-background-color: #6c757d; -fx-text-fill: white;"
+        onAction = (_: ActionEvent) => callback()
+      }
+    }
+    
+    val buttonBox = browseButton match {
+      case Some(btn) =>
+        new VBox {
+          spacing = 10
+          alignment = Pos.Center
+          children = Seq(
+            new HBox {
+              spacing = 10
+              alignment = Pos.Center
+              children = Seq(loginButton, registerButton)
+            },
+            new Label("OR") {
+              style = "-fx-font-size: 12px; -fx-text-fill: gray;"
+            },
+            btn
+          )
+        }
+      case None =>
+        new HBox {
+          spacing = 10
+          alignment = Pos.Center
+          children = Seq(loginButton, registerButton)
+        }
+    }
+    
     val loginBox = new VBox {
       spacing = 15
       alignment = Pos.Center
@@ -51,11 +85,7 @@ class LoginComponent(
         new Separator(),
         usernameField,
         passwordField,
-        new HBox {
-          spacing = 10
-          alignment = Pos.Center
-          children = Seq(loginButton, registerButton)
-        },
+        buttonBox,
         new Label("Demo credentials: admin/Admin123*, john_doe/Password123!") {
           style = "-fx-font-size: 12px; -fx-text-fill: gray;"
         }

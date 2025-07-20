@@ -22,7 +22,15 @@ object ModularCommunityEngagementApp extends JFXApp3 {
     try {
       val communityService = new service.CommunityEngagementService()
       val sceneManager = new SceneManager(stage, communityService)
-      sceneManager.showWelcomeScene()
+      
+      // Check if user is already logged in, if so go directly to dashboard
+      // Otherwise show login screen instead of welcome screen
+      if (communityService.isLoggedIn) {
+        sceneManager.showMainScene()
+      } else {
+        sceneManager.showLoginScene()
+      }
+      
       stage.centerOnScreen()
     } catch {
       case e: Exception =>

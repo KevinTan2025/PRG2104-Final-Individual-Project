@@ -29,7 +29,8 @@ class SceneManager(stage: Stage, private val service: CommunityEngagementService
   def showLoginScene(): Unit = {
     val loginComponent = new LoginComponent(
       onLoginSuccess = () => showMainScene(),
-      onRegisterClick = () => showRegisterScene()
+      onRegisterClick = () => showRegisterScene(),
+      onBrowseAnonymouslyClick = Some(() => showAnonymousScene())
     )
     
     val scene = new Scene(loginComponent.build(), 800, 600)
@@ -55,7 +56,7 @@ class SceneManager(stage: Stage, private val service: CommunityEngagementService
       onRegisterClick = () => showRegisterScene(),
       onExitAnonymousMode = () => {
         service.disableAnonymousMode()
-        showWelcomeScene()
+        showLoginScene()
       }
     )
     
@@ -77,7 +78,7 @@ class SceneManager(stage: Stage, private val service: CommunityEngagementService
   def showMainScene(): Unit = {
     val menuBar = new MenuBarComponent(onLogout = () => {
       service.logout()
-      showWelcomeScene()
+      showLoginScene()
     })
     val tabPane = new MainTabPane()
     

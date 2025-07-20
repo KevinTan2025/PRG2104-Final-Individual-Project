@@ -28,7 +28,7 @@ class AnonymousMenuBarComponent(
           onAction = (_: ActionEvent) => onRegisterClick()
         },
         new SeparatorMenuItem(),
-        new MenuItem("🏠 Back to Welcome") {
+        new MenuItem("🏠 Back to Login") {
           onAction = (_: ActionEvent) => onExitAnonymousMode()
         }
       )
