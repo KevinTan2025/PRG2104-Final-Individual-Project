@@ -57,41 +57,49 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
   private val loginUsernameField = new TextField {
     promptText = "Username or Email"
     prefWidth = 300
-    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
+    prefHeight = 40
+    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-prompt-text-fill: #999999;"
   }
   
   private val loginPasswordField = new PasswordField {
     promptText = "Password"
     prefWidth = 300
-    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
+    prefHeight = 40
+    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-prompt-text-fill: #999999;"
   }
   
   // Registration form components
   private val regUsernameField = new EnhancedTextField("Username") {
     prefWidth = 300
+    prefHeight = 40
     style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
   }
   private val regEmailField = new EnhancedTextField("Email") {
     prefWidth = 300
+    prefHeight = 40
     style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
   }
   private val regNameField = new EnhancedTextField("Full Name") {
     prefWidth = 300
+    prefHeight = 40
     style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
   }
   private val regContactField = new EnhancedTextField("Contact Info") {
     prefWidth = 300
+    prefHeight = 40
     style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
   }
   private val regPasswordField = new PasswordField { 
     promptText = "Password (8+ chars, letter, digit, special char)" 
     prefWidth = 300
-    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
+    prefHeight = 40
+    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-prompt-text-fill: #999999;"
   }
   private val regConfirmPasswordField = new PasswordField { 
     promptText = "Confirm Password" 
     prefWidth = 300
-    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
+    prefHeight = 40
+    style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-prompt-text-fill: #999999;"
   }
   
   // OTP verification components
@@ -368,23 +376,23 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
         if (username.length < 3) {
           usernameStatusLabel.text = "✗ Username must be at least 3 characters"
           usernameStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
-          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E;"
+          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-pref-height: 40;"
         } else if (!isValidUsernameFormat(username)) {
           usernameStatusLabel.text = "✗ Username can only contain letters, numbers, and underscore"
           usernameStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
-          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E;"
+          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-pref-height: 40;"
         } else if (!communityService.isUsernameAvailable(username)) {
           usernameStatusLabel.text = "✗ Username is already taken"
           usernameStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
-          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E;"
+          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-pref-height: 40;"
         } else {
           usernameStatusLabel.text = "✓ Username is available"
           usernameStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
-          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #38A169;"
+          regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #38A169; -fx-pref-height: 40;"
         }
       } else {
         usernameStatusLabel.text = ""
-        regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
+        regUsernameField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-pref-height: 40;"
       }
     }
     
@@ -399,20 +407,20 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
           if (!communityService.isEmailAvailable(email)) {
             emailStatusLabel.text = "✗ Email is already registered"
             emailStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
-            regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E;"
+            regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-pref-height: 40;"
           } else {
             emailStatusLabel.text = "✓ Valid email format"
             emailStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
-            regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #38A169;"
+            regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #38A169; -fx-pref-height: 40;"
           }
         } else {
           emailStatusLabel.text = "✗ Invalid email format"
           emailStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
-          regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E;"
+          regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-pref-height: 40;"
         }
       } else {
         emailStatusLabel.text = ""
-        regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd;"
+        regEmailField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-pref-height: 40;"
       }
       
       if (!isValidEmail) {

@@ -16,18 +16,29 @@ class EnhancedTextField(placeholderText: String) extends TextField {
   // Track if user has actually typed anything
   private var hasUserInput = false
   
-  // Enhanced style for better UX
-  style = "-fx-prompt-text-fill: #999999;"
+  // Base style - will be overridden by parent components if needed
+  private val basePromptTextStyle = "-fx-prompt-text-fill: #999999;"
   
-  // Handle focus events for visual feedback
+  // Store the external style to preserve it during focus changes
+  private var externalStyle: String = ""
+  
+  // Handle focus events for visual feedback while preserving external styles
   focused.onChange { (_, _, newValue) =>
-    if (newValue) {
-      // When focused, make prompt text slightly lighter to show it's active
-      style = "-fx-prompt-text-fill: #BBBBBB;"
+    val promptTextColor = if (newValue) "#BBBBBB" else "#999999"
+    // Combine external style with prompt text color
+    if (externalStyle.nonEmpty) {
+      style = s"$externalStyle -fx-prompt-text-fill: $promptTextColor;"
     } else {
-      // When focus lost, return to normal prompt text color
-      style = "-fx-prompt-text-fill: #999999;"
+      style = s"-fx-prompt-text-fill: $promptTextColor;"
     }
+  }
+  
+  // Override style property to preserve external styles
+  override def style_=(value: String): Unit = {
+    externalStyle = value
+    // Apply the style immediately with current prompt text color
+    val promptTextColor = if (focused.value) "#BBBBBB" else "#999999"
+    super.style_=(s"$value -fx-prompt-text-fill: $promptTextColor;")
   }
   
   // Track actual user input
