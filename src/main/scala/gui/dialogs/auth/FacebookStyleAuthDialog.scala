@@ -117,6 +117,14 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     style = "-fx-font-size: 11px; -fx-padding: 2 0 0 5;"
   }
   
+  private val passwordStatusLabel = new Label("") {
+    style = "-fx-font-size: 11px; -fx-padding: 2 0 0 5;"
+  }
+  
+  private val confirmPasswordStatusLabel = new Label("") {
+    style = "-fx-font-size: 11px; -fx-padding: 2 0 0 5;"
+  }
+  
   private val otpStatusLabel = new Label("") {
     style = "-fx-font-size: 11px; -fx-padding: 2 0 0 5;"
   }
@@ -319,8 +327,14 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
           regNameField,
           regContactField,
           emailSection,
-          regPasswordField,
-          regConfirmPasswordField,
+          new VBox {
+            spacing = 3
+            children = Seq(regPasswordField, passwordStatusLabel)
+          },
+          new VBox {
+            spacing = 3
+            children = Seq(regConfirmPasswordField, confirmPasswordStatusLabel)
+          },
           registerButton,
           loginLinkButton
         )
@@ -430,6 +444,74 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     
     // Send OTP button
     sendOtpButton.onAction = (_: ActionEvent) => sendOTP()
+    
+    // Password field changes for registration
+    regPasswordField.text.onChange { (_, _, _) =>
+      val password = regPasswordField.text.value
+      validatePassword(password)
+      // Also revalidate confirm password when main password changes
+      val confirmPassword = regConfirmPasswordField.text.value
+      if (confirmPassword.nonEmpty) {
+        validateConfirmPassword(password, confirmPassword)
+      }
+    }
+    
+    // Confirm password field changes for registration
+    regConfirmPasswordField.text.onChange { (_, _, _) =>
+      val password = regPasswordField.text.value
+      val confirmPassword = regConfirmPasswordField.text.value
+      validateConfirmPassword(password, confirmPassword)
+    }
+  }
+  
+  private def validatePassword(password: String): Unit = {
+    if (password.isEmpty) {
+      passwordStatusLabel.text = ""
+      regPasswordField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-prompt-text-fill: #999999; -fx-pref-height: 40;"
+      return
+    }
+    
+    val requirements = getPasswordRequirements(password)
+    val missingCount = requirements.count(!_._2)
+    
+    if (missingCount == 0) {
+      passwordStatusLabel.text = "✓ Password meets all requirements"
+      passwordStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
+      regPasswordField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #38A169; -fx-prompt-text-fill: #999999; -fx-pref-height: 40;"
+    } else {
+      val missing = requirements.filter(!_._2).map(_._1)
+      passwordStatusLabel.text = s"✗ Missing: ${missing.mkString(", ")}"
+      passwordStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
+      regPasswordField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-prompt-text-fill: #999999; -fx-pref-height: 40;"
+    }
+  }
+  
+  private def validateConfirmPassword(password: String, confirmPassword: String): Unit = {
+    if (confirmPassword.isEmpty) {
+      confirmPasswordStatusLabel.text = ""
+      regConfirmPasswordField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #ddd; -fx-prompt-text-fill: #999999; -fx-pref-height: 40;"
+      return
+    }
+    
+    if (password == confirmPassword) {
+      confirmPasswordStatusLabel.text = "✓ Passwords match"
+      confirmPasswordStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #38A169; -fx-padding: 2 0 0 5;"
+      regConfirmPasswordField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #38A169; -fx-prompt-text-fill: #999999; -fx-pref-height: 40;"
+    } else {
+      confirmPasswordStatusLabel.text = "✗ Passwords do not match"
+      confirmPasswordStatusLabel.style = "-fx-font-size: 11px; -fx-text-fill: #E53E3E; -fx-padding: 2 0 0 5;"
+      regConfirmPasswordField.style = "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 6; -fx-border-radius: 6; -fx-border-color: #E53E3E; -fx-prompt-text-fill: #999999; -fx-pref-height: 40;"
+    }
+  }
+  
+  private def getPasswordRequirements(password: String): List[(String, Boolean)] = {
+    List(
+      ("8+ chars", password.length >= 8),
+      ("uppercase", password.exists(_.isUpper)),
+      ("lowercase", password.exists(_.isLower)),
+      ("digit", password.exists(_.isDigit)),
+      ("special char", password.exists(c => !c.isLetterOrDigit))
+    )
   }
   
   private def handleLogin(): Unit = {
