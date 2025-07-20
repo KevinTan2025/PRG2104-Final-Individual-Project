@@ -7,7 +7,8 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
 import gui.components.common.public.BaseComponent
-import gui.dialogs.{ProfileDialog, AdminDialogs}
+import gui.dialogs.common.ProfileDialog
+import gui.dialogs.admin.AdminDialogs
 import service.CommunityEngagementService
 
 /**

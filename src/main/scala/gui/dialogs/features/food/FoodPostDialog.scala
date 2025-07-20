@@ -1,4 +1,4 @@
-package gui.dialogs
+package gui.dialogs.features.food
 
 import scalafx.scene.control._
 import scalafx.scene.layout._

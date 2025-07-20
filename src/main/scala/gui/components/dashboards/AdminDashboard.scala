@@ -5,7 +5,11 @@ import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
 import scalafx.Includes._
-import gui.dialogs._
+import gui.dialogs.admin._
+import gui.dialogs.features.announcements._
+import gui.dialogs.features.events._
+import gui.dialogs.features.food._
+import gui.dialogs.common._
 import gui.utils.GuiUtils
 import service.CommunityEngagementService
 

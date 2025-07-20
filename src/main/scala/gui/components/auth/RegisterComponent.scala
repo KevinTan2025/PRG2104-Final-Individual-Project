@@ -241,7 +241,7 @@ class RegisterComponent(
     val parentStage = sendOtpButton.scene.value.window.value.asInstanceOf[javafx.stage.Stage]
     
     // Create and show the enhanced OTP dialog
-    val otpDialog = new gui.dialogs.OTPVerificationDialog(
+    val otpDialog = new gui.dialogs.auth.OTPVerificationDialog(
       new scalafx.stage.Stage(parentStage), 
       email
     )

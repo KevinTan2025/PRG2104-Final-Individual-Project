@@ -6,7 +6,8 @@ import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
-import gui.dialogs.{AnnouncementDialog, CommentDialog}
+import gui.dialogs.features.announcements.AnnouncementDialog
+import gui.dialogs.common.CommentDialog
 import gui.components.common.public.{BaseTabComponent, SimpleComponentBuilder}
 import service.CommunityEngagementService
 

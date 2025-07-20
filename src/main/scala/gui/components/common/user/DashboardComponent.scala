@@ -7,7 +7,10 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
-import gui.dialogs._
+import gui.dialogs.features.announcements._
+import gui.dialogs.features.events._
+import gui.dialogs.features.food._
+import gui.dialogs.common._
 import service.CommunityEngagementService
 import model.User
 

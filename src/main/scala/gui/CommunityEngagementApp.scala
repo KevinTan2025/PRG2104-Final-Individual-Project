@@ -148,7 +148,7 @@ object CommunityEngagementApp extends JFXApp3 {
           // Store registration data and start OTP verification
           pendingRegistration = Some(RegistrationData(username, email, name, contact, password))
           
-          val otpDialog = new gui.dialogs.OTPVerificationDialog(stage, email)
+          val otpDialog = new gui.dialogs.auth.OTPVerificationDialog(stage, email)
           otpDialog.show(
             onSuccess = () => {
               pendingRegistration match {

@@ -5,7 +5,7 @@ import scalafx.scene.layout.{VBox, HBox}
 import scalafx.geometry.Insets
 import scalafx.Includes._
 import gui.components.common.public.{BaseTabComponent, SimpleComponentBuilder}
-import gui.dialogs.FoodPostDialog
+import gui.dialogs.features.food.FoodPostDialog
 import gui.utils.GuiUtils
 import service.CommunityEngagementService
 

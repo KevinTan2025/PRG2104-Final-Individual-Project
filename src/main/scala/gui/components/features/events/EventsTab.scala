@@ -6,7 +6,7 @@ import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
-import gui.dialogs.EventDialog
+import gui.dialogs.features.events.EventDialog
 import gui.components.common.public.BaseTabComponent
 import service.CommunityEngagementService
 
