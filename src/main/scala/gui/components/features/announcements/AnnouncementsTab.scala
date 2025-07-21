@@ -2,17 +2,17 @@ package gui.components.features.announcements
 
 import scalafx.scene.control._
 import scalafx.scene.layout._
-import scalafx.geometry.Insets
+import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.dialogs.features.announcements.AnnouncementDialog
-import gui.dialogs.common.CommentDialog
-import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
+import gui.components.features.activityfeed.EnhancedActivityFeedComponent
+import model.ActivityFeedType
 import service.CommunityEngagementService
 
 /**
- * Announcements tab component
+ * Announcements tab component with activity feed integration
  * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以创建公告
  */
 class AnnouncementsTab(
@@ -20,130 +20,147 @@ class AnnouncementsTab(
   onLoginPrompt: () => Unit = () => {}
 ) extends BaseTabComponent {
   
-  private val announcementsList = new ListView[String]()
-  
   override def build(): Tab = {
-    // 初始加载数据
-    refreshAnnouncements()
+    // Create activity feed component filtered for announcements only
+    val activityFeedComponent = new EnhancedActivityFeedComponent(
+      service, 
+      () => refresh(), 
+      Some(ActivityFeedType.ANNOUNCEMENT)
+    )
+    val activityFeed = activityFeedComponent.build()
     
-    val createButton = new Button("Create Announcement") {
-      onAction = (_: ActionEvent) => {
-        if (readOnlyMode) {
-          onLoginPrompt()
-        } else {
-          val dialog = new AnnouncementDialog(() => refreshAnnouncements())
-          dialog.showAndWait()
-        }
-      }
+    val sidePanel = createAnnouncementsSidePanel()
+    
+    val mainContent = new HBox {
+      spacing = 20
+      padding = Insets(20)
+      children = Seq(
+        activityFeed,
+        sidePanel
+      )
     }
     
-    val searchField = new TextField {
-      promptText = "Search announcements..."
-    }
-    
-    val searchButton = new Button("Search") {
-      onAction = (_: ActionEvent) => searchAnnouncements()
-    }
-    
-    val addCommentButton = new Button("Add Comment") {
-      onAction = (_: ActionEvent) => {
-        if (readOnlyMode) {
-          onLoginPrompt()
-        } else {
-          addComment()
-        }
-      }
-    }
-    
-    val likeButton = new Button("Like") {
-      onAction = (_: ActionEvent) => {
-        if (readOnlyMode) {
-          onLoginPrompt()
-        } else {
-          likeAnnouncement()
-        }
-      }
-    }
-    
-    val refreshButton = new Button("Refresh") {
-      onAction = (_: ActionEvent) => refreshAnnouncements()
-    }
-    
-    // 在只读模式下禁用或修改某些按钮
-    if (readOnlyMode) {
-      createButton.text = "🔒 Login to Create"
-      addCommentButton.text = "🔒 Login to Comment"
-      likeButton.text = "🔒 Login to Like"
-    }
-    
-    val topControls = new HBox {
-      spacing = 10
-      padding = Insets(10)
-      children = Seq(createButton, searchField, searchButton, addCommentButton, likeButton, refreshButton)
-    }
-    
-    val tabContent = new BorderPane {
-      top = topControls
-      center = announcementsList
+    val scrollContent = new ScrollPane {
+      fitToWidth = true
+      content = mainContent
     }
     
     new Tab {
-      text = if (readOnlyMode) "📢 Announcements" else "Announcements"
-      content = tabContent
+      text = "📢 Announcements"
+      content = scrollContent
       closable = false
     }
   }
   
-  override def refresh(): Unit = {
-    refreshAnnouncements()
+  private def createAnnouncementsSidePanel(): VBox = {
+    new VBox {
+      spacing = 20
+      prefWidth = 300
+      
+      children = Seq(
+        createQuickActionsCard(),
+        createAnnouncementStatsCard(),
+        createRecentAnnouncementsCard()
+      )
+    }
   }
   
-  private def refreshAnnouncements(): Unit = {
-    val announcements = service.getAnnouncements
-    val items = announcements.map(a => s"[${a.announcementType}] ${a.title} - ${a.timestamp.toLocalDate}")
-    announcementsList.items = scalafx.collections.ObservableBuffer(items: _*)
-  }
-  
-  private def searchAnnouncements(): Unit = {
-    // Implementation for search
-  }
-  
-  private def addComment(): Unit = {
-    val selectedIndex = announcementsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0) {
-      val announcements = service.getAnnouncements
-      if (selectedIndex < announcements.length) {
-        val announcement = announcements(selectedIndex)
-        val dialog = new CommentDialog(announcement.title, (comment) => {
-          if (service.addCommentToAnnouncement(announcement.announcementId, comment)) {
-            GuiUtils.showInfo("Success", "Comment added successfully!")
-          } else {
-            GuiUtils.showError("Failed", "Could not add comment.")
+  private def createQuickActionsCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: #f0f2f5; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("📢 Quick Actions") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        new Button("📝 Create Announcement") {
+          style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6; -fx-pref-width: 250;"
+          onAction = _ => {
+            if (readOnlyMode) {
+              onLoginPrompt()
+            } else {
+              val dialog = new AnnouncementDialog(() => refresh())
+              dialog.showAndWait()
+            }
           }
-        })
-        dialog.showAndWait()
-      }
-    } else {
-      GuiUtils.showWarning("No Selection", "Please select an announcement to comment on.")
+        }
+      )
     }
   }
   
-  private def likeAnnouncement(): Unit = {
-    val selectedIndex = announcementsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0) {
-      val announcements = service.getAnnouncements
-      if (selectedIndex < announcements.length) {
-        val announcement = announcements(selectedIndex)
-        if (service.likeAnnouncement(announcement.announcementId)) {
-          GuiUtils.showInfo("Success", "Announcement liked!")
-        }
-      }
-    } else {
-      GuiUtils.showWarning("No Selection", "Please select an announcement to like.")
+  private def createAnnouncementStatsCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("📊 Announcement Stats") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createStatRow("Total Announcements", service.getAnnouncements.size.toString),
+        createStatRow("This Week", service.getAnnouncements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusWeeks(1))).toString),
+        createStatRow("This Month", service.getAnnouncements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusMonths(1))).toString)
+      )
     }
+  }
+  
+  private def createRecentAnnouncementsCard(): VBox = {
+    new VBox {
+      spacing = 10
+      padding = Insets(15)
+      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
+      
+      children = Seq(
+        new Label("📋 Categories") {
+          style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
+        },
+        createCategoryItem("🚨 Emergency", "Urgent notifications"),
+        createCategoryItem("📅 Events", "Event announcements"),
+        createCategoryItem("🍕 Food Distribution", "Food sharing info"),
+        createCategoryItem("💡 Tips", "Helpful community tips"),
+        createCategoryItem("📢 General", "General announcements")
+      )
+    }
+  }
+  
+  private def createStatRow(label: String, value: String): HBox = {
+    new HBox {
+      spacing = 10
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label(label) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
+        },
+        new Region { HBox.setHgrow(this, scalafx.scene.layout.Priority.Always) },
+        new Label(value) {
+          style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
+        }
+      )
+    }
+  }
+  
+  private def createCategoryItem(name: String, description: String): VBox = {
+    new VBox {
+      spacing = 2
+      children = Seq(
+        new Label(name) {
+          style = "-fx-text-fill: #1c1e21; -fx-font-weight: bold; -fx-font-size: 12px;"
+        },
+        new Label(description) {
+          style = "-fx-text-fill: #65676b; -fx-font-size: 10px;"
+        }
+      )
+    }
+  }
+  
+  override def refresh(): Unit = {
+    // Refresh will be handled by the activity feed component
   }
   
   override def initialize(): Unit = {
-    refreshAnnouncements()
+    // No special initialization needed
   }
 }

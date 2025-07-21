@@ -15,15 +15,15 @@ import java.time.format.DateTimeFormatter
 
 /**
  * Enhanced Activity Feed Component with real database integration
- * Supports Facebook-style interactions with proper feedback
+ * Displays all content in a unified feed without duplicate filtering
  */
 class EnhancedActivityFeedComponent(
   private val service: CommunityEngagementService,
-  private val onRefresh: () => Unit = () => {}
+  private val onRefresh: () => Unit = () => {},
+  private val contentFilter: Option[ActivityFeedType] = None
 ) {
   
   private val activityFeedService = new ActivityFeedService()
-  private var currentFilter: Option[ActivityFeedType] = None
   
   def build(): VBox = {
     val mainContainer = new VBox {
@@ -33,7 +33,6 @@ class EnhancedActivityFeedComponent(
     }
     
     val header = createHeader()
-    val filterTabs = createFilterTabs()
     val feedContainer = new VBox {
       spacing = 15
       id = "feed-container"
@@ -42,19 +41,35 @@ class EnhancedActivityFeedComponent(
     // Initial load
     refreshFeed(feedContainer)
     
-    mainContainer.children = Seq(header, filterTabs, feedContainer)
+    mainContainer.children = Seq(header, feedContainer)
     mainContainer
   }
   
   private def createHeader(): VBox = {
+    val titleText = contentFilter match {
+      case Some(ActivityFeedType.ANNOUNCEMENT) => "📢 Announcements"
+      case Some(ActivityFeedType.FOOD_SHARING) => "🍕 Food Sharing Posts"
+      case Some(ActivityFeedType.EVENT) => "📅 Community Events"
+      case Some(ActivityFeedType.DISCUSSION) => "💬 Discussion Topics"
+      case _ => "🔥 Community Activity Feed"
+    }
+    
+    val subtitleText = contentFilter match {
+      case Some(ActivityFeedType.ANNOUNCEMENT) => "Latest community announcements and updates"
+      case Some(ActivityFeedType.FOOD_SHARING) => "Share and discover food in your community"
+      case Some(ActivityFeedType.EVENT) => "Upcoming events and activities"
+      case Some(ActivityFeedType.DISCUSSION) => "Join the conversation in our forums"
+      case _ => "Stay connected with your community"
+    }
+    
     new VBox {
       spacing = 10
       children = Seq(
-        new Label("🔥 Community Activity Feed") {
+        new Label(titleText) {
           font = Font.font("System", FontWeight.Bold, 20)
           textFill = Color.web("#1877f2")
         },
-        new Label("Stay connected with your community") {
+        new Label(subtitleText) {
           font = Font.font("System", 14)
           textFill = Color.web("#65676b")
         }
@@ -62,48 +77,11 @@ class EnhancedActivityFeedComponent(
     }
   }
   
-  private def createFilterTabs(): HBox = {
-    val allButton = createFilterButton("All", None, "🌟")
-    val announcementButton = createFilterButton("Announcements", Some(ActivityFeedType.ANNOUNCEMENT), "📢")
-    val foodButton = createFilterButton("Food Sharing", Some(ActivityFeedType.FOOD_SHARING), "🍕")
-    val eventsButton = createFilterButton("Events", Some(ActivityFeedType.EVENT), "📅")
-    val discussionButton = createFilterButton("Discussions", Some(ActivityFeedType.DISCUSSION), "💬")
-    
-    new HBox {
-      spacing = 10
-      alignment = Pos.CenterLeft
-      children = Seq(allButton, announcementButton, foodButton, eventsButton, discussionButton)
-    }
-  }
-  
-  private def createFilterButton(text: String, filterType: Option[ActivityFeedType], icon: String): Button = {
-    new Button(s"$icon $text") {
-      styleClass += "filter-button"
-      style = if (currentFilter == filterType) {
-        "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 16;"
-      } else {
-        "-fx-background-color: #f0f2f5; -fx-text-fill: #65676b; -fx-background-radius: 20; -fx-padding: 8 16;"
-      }
-      
-      onAction = _ => {
-        currentFilter = filterType
-        updateFilterButtons()
-        val feedContainer = parent.value.asInstanceOf[VBox].children(2).asInstanceOf[VBox]
-        refreshFeed(feedContainer)
-      }
-    }
-  }
-  
-  private def updateFilterButtons(): Unit = {
-    // This would normally update the button styles, but for simplicity we'll refresh the whole component
-    onRefresh()
-  }
-  
   private def refreshFeed(container: VBox): Unit = {
     container.children.clear()
     
     try {
-      val feedItems = currentFilter match {
+      val feedItems = contentFilter match {
         case Some(filterType) => activityFeedService.getActivityFeedByType(filterType, 20, service.getCurrentUser.map(_.userId))
         case None => activityFeedService.getActivityFeed(20, service.getCurrentUser.map(_.userId))
       }

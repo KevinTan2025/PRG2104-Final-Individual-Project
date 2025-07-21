@@ -23,7 +23,8 @@ class DashboardComponent extends BaseTabComponent {
   
   override def build(): Tab = {
     val currentUser = service.getCurrentUser
-    val activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh())
+    // Home tab shows all activity types
+    val activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh(), None)
     val userFeed = activityFeedComponent.build()
     val sidePanel = createUserSidePanel(currentUser)
     
