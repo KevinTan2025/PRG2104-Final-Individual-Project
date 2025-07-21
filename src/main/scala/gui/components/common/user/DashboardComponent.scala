@@ -7,6 +7,7 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
+import gui.components.features.activityfeed.EnhancedActivityFeedComponent
 import gui.dialogs.features.announcements._
 import gui.dialogs.features.events._
 import gui.dialogs.features.food._
@@ -15,14 +16,15 @@ import service.CommunityEngagementService
 import model.User
 
 /**
- * Enhanced Dashboard component for logged-in users with activity feed
+ * Enhanced Dashboard component for logged-in users with real activity feed
  * 安全级别: USER - 注册用户可以查看的增强仪表板组件
  */
 class DashboardComponent extends BaseTabComponent {
   
   override def build(): Tab = {
     val currentUser = service.getCurrentUser
-    val userFeed = createUserActivityFeed(currentUser)
+    val activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh())
+    val userFeed = activityFeedComponent.build()
     val sidePanel = createUserSidePanel(currentUser)
     
     val mainContent = new HBox {
@@ -44,90 +46,6 @@ class DashboardComponent extends BaseTabComponent {
       content = scrollContent
       closable = false
     }
-  }
-  
-  private def createUserActivityFeed(currentUser: Option[User]): VBox = {
-    val feedTitle = new Label("🔥 Community Activity Feed") {
-      style = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1877f2;"
-    }
-    
-    val activityFeed = new VBox {
-      spacing = 15
-      padding = Insets(0, 20, 0, 0)
-      prefWidth = 500
-      
-      children = Seq(
-        feedTitle,
-        createActivityPost("📢 System Announcement", "Welcome Week activities start tomorrow!", "Community Admin", "2 hours ago"),
-        createActivityPost("🍕 Food Share", "Free pizza available in the main lobby", "Sarah Chen", "3 hours ago"),
-        createActivityPost("🎉 Event Reminder", "Movie night this Friday at 7 PM in Room 301", "Events Team", "5 hours ago"),
-        createActivityPost("🍜 Food Share", "Homemade soup available - perfect for cold weather!", "Mike Johnson", "6 hours ago"),
-        createActivityPost("📅 New Event", "Study group for final exams - all welcome!", "Student Council", "1 day ago"),
-        createQuickActionCard(currentUser)
-      )
-    }
-    
-    activityFeed
-  }
-  
-  private def createActivityPost(category: String, content: String, author: String, time: String): VBox = {
-    val postCard = new VBox {
-      spacing = 10
-      padding = Insets(15)
-      style = "-fx-background-color: white; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);"
-      
-      children = Seq(
-        new HBox {
-          spacing = 10
-          alignment = Pos.CenterLeft
-          children = Seq(
-            new Label(category) {
-              style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
-            },
-            new Region { HBox.setHgrow(this, Priority.Always) },
-            new Label(time) {
-              style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
-            }
-          )
-        },
-        new Label(content) {
-          style = "-fx-font-size: 14px; -fx-text-fill: #050505;"
-          wrapText = true
-        },
-        new HBox {
-          spacing = 5
-          alignment = Pos.CenterLeft
-          children = Seq(
-            new Label("by") {
-              style = "-fx-text-fill: #65676b; -fx-font-size: 12px;"
-            },
-            new Label(author) {
-              style = "-fx-text-fill: #1877f2; -fx-font-weight: bold; -fx-font-size: 12px;"
-            }
-          )
-        },
-        new HBox {
-          spacing = 20
-          alignment = Pos.CenterLeft
-          children = Seq(
-            new Button("👍 Like") {
-              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
-              onAction = _ => println(s"Liked: $content")
-            },
-            new Button("💬 Comment") {
-              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
-              onAction = _ => println(s"Comment on: $content")
-            },
-            new Button("📤 Share") {
-              style = "-fx-background-color: transparent; -fx-text-fill: #65676b; -fx-border-color: transparent;"
-              onAction = _ => println(s"Shared: $content")
-            }
-          )
-        }
-      )
-    }
-    
-    postCard
   }
   
   private def createQuickActionCard(currentUser: Option[User]): VBox = {
@@ -179,6 +97,7 @@ class DashboardComponent extends BaseTabComponent {
       
       children = Seq(
         createUserInfoCard(currentUser),
+        createQuickActionCard(currentUser),
         createMyStatsCard(),
         createTrendingCard(),
         createUpcomingEventsCard()
