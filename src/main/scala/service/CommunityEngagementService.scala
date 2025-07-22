@@ -448,6 +448,108 @@ class CommunityEngagementService {
       dbService.resetUserPassword(user.userId, currentPassword, newPassword)
     }
   }
+  
+  /**
+   * Food Stock Management
+   */
+  
+  def createFoodStock(foodStock: FoodStock): Boolean = {
+    dbService.foodStockManager.createFoodStock(foodStock)
+    true
+  }
+  
+  def getAllFoodStocks: List[FoodStock] = {
+    dbService.foodStockManager.getAllFoodStocks
+  }
+  
+  def getFoodStockById(stockId: String): Option[FoodStock] = {
+    dbService.foodStockManager.get(stockId)
+  }
+  
+  def updateFoodStock(foodStock: FoodStock): Boolean = {
+    dbService.foodStockManager.add(foodStock.stockId, foodStock)
+    true
+  }
+  
+  def deleteFoodStock(stockId: String): Boolean = {
+    dbService.foodStockManager.remove(stockId).isDefined
+  }
+  
+  def searchFoodStocks(searchTerm: String): List[FoodStock] = {
+    dbService.foodStockManager.searchFoodStocks(searchTerm)
+  }
+  
+  def getFoodStocksByCategory(category: FoodCategory): List[FoodStock] = {
+    dbService.foodStockManager.getFoodStocksByCategory(category)
+  }
+  
+  def getFoodStocksByStatus(status: StockStatus): List[FoodStock] = {
+    dbService.foodStockManager.getFoodStocksByStatus(status)
+  }
+  
+  def getFoodStocksByLocation(location: String): List[FoodStock] = {
+    dbService.foodStockManager.getFoodStocksByLocation(location)
+  }
+  
+  def generateStockAlerts: List[String] = {
+    dbService.foodStockManager.generateStockAlerts
+  }
+  
+  def getStockStatistics: (Int, Int, Int, Int) = {
+    dbService.foodStockManager.getStockStatistics
+  }
+  
+  def addStock(stockId: String, quantity: Double, userId: String, notes: String = ""): Boolean = {
+    dbService.foodStockManager.addStock(stockId, quantity, userId, notes)
+  }
+  
+  def removeStock(stockId: String, quantity: Double, userId: String, notes: String = ""): Boolean = {
+    dbService.foodStockManager.removeStock(stockId, quantity, userId, notes)
+  }
+  
+  def adjustStock(stockId: String, newQuantity: Double, userId: String, notes: String = ""): Boolean = {
+    dbService.foodStockManager.adjustStock(stockId, newQuantity, userId, notes)
+  }
+  
+  /**
+   * Stock Movement Management
+   */
+  
+  def addStockMovement(movement: StockMovement): Boolean = {
+    dbService.stockMovementManager.createStockMovement(movement)
+    // Update the stock quantity based on the movement
+    getFoodStockById(movement.stockId) match {
+      case Some(stock) =>
+        val updatedStock = movement.actionType match {
+          case StockActionType.STOCK_IN =>
+            stock.copy(currentQuantity = stock.currentQuantity + movement.quantity)
+          case StockActionType.STOCK_OUT =>
+            stock.copy(currentQuantity = math.max(0, stock.currentQuantity - movement.quantity))
+          case StockActionType.ADJUSTMENT =>
+            stock.copy(currentQuantity = movement.quantity) // Set to exact quantity
+          case StockActionType.EXPIRED_REMOVAL =>
+            stock.copy(currentQuantity = math.max(0, stock.currentQuantity - movement.quantity))
+        }
+        updateFoodStock(updatedStock)
+      case None => false
+    }
+  }
+  
+  def getStockMovements(stockId: String): List[StockMovement] = {
+    dbService.stockMovementManager.getMovementsByStockId(stockId)
+  }
+  
+  def getAllStockMovements: List[StockMovement] = {
+    dbService.stockMovementManager.getAllStockMovements
+  }
+  
+  def getStockMovementsByUser(userId: String): List[StockMovement] = {
+    dbService.stockMovementManager.getMovementsByUserId(userId)
+  }
+  
+  def getStockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
+    dbService.stockMovementManager.getMovementsByDateRange(startDate, endDate)
+  }
 }
 
 /**

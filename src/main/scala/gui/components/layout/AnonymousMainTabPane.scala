@@ -5,6 +5,7 @@ import scalafx.scene.layout._
 import gui.components.common.public.BaseComponent
 import gui.components.features.announcements.AnnouncementsTab
 import gui.components.features.food.FoodSharingTab
+import gui.components.features.foodstock.FoodStockTab
 import gui.components.features.discussion.DiscussionTab
 import gui.components.features.events.EventsTab
 import gui.components.features.info.AppInfoTab
@@ -24,6 +25,7 @@ class AnonymousMainTabPane(
         new AnonymousDashboardComponent(onLoginPrompt).build(),
         new AnnouncementsTab(readOnlyMode = true, onLoginPrompt).build(),
         new FoodSharingTab(readOnlyMode = true, onLoginPrompt).build(),
+        new FoodStockTab().build(),
         new DiscussionTab(readOnlyMode = true, onLoginPrompt).build(),
         new EventsTab(readOnlyMode = true, onLoginPrompt).build(),
         new AppInfoTab().build()

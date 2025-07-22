@@ -160,6 +160,38 @@ object DatabaseSchema {
         FOREIGN KEY (author_id) REFERENCES users(user_id)
       );
       
+      -- Food stocks table
+      CREATE TABLE IF NOT EXISTS food_stocks (
+        stock_id TEXT PRIMARY KEY,
+        food_name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        current_quantity REAL NOT NULL DEFAULT 0,
+        unit TEXT NOT NULL,
+        minimum_threshold REAL NOT NULL DEFAULT 0,
+        expiry_date TEXT,
+        is_packaged BOOLEAN NOT NULL DEFAULT 0,
+        location TEXT NOT NULL DEFAULT 'Main Storage',
+        last_modified_by TEXT,
+        last_modified_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (last_modified_by) REFERENCES users(user_id)
+      );
+      
+      -- Stock movements table (for tracking all stock changes)
+      CREATE TABLE IF NOT EXISTS stock_movements (
+        movement_id TEXT PRIMARY KEY,
+        stock_id TEXT NOT NULL,
+        action_type TEXT NOT NULL,
+        quantity REAL NOT NULL,
+        previous_quantity REAL NOT NULL,
+        new_quantity REAL NOT NULL,
+        user_id TEXT NOT NULL,
+        notes TEXT DEFAULT '',
+        timestamp TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (stock_id) REFERENCES food_stocks(stock_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+      );
+      
       -- Create indexes for better performance
       CREATE INDEX IF NOT EXISTS idx_announcements_author ON announcements(author_id);
       CREATE INDEX IF NOT EXISTS idx_food_posts_author ON food_posts(author_id);
@@ -175,6 +207,13 @@ object DatabaseSchema {
       CREATE INDEX IF NOT EXISTS idx_notifications_recipient ON notifications(recipient_id);
       CREATE INDEX IF NOT EXISTS idx_notifications_read ON notifications(is_read);
       CREATE INDEX IF NOT EXISTS idx_comments_content ON comments(content_type, content_id);
+      CREATE INDEX IF NOT EXISTS idx_food_stocks_category ON food_stocks(category);
+      CREATE INDEX IF NOT EXISTS idx_food_stocks_location ON food_stocks(location);
+      CREATE INDEX IF NOT EXISTS idx_food_stocks_expiry ON food_stocks(expiry_date);
+      CREATE INDEX IF NOT EXISTS idx_food_stocks_quantity ON food_stocks(current_quantity);
+      CREATE INDEX IF NOT EXISTS idx_stock_movements_stock ON stock_movements(stock_id);
+      CREATE INDEX IF NOT EXISTS idx_stock_movements_user ON stock_movements(user_id);
+      CREATE INDEX IF NOT EXISTS idx_stock_movements_timestamp ON stock_movements(timestamp);
     """
     
     DatabaseConnection.executeSqlScript(createTablesScript)
@@ -299,9 +338,47 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
     
+    // Insert sample food stock items
+    val sampleFoodStocks = List(
+      ("stock1", "Rice", "GRAINS", 25.5, "kg", 5.0, Some(LocalDateTime.now().plusMonths(6)), true, "Dry Storage"),
+      ("stock2", "Apples", "FRUITS", 8.0, "kg", 2.0, Some(LocalDateTime.now().plusDays(14)), false, "Refrigerator"),
+      ("stock3", "Canned Beans", "PROTEIN", 12.0, "cans", 3.0, Some(LocalDateTime.now().plusYears(1)), true, "Pantry"),
+      ("stock4", "Fresh Milk", "DAIRY", 6.0, "liters", 2.0, Some(LocalDateTime.now().plusDays(7)), false, "Refrigerator"),
+      ("stock5", "Bread", "GRAINS", 4.0, "loaves", 1.0, Some(LocalDateTime.now().plusDays(3)), true, "Bread Box"),
+      ("stock6", "Carrots", "VEGETABLES", 3.5, "kg", 1.0, Some(LocalDateTime.now().plusDays(10)), false, "Refrigerator"),
+      ("stock7", "Instant Noodles", "PACKAGED_FOOD", 20.0, "packs", 5.0, Some(LocalDateTime.now().plusMonths(8)), true, "Pantry"),
+      ("stock8", "Orange Juice", "BEVERAGES", 2.0, "bottles", 1.0, Some(LocalDateTime.now().plusDays(5)), true, "Refrigerator")
+    )
+    
+    sampleFoodStocks.foreach { case (stockId, foodName, category, quantity, unit, threshold, expiryDate, isPackaged, location) =>
+      val expiryDateStr = expiryDate.map(DatabaseConnection.formatDateTime)
+      DatabaseConnection.executeUpdate(
+        """INSERT OR IGNORE INTO food_stocks 
+           (stock_id, food_name, category, current_quantity, unit, minimum_threshold, 
+            expiry_date, is_packaged, location, last_modified_by, last_modified_date, created_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        stockId, foodName, category, quantity, unit, threshold,
+        expiryDateStr.orNull, isPackaged, location, "admin1",
+        DatabaseConnection.formatDateTime(LocalDateTime.now()),
+        DatabaseConnection.formatDateTime(LocalDateTime.now())
+      )
+      
+      // Add initial stock movement record
+      val movementId = UUID.randomUUID().toString
+      DatabaseConnection.executeUpdate(
+        """INSERT OR IGNORE INTO stock_movements 
+           (movement_id, stock_id, action_type, quantity, previous_quantity, 
+            new_quantity, user_id, notes, timestamp) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        movementId, stockId, "STOCK_IN", quantity, 0.0, quantity, "admin1",
+        "Initial stock entry", DatabaseConnection.formatDateTime(LocalDateTime.now())
+      )
+    }
+    
     println("Sample data inserted successfully!")
     println("Sample users created with default password: 'Password123!'")
     println("Available users: admin/john_doe/jane_smith")
+    println("Sample food stock items created for testing inventory management.")
   }
   
   /**
@@ -309,6 +386,8 @@ object DatabaseSchema {
    */
   def dropAllTables(): Unit = {
     val dropTablesScript = """
+      DROP TABLE IF EXISTS stock_movements;
+      DROP TABLE IF EXISTS food_stocks;
       DROP TABLE IF EXISTS comments;
       DROP TABLE IF EXISTS notifications;
       DROP TABLE IF EXISTS event_rsvps;

@@ -6,6 +6,7 @@ import gui.components.common.public.BaseComponent
 import gui.components.common.user.DashboardComponent
 import gui.components.features.announcements.AnnouncementsTab
 import gui.components.features.food.FoodSharingTab
+import gui.components.features.foodstock.FoodStockTab
 import gui.components.features.discussion.DiscussionTab
 import gui.components.features.events.EventsTab
 import gui.components.features.notifications.NotificationsTab
@@ -24,6 +25,7 @@ class MainTabPane extends BaseComponent {
         new DashboardComponent().build(),
         new AnnouncementsTab().build(),
         new FoodSharingTab().build(),
+        new FoodStockTab().build(),
         new DiscussionTab().build(),
         new EventsTab().build(),
         new NotificationsTab().build(),

@@ -2,6 +2,7 @@ package database.service
 
 import database.dao._
 import database.{DatabaseConnection, DatabaseSchema}
+import manager.{FoodStockManager, StockMovementManager}
 import model._
 import java.time.LocalDateTime
 import java.util.UUID
@@ -16,6 +17,12 @@ class DatabaseService {
   private val userDAO = new UserDAO()
   private val announcementDAO = new AnnouncementDAO()
   private val foodPostDAO = new FoodPostDAO()
+  private val foodStockDAO = new FoodStockDAO()
+  private val stockMovementDAO = new StockMovementDAO()
+  
+  // Manager instances for food stock
+  val foodStockManager = new FoodStockManager()
+  val stockMovementManager = new StockMovementManager()
   // We'll add more DAOs as needed
   
   // Initialize database on first use
