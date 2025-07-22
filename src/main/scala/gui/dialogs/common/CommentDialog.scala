@@ -16,9 +16,11 @@ class CommentDialog(itemTitle: String, onSuccess: (String) => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "Add Comment"
+    dialog.title = "添加评论 - Add Comment"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 500
+    dialog.minHeight = 400
     
     val contentArea = new TextArea { 
       promptText = "Share your thoughts... (Be respectful and constructive)"

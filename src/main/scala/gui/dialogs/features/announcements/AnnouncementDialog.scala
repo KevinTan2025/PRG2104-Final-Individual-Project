@@ -7,6 +7,7 @@ import scalafx.stage.{Modality, Stage}
 import scalafx.scene.Scene
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 
 /**
  * Dialog for creating announcements
@@ -17,11 +18,13 @@ class AnnouncementDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "Create Announcement"
+    dialog.title = "创建公告 - Create Announcement"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 450
+    dialog.minHeight = 400
     
-    val titleField = new TextField { promptText = "Announcement title" }
+    val titleField = new EnhancedTextField("Announcement title")
     val contentArea = new TextArea { 
       promptText = "Announcement content"
       prefRowCount = 5

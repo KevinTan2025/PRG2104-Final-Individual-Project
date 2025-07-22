@@ -9,6 +9,7 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 import model.{FoodStock, StockActionType}
 
 /**
@@ -31,9 +32,11 @@ class StockMovementDialog(
   }
   
   def showAndWait(): Unit = {
-    dialog.title = s"Manage Stock: ${stock.foodName}"
+    dialog.title = s"库存管理 - Stock Management: ${stock.foodName}"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 500
+    dialog.minHeight = 450
     
     // Current stock info
     val currentStockLabel = new Label(s"Current Stock: ${stock.currentQuantity} ${stock.unit}")
@@ -47,9 +50,7 @@ class StockMovementDialog(
       value = "Add Stock"
     }
     
-    val quantityField = new TextField { 
-      promptText = "Quantity"
-    }
+    val quantityField = new EnhancedTextField("Quantity")
     
     val notesArea = new TextArea {
       promptText = "Notes (optional)"
@@ -178,7 +179,7 @@ class StockMovementDialog(
       }, 1, 4)
     }
     
-    dialog.scene = new Scene(grid, 450, 400)
+    dialog.scene = new Scene(grid, 550, 500)
     dialog.showAndWait()
   }
 }

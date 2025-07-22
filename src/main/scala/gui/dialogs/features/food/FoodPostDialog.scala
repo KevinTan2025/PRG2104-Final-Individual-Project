@@ -7,6 +7,7 @@ import scalafx.stage.{Modality, Stage}
 import scalafx.scene.Scene
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 import java.time.LocalDateTime
 
 /**
@@ -18,17 +19,19 @@ class FoodPostDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "Create Food Post"
+    dialog.title = "创建食物分享 - Create Food Post"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 500
+    dialog.minHeight = 450
     
-    val titleField = new TextField { promptText = "Post title" }
+    val titleField = new EnhancedTextField("Post title")
     val descriptionArea = new TextArea { 
       promptText = "Description"
       prefRowCount = 3
     }
-    val quantityField = new TextField { promptText = "Quantity" }
-    val locationField = new TextField { promptText = "Location" }
+    val quantityField = new EnhancedTextField("Quantity")
+    val locationField = new EnhancedTextField("Location")
     
     val typeCombo = new ComboBox[String] {
       items = scalafx.collections.ObservableBuffer("OFFER", "REQUEST")
@@ -36,7 +39,7 @@ class FoodPostDialog(onSuccess: () => Unit) {
     }
     
     val expiryCheck = new CheckBox("Has expiry date")
-    val expiryPicker = new TextField { 
+    val expiryPicker = new EnhancedTextField("Days until expiry") { 
       promptText = "Days until expiry"
       disable = true
     }
@@ -102,7 +105,7 @@ class FoodPostDialog(onSuccess: () => Unit) {
       }, 1, 6)
     }
     
-    dialog.scene = new Scene(grid, 400, 400)
+    dialog.scene = new Scene(grid, 500, 450)
     dialog.showAndWait()
   }
 }

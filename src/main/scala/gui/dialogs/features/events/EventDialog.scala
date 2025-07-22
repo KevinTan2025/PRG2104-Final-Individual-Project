@@ -7,6 +7,7 @@ import scalafx.stage.{Modality, Stage}
 import scalafx.scene.Scene
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 import java.time.LocalDateTime
 
 /**
@@ -18,21 +19,23 @@ class EventDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "Create Event"
+    dialog.title = "创建活动 - Create Event"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 550
+    dialog.minHeight = 500
     
-    val titleField = new TextField { promptText = "Event title" }
+    val titleField = new EnhancedTextField("Event title")
     val descriptionArea = new TextArea { 
       promptText = "Description"
       prefRowCount = 3
     }
-    val locationField = new TextField { promptText = "Event location" }
-    val startDateField = new TextField { promptText = "Start date (YYYY-MM-DD)" }
-    val startTimeField = new TextField { promptText = "Start time (HH:MM)" }
-    val endDateField = new TextField { promptText = "End date (YYYY-MM-DD)" }
-    val endTimeField = new TextField { promptText = "End time (HH:MM)" }
-    val maxParticipantsField = new TextField { promptText = "Max participants (optional)" }
+    val locationField = new EnhancedTextField("Event location")
+    val startDateField = new EnhancedTextField("Start date (YYYY-MM-DD)")
+    val startTimeField = new EnhancedTextField("Start time (HH:MM)")
+    val endDateField = new EnhancedTextField("End date (YYYY-MM-DD)")
+    val endTimeField = new EnhancedTextField("End time (HH:MM)")
+    val maxParticipantsField = new EnhancedTextField("Max participants (optional)")
     
     val createButton = new Button("Create") {
       onAction = _ => {

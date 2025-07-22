@@ -7,6 +7,7 @@ import scalafx.stage.{Modality, Stage}
 import scalafx.scene.Scene
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 
 /**
  * Dialog for creating discussion topics
@@ -17,11 +18,13 @@ class DiscussionTopicDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "Create Discussion Topic"
+    dialog.title = "创建讨论 - Create Discussion Topic"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 450
+    dialog.minHeight = 400
     
-    val titleField = new TextField { promptText = "Discussion topic title" }
+    val titleField = new EnhancedTextField("Discussion topic title")
     val contentArea = new TextArea { 
       promptText = "Topic content or question"
       prefRowCount = 5

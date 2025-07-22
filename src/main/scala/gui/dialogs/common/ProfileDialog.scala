@@ -6,6 +6,7 @@ import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 import service.CommunityEngagementService
 
 /**
@@ -19,22 +20,20 @@ class ProfileDialog {
     service.getCurrentUser match {
       case Some(user) =>
         val dialog = new Dialog[Unit]()
-        dialog.title = "User Profile"
+        dialog.title = "用户资料 - User Profile"
         dialog.headerText = s"Edit profile for ${user.username}"
+        dialog.resizable = true
         
-        val nameField = new TextField {
+        val nameField = new EnhancedTextField("Full Name") {
           text = user.name
-          promptText = "Full Name"
         }
         
-        val contactField = new TextField {
+        val contactField = new EnhancedTextField("Contact Info") {
           text = user.contactInfo
-          promptText = "Contact Info"
         }
         
-        val emailField = new TextField {
+        val emailField = new EnhancedTextField("Email") {
           text = user.email
-          promptText = "Email"
           editable = false  // Email usually shouldn't be changed
         }
         
@@ -76,18 +75,17 @@ class ProfileDialog {
                 newPasswordField.text = ""
                 confirmPasswordField.text = ""
               } else {
-                GuiUtils.showError("Failed", "Current password is incorrect.")
+                GuiUtils.showError("Password Change Failed", "Current password is incorrect or password change failed.")
               }
             }
           }
         }
         
         val grid = new GridPane {
+          padding = Insets(20)
           hgap = 10
           vgap = 10
-          padding = Insets(20)
           
-          // Profile information
           add(new Label("Username:"), 0, 0)
           add(new Label(user.username) { style = "-fx-font-weight: bold;" }, 1, 0)
           add(new Label("Email:"), 0, 1)
@@ -113,23 +111,27 @@ class ProfileDialog {
           add(changePasswordButton, 1, 11)
         }
         
-        dialog.dialogPane().content = grid
-        dialog.dialogPane().buttonTypes = Seq(ButtonType.OK, ButtonType.Cancel)
+        val saveButton = new ButtonType("Save Changes", ButtonBar.ButtonData.OKDone)
+        val cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CancelClose)
         
-        dialog.resultConverter = dialogButton => {
-          if (dialogButton == ButtonType.OK) {
-            if (service.updateUserProfile(nameField.text.value, contactField.text.value)) {
+        dialog.dialogPane().buttonTypes = List(saveButton, cancelButton)
+        dialog.dialogPane().content = grid
+        
+        val result = dialog.showAndWait()
+        
+        result match {
+          case Some(`saveButton`) =>
+            // Update user info
+            if (service.updateUserProfile(nameField.text.value.trim, contactField.text.value.trim)) {
               GuiUtils.showInfo("Success", "Profile updated successfully!")
             } else {
-              GuiUtils.showError("Failed", "Could not update profile.")
+              GuiUtils.showError("Update Failed", "Failed to update profile. Please try again.")
             }
-          }
+          case _ => // Cancel or close
         }
         
-        dialog.showAndWait()
-        
       case None =>
-        GuiUtils.showWarning("Not Logged In", "Please log in to view your profile.")
+        GuiUtils.showError("No User", "No user is currently logged in.")
     }
   }
 }

@@ -9,6 +9,7 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
+import gui.components.common.public.EnhancedTextField
 import model.{FoodCategory, FoodStock}
 import java.time.LocalDateTime
 import java.util.UUID
@@ -26,12 +27,13 @@ class FoodStockDialog(
   private val isEditing = existingStock.isDefined
   
   def showAndWait(): Unit = {
-    dialog.title = if (isEditing) "Edit Food Stock" else "Add Food Stock"
+    dialog.title = if (isEditing) "编辑库存商品 - Edit Food Stock Item" else "添加新库存 - Add New Food Stock"
     dialog.initModality(Modality.ApplicationModal)
-    dialog.resizable = false
+    dialog.resizable = true
+    dialog.minWidth = 500
+    dialog.minHeight = 600
     
-    val foodNameField = new TextField { 
-      promptText = "Food item name"
+    val foodNameField = new EnhancedTextField("Food item name") { 
       text = existingStock.map(_.foodName).getOrElse("")
     }
     
@@ -40,23 +42,19 @@ class FoodStockDialog(
       value = existingStock.map(_.category.toString).getOrElse("OTHER")
     }
     
-    val quantityField = new TextField { 
-      promptText = "Current quantity"
+    val quantityField = new EnhancedTextField("Current quantity") { 
       text = existingStock.map(_.currentQuantity.toString).getOrElse("")
     }
     
-    val unitField = new TextField { 
-      promptText = "Unit (kg, pieces, bottles, etc.)"
+    val unitField = new EnhancedTextField("Unit (kg, pieces, bottles, etc.)") { 
       text = existingStock.map(_.unit).getOrElse("")
     }
     
-    val thresholdField = new TextField { 
-      promptText = "Minimum threshold"
+    val thresholdField = new EnhancedTextField("Minimum threshold") { 
       text = existingStock.map(_.minimumThreshold.toString).getOrElse("")
     }
     
-    val locationField = new TextField { 
-      promptText = "Storage location"
+    val locationField = new EnhancedTextField("Storage location") {
       text = existingStock.map(_.location).getOrElse("Main Storage")
     }
     
@@ -68,8 +66,7 @@ class FoodStockDialog(
       selected = existingStock.flatMap(_.expiryDate).isDefined
     }
     
-    val expiryDaysField = new TextField { 
-      promptText = "Days until expiry"
+    val expiryDaysField = new EnhancedTextField("Days until expiry") { 
       disable = !hasExpiryCheck.selected.value
       text = existingStock.flatMap(_.expiryDate).map { expiry =>
         val days = java.time.temporal.ChronoUnit.DAYS.between(LocalDateTime.now(), expiry)
@@ -208,7 +205,7 @@ class FoodStockDialog(
       }, 1, 9)
     }
     
-    dialog.scene = new Scene(grid, 450, 500)
+    dialog.scene = new Scene(grid, 550, 600)
     dialog.showAndWait()
   }
 }
