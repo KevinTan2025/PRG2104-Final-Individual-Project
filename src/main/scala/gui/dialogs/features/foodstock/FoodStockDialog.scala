@@ -10,6 +10,7 @@ import scalafx.Includes._
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
 import gui.components.common.public.EnhancedTextField
+import gui.components.common.datepicker.EnhancedDatePicker
 import model.{FoodCategory, FoodStock}
 import java.time.LocalDateTime
 import java.util.UUID
@@ -66,16 +67,16 @@ class FoodStockDialog(
       selected = existingStock.flatMap(_.expiryDate).isDefined
     }
     
-    val expiryDaysField = new EnhancedTextField("Days until expiry") { 
-      disable = !hasExpiryCheck.selected.value
-      text = existingStock.flatMap(_.expiryDate).map { expiry =>
-        val days = java.time.temporal.ChronoUnit.DAYS.between(LocalDateTime.now(), expiry)
-        math.max(0, days).toString
-      }.getOrElse("")
+    val expiryDatePicker = new EnhancedDatePicker() {
+      control.disable = !hasExpiryCheck.selected.value
+      // Set existing expiry date if available
+      existingStock.flatMap(_.expiryDate).foreach { expiry =>
+        setValue(expiry.toLocalDate)
+      }
     }
     
     hasExpiryCheck.onAction = _ => {
-      expiryDaysField.disable = !hasExpiryCheck.selected.value
+      expiryDatePicker.control.disable = !hasExpiryCheck.selected.value
     }
     
     val notesArea = new TextArea {
@@ -106,15 +107,8 @@ class FoodStockDialog(
           return
         }
         
-        val expiryDate = if (hasExpiryCheck.selected.value && expiryDaysField.text.value.nonEmpty) {
-          try {
-            val days = expiryDaysField.text.value.toLong
-            Some(LocalDateTime.now().plusDays(days))
-          } catch {
-            case _: NumberFormatException => 
-              GuiUtils.showError("Validation Error", "Invalid expiry days.")
-              return
-          }
+        val expiryDate = if (hasExpiryCheck.selected.value && expiryDatePicker.getValue.isDefined) {
+          Some(expiryDatePicker.getValue.get.atStartOfDay())
         } else None
         
         val success = if (isEditing) {
@@ -196,7 +190,7 @@ class FoodStockDialog(
       add(isPackagedCheck, 0, 6)
       add(new Label(""), 1, 6)
       add(hasExpiryCheck, 0, 7)
-      add(expiryDaysField, 1, 7)
+      add(expiryDatePicker.control, 1, 7)
       add(new Label("Notes:"), 0, 8)
       add(notesArea, 1, 8)
       add(new HBox {
