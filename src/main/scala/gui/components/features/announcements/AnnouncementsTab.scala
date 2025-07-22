@@ -20,9 +20,11 @@ class AnnouncementsTab(
   onLoginPrompt: () => Unit = () => {}
 ) extends BaseTabComponent {
   
+  private var activityFeedComponent: EnhancedActivityFeedComponent = _
+  
   override def build(): Tab = {
     // Create activity feed component filtered for announcements only
-    val activityFeedComponent = new EnhancedActivityFeedComponent(
+    activityFeedComponent = new EnhancedActivityFeedComponent(
       service, 
       () => refresh(), 
       Some(ActivityFeedType.ANNOUNCEMENT)
@@ -157,7 +159,10 @@ class AnnouncementsTab(
   }
   
   override def refresh(): Unit = {
-    // Refresh will be handled by the activity feed component
+    // Refresh the activity feed to show latest announcements
+    if (activityFeedComponent != null) {
+      activityFeedComponent.refresh()
+    }
   }
   
   override def initialize(): Unit = {

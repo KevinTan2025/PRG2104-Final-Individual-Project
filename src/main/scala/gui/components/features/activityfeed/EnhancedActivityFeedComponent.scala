@@ -24,6 +24,7 @@ class EnhancedActivityFeedComponent(
 ) {
   
   private val activityFeedService = new ActivityFeedService()
+  private var feedContainer: VBox = _
   
   def build(): VBox = {
     val mainContainer = new VBox {
@@ -33,7 +34,7 @@ class EnhancedActivityFeedComponent(
     }
     
     val header = createHeader()
-    val feedContainer = new VBox {
+    feedContainer = new VBox {
       spacing = 15
       id = "feed-container"
     }
@@ -43,6 +44,15 @@ class EnhancedActivityFeedComponent(
     
     mainContainer.children = Seq(header, feedContainer)
     mainContainer
+  }
+  
+  /**
+   * Public method to refresh the activity feed
+   */
+  def refresh(): Unit = {
+    if (feedContainer != null) {
+      refreshFeed(feedContainer)
+    }
   }
   
   private def createHeader(): VBox = {
