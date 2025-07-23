@@ -19,9 +19,15 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   
   private val service = CommunityEngagementService.getInstance
   private val dialog = new Stage()
+  private var currentTopic = topic
   
   def showAndWait(): Unit = {
-    dialog.title = s"Discussion: ${topic.title}"
+    initializeDialog()
+    dialog.showAndWait()
+  }
+  
+  private def initializeDialog(): Unit = {
+    dialog.title = s"Discussion: ${currentTopic.title}"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
     dialog.minWidth = 600
@@ -34,16 +40,16 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       style = "-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 1 0;"
       
       children = Seq(
-        new Label(topic.title) {
+        new Label(currentTopic.title) {
           style = "-fx-font-size: 18px; -fx-font-weight: bold;"
         },
-        new Label(s"Category: ${topic.category}") {
+        new Label(s"Category: ${currentTopic.category}") {
           style = "-fx-text-fill: #6c757d; -fx-font-size: 12px;"
         },
-        new Label(s"Posted by: ${topic.authorId} on ${topic.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}") {
+        new Label(s"Posted by: ${currentTopic.authorId} on ${currentTopic.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}") {
           style = "-fx-text-fill: #6c757d; -fx-font-size: 12px;"
         },
-        new Label(s"👍 ${topic.likes} likes • 💬 ${topic.getReplyCount} replies") {
+        new Label(s"👍 ${currentTopic.likes} likes • 💬 ${currentTopic.getReplyCount} replies") {
           style = "-fx-text-fill: #495057; -fx-font-weight: bold;"
         }
       )
@@ -57,7 +63,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
         new Label("Description:") {
           style = "-fx-font-weight: bold; -fx-font-size: 14px;"
         },
-        new Label(topic.description) {
+        new Label(currentTopic.description) {
           wrapText = true
           style = "-fx-font-size: 13px; -fx-text-fill: #212529;"
         }
@@ -70,18 +76,18 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       padding = Insets(20)
     }
     
-    repliesBox.children.add(new Label(s"Replies (${topic.getReplyCount}):") {
+    repliesBox.children.add(new Label(s"Replies (${currentTopic.getReplyCount}):") {
       style = "-fx-font-weight: bold; -fx-font-size: 14px;"
     })
     
-    if (topic.replies.nonEmpty) {
+    if (currentTopic.replies.nonEmpty) {
       val repliesScrollPane = new ScrollPane {
         prefHeight = 200
         fitToWidth = true
         
         content = new VBox {
           spacing = 10
-          children = topic.replies.reverse.map(createReplyItem)
+          children = currentTopic.replies.reverse.map(createReplyItem)
         }
       }
       repliesBox.children.add(repliesScrollPane)
@@ -106,7 +112,17 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
     }
     
     dialog.scene = new Scene(mainContent, 650, 700)
-    dialog.showAndWait()
+  }
+  
+  private def refreshDialog(): Unit = {
+    // Update current topic data
+    service.getDiscussionTopics.find(_.topicId == currentTopic.topicId) match {
+      case Some(updatedTopic) =>
+        currentTopic = updatedTopic
+        initializeDialog() // Reinitialize the dialog with updated data
+      case None =>
+        GuiUtils.showError("Error", "Topic not found.")
+    }
   }
   
   private def createReplyItem(reply: Reply): VBox = {
@@ -144,10 +160,10 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       onAction = _ => {
         service.getCurrentUser match {
           case Some(_) =>
-            if (service.likeTopic(topic.topicId)) {
+            if (service.likeTopic(currentTopic.topicId)) {
               GuiUtils.showInfo("Success", "Topic liked!")
               onUpdate()
-              dialog.close()
+              refreshDialog()
             } else {
               GuiUtils.showError("Error", "Failed to like topic.")
             }
@@ -173,15 +189,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
     val refreshButton = new Button("🔄 Refresh") {
       onAction = _ => {
         onUpdate()
-        dialog.close()
-        // Re-open with updated data
-        service.getDiscussionTopics.find(_.topicId == topic.topicId) match {
-          case Some(updatedTopic) =>
-            val newDialog = new DiscussionTopicDetailsDialog(updatedTopic, onUpdate)
-            newDialog.showAndWait()
-          case None =>
-            GuiUtils.showError("Error", "Topic not found.")
-        }
+        refreshDialog()
       }
       style = "-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-background-radius: 6;"
     }
@@ -202,7 +210,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   private def showReplyDialog(): Unit = {
     val replyDialog = new Dialog[String]()
     replyDialog.title = "Add Reply"
-    replyDialog.headerText = s"Reply to: ${topic.title}"
+    replyDialog.headerText = s"Reply to: ${currentTopic.title}"
     
     val contentArea = new TextArea {
       promptText = "Your reply..."
@@ -233,21 +241,15 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
     
     replyDialog.showAndWait() match {
       case Some(replyContent: String) =>
-        if (service.addReplyToTopic(topic.topicId, replyContent)) {
+        if (service.addReplyToTopic(currentTopic.topicId, replyContent)) {
           GuiUtils.showInfo("Success", "Reply added successfully!")
           onUpdate()
-          dialog.close()
-          // Re-open with updated data
-          service.getDiscussionTopics.find(_.topicId == topic.topicId) match {
-            case Some(updatedTopic) =>
-              val newDialog = new DiscussionTopicDetailsDialog(updatedTopic, onUpdate)
-              newDialog.showAndWait()
-            case None =>
-              GuiUtils.showError("Error", "Topic not found.")
-          }
+          refreshDialog()
         } else {
           GuiUtils.showError("Error", "Failed to add reply.")
         }
+      case Some(_) => // Invalid type returned
+        GuiUtils.showError("Error", "Invalid reply content.")
       case None => // User cancelled or entered empty content
     }
   }
