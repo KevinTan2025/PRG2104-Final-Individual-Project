@@ -6,7 +6,7 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
-import gui.dialogs.features.foodstock.{FoodStockDialog, StockMovementDialog}
+import gui.dialogs.features.foodstock.{FoodStockDialog, StockMovementDialog, ExportStockDialog}
 import gui.components.common.public.BaseTabComponent
 import service.CommunityEngagementService
 import model.{FoodStock, FoodCategory, StockStatus}
@@ -23,7 +23,7 @@ class FoodStockTab extends BaseTabComponent {
       ("All" :: FoodCategory.values.map(_.toString).toList): _*
     )
     value = "All"
-    prefWidth = 180
+    prefWidth = 150
   }
   
   private val statusCombo = new ComboBox[String] {
@@ -328,14 +328,8 @@ class FoodStockTab extends BaseTabComponent {
   
   private def handleExport(): Unit = {
     val stocks = service.getAllFoodStocks
-    val csvContent = "Food Name,Category,Quantity,Unit,Status,Location,Expiry Date\n" +
-      stocks.map { stock =>
-        val expiryStr = stock.expiryDate.map(_.toString).getOrElse("No expiry")
-        s"${stock.foodName},${stock.category},${stock.currentQuantity},${stock.unit}," +
-        s"${stock.getStockStatus},${stock.location},$expiryStr"
-      }.mkString("\n")
-    
-    GuiUtils.showInfo("Export Stock Data", s"CSV Export:\n\n$csvContent")
+    val exportDialog = new ExportStockDialog(stocks)
+    exportDialog.showAndWait()
   }
   
   private def handleShowAlerts(): Unit = {
