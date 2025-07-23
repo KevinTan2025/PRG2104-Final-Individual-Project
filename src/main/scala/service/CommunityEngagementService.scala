@@ -556,6 +556,28 @@ class CommunityEngagementService {
   def getStockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
     dbService.stockMovementManager.getMovementsByDateRange(startDate, endDate)
   }
+  
+  /**
+   * Database Management Operations (Admin Only)
+   */
+  
+  def resetDatabaseForAdmin(): Boolean = {
+    if (isCurrentUserAdmin) {
+      try {
+        dbService.resetDatabase()
+        // Clear current session since database is reset
+        currentUser = None
+        isAnonymousMode = false
+        true
+      } catch {
+        case e: Exception =>
+          println(s"Error resetting database: ${e.getMessage}")
+          false
+      }
+    } else {
+      false
+    }
+  }
 }
 
 /**

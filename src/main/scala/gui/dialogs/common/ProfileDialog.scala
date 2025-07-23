@@ -81,6 +81,81 @@ class ProfileDialog {
           }
         }
         
+        // Admin-only database reset section
+        val adminSection = if (user.hasAdminPrivileges) {
+          val warningLabel = new Label("⚠️ DANGER ZONE ⚠️") {
+            style = "-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: red;"
+          }
+          
+          val resetWarningLabel = new Label("WARNING!!! Only click if you know what you are doing!!!") {
+            style = "-fx-font-weight: bold; -fx-text-fill: red; -fx-font-size: 12px;"
+            wrapText = true
+          }
+          
+          val resetDescriptionLabel = new Label("This will completely reset the database, removing ALL data and recreating sample data. The application will exit after reset.") {
+            style = "-fx-text-fill: darkred; -fx-font-size: 11px;"
+            wrapText = true
+            maxWidth = 400
+          }
+          
+          val resetButton = new Button("🗑️ RESET DATABASE") {
+            style = "-fx-background-color: red; -fx-text-fill: white; -fx-font-weight: bold;"
+            onAction = _ => {
+              val confirmDialog = new Alert(Alert.AlertType.Confirmation) {
+                title = "⚠️ CONFIRM DATABASE RESET"
+                headerText = "CRITICAL ACTION: Reset Database"
+                contentText = "Are you absolutely sure you want to reset the database?\n\n" +
+                             "This action will:\n" +
+                             "• Delete ALL user data\n" +
+                             "• Delete ALL food stock records\n" +
+                             "• Delete ALL announcements and posts\n" +
+                             "• Reset to sample data only\n" +
+                             "• Close the application\n\n" +
+                             "This action CANNOT be undone!"
+              }
+              
+              confirmDialog.showAndWait() match {
+                case Some(ButtonType.OK) =>
+                  val secondConfirmDialog = new Alert(Alert.AlertType.Warning) {
+                    title = "⚠️ FINAL CONFIRMATION"
+                    headerText = "LAST CHANCE TO CANCEL"
+                    contentText = "Type 'RESET' in the text field below to confirm database reset:"
+                  }
+                  
+                  val confirmField = new TextField()
+                  secondConfirmDialog.dialogPane().content = new VBox(10) {
+                    children = List(
+                      new Label("Type 'RESET' to confirm:"),
+                      confirmField
+                    )
+                  }
+                  
+                  secondConfirmDialog.showAndWait() match {
+                    case Some(ButtonType.OK) if confirmField.text.value == "RESET" =>
+                      if (service.resetDatabaseForAdmin()) {
+                        GuiUtils.showInfo("Database Reset", "Database has been reset successfully!\nThe application will now exit.")
+                        // Close dialog first
+                        dialog.close()
+                        // Exit application
+                        scalafx.application.Platform.exit()
+                        System.exit(0)
+                      } else {
+                        GuiUtils.showError("Reset Failed", "Database reset failed. Please check the logs.")
+                      }
+                    case Some(ButtonType.OK) =>
+                      GuiUtils.showWarning("Reset Cancelled", "Incorrect confirmation text. Reset cancelled.")
+                    case _ => // User cancelled
+                  }
+                case _ => // User cancelled
+              }
+            }
+          }
+          
+          Some((warningLabel, resetWarningLabel, resetDescriptionLabel, resetButton))
+        } else {
+          None
+        }
+        
         val grid = new GridPane {
           padding = Insets(20)
           hgap = 10
@@ -109,6 +184,17 @@ class ProfileDialog {
           add(new Label("Confirm Password:"), 0, 10)
           add(confirmPasswordField, 1, 10)
           add(changePasswordButton, 1, 11)
+          
+          // Add admin section if user is admin
+          adminSection match {
+            case Some((warningLabel, resetWarningLabel, resetDescriptionLabel, resetButton)) =>
+              add(new Separator(), 0, 12, 2, 1)
+              add(warningLabel, 0, 13, 2, 1)
+              add(resetWarningLabel, 0, 14, 2, 1)
+              add(resetDescriptionLabel, 0, 15, 2, 1)
+              add(resetButton, 0, 16, 2, 1)
+            case None => // No admin section for regular users
+          }
         }
         
         val saveButton = new ButtonType("Save Changes", ButtonBar.ButtonData.OKDone)

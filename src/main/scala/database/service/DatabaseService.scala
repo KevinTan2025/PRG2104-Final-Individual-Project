@@ -358,8 +358,7 @@ class DatabaseService {
   }
   
   def resetDatabase(): Unit = {
-    DatabaseSchema.dropAllTables()
-    DatabaseSchema.initializeDatabase()
+    DatabaseSchema.resetDatabase()
   }
   
   /**

@@ -13,8 +13,13 @@ object DatabaseSchema {
   def initializeDatabase(): Unit = {
     if (!DatabaseConnection.isDatabaseInitialized) {
       createTables()
-      insertSampleData()
-      println("Database initialized successfully!")
+      if (!isDatabaseMarkedInitialized()) {
+        insertSampleData()
+        markDatabaseInitialized()
+        println("Database initialized successfully!")
+      } else {
+        println("Database already initialized.")
+      }
     } else {
       println("Database already initialized.")
     }
@@ -214,6 +219,14 @@ object DatabaseSchema {
       CREATE INDEX IF NOT EXISTS idx_stock_movements_stock ON stock_movements(stock_id);
       CREATE INDEX IF NOT EXISTS idx_stock_movements_user ON stock_movements(user_id);
       CREATE INDEX IF NOT EXISTS idx_stock_movements_timestamp ON stock_movements(timestamp);
+      
+      -- System metadata table for tracking initialization state
+      CREATE TABLE IF NOT EXISTS system_metadata (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
     """
     
     DatabaseConnection.executeSqlScript(createTablesScript)
@@ -397,9 +410,56 @@ object DatabaseSchema {
       DROP TABLE IF EXISTS food_posts;
       DROP TABLE IF EXISTS announcements;
       DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS system_metadata;
     """
     
     DatabaseConnection.executeSqlScript(dropTablesScript)
     println("All tables dropped successfully!")
+  }
+  
+  /**
+   * Reset database completely - drops all tables and recreates with sample data
+   */
+  def resetDatabase(): Unit = {
+    dropAllTables()
+    createTables()
+    insertSampleData()
+    markDatabaseInitialized()
+    println("Database reset completed successfully!")
+  }
+  
+  /**
+   * Check if database has been marked as initialized
+   */
+  private def isDatabaseMarkedInitialized(): Boolean = {
+    try {
+      val rs = DatabaseConnection.executeQuery(
+        "SELECT value FROM system_metadata WHERE key = 'database_initialized'"
+      )
+      val isInitialized = rs.next() && rs.getString("value") == "true"
+      rs.close()
+      isInitialized
+    } catch {
+      case _: Exception => false
+    }
+  }
+  
+  /**
+   * Mark database as initialized
+   */
+  private def markDatabaseInitialized(): Unit = {
+    try {
+      import java.time.LocalDateTime
+      val now = DatabaseConnection.formatDateTime(LocalDateTime.now())
+      DatabaseConnection.executeUpdate(
+        """INSERT OR REPLACE INTO system_metadata 
+           (key, value, created_at, updated_at) 
+           VALUES ('database_initialized', 'true', ?, ?)""",
+        now, now
+      )
+    } catch {
+      case e: Exception =>
+        println(s"Warning: Could not mark database as initialized: ${e.getMessage}")
+    }
   }
 }
