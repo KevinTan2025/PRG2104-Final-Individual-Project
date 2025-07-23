@@ -8,6 +8,8 @@ import scalafx.scene.Scene
 import service.CommunityEngagementService
 import gui.utils.GuiUtils
 import gui.components.common.public.EnhancedTextField
+import service.CommunityEngagementService
+import model.DiscussionCategory
 
 /**
  * Dialog for creating discussion topics
@@ -31,17 +33,47 @@ class DiscussionTopicDialog(onSuccess: () => Unit) {
     }
     
     val categoryCombo = new ComboBox[String] {
-      items = scalafx.collections.ObservableBuffer("GENERAL", "FOOD_SHARING", "EVENTS", "TIPS", "Q_AND_A")
+      items = scalafx.collections.ObservableBuffer(
+        "GENERAL", "NUTRITION", "SUSTAINABLE_AGRICULTURE", "FOOD_SECURITY", 
+        "COMMUNITY_GARDEN", "COOKING_TIPS", "EVENTS", "ANNOUNCEMENTS"
+      )
       value = "GENERAL"
     }
     
     val createButton = new Button("Create") {
       onAction = _ => {
-        // This would create a discussion topic through the service
-        // For now, just show success message
-        GuiUtils.showInfo("Success", "Discussion topic created successfully!")
-        onSuccess()
-        dialog.close()
+        val title = titleField.text.value.trim
+        val content = contentArea.text.value.trim
+        val selectedCategory = categoryCombo.value.value
+        
+        if (title.isEmpty || content.isEmpty) {
+          GuiUtils.showWarning("Missing Information", "Please fill in both title and content.")
+        } else {
+          service.getCurrentUser match {
+            case Some(_) =>
+              val category = selectedCategory match {
+                case "NUTRITION" => DiscussionCategory.NUTRITION
+                case "SUSTAINABLE_AGRICULTURE" => DiscussionCategory.SUSTAINABLE_AGRICULTURE
+                case "FOOD_SECURITY" => DiscussionCategory.FOOD_SECURITY
+                case "COMMUNITY_GARDEN" => DiscussionCategory.COMMUNITY_GARDEN
+                case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
+                case "EVENTS" => DiscussionCategory.EVENTS
+                case "ANNOUNCEMENTS" => DiscussionCategory.ANNOUNCEMENTS
+                case _ => DiscussionCategory.GENERAL
+              }
+              
+              service.createDiscussionTopic(title, content, category) match {
+                case Some(_) =>
+                  GuiUtils.showInfo("Success", "Discussion topic created successfully!")
+                  onSuccess()
+                  dialog.close()
+                case None =>
+                  GuiUtils.showError("Error", "Failed to create discussion topic.")
+              }
+            case None =>
+              GuiUtils.showWarning("Login Required", "Please log in to create topics.")
+          }
+        }
       }
     }
     

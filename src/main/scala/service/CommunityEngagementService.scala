@@ -2,6 +2,7 @@ package service
 
 import database.service.DatabaseService
 import model._
+import manager.DiscussionForumManager
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -13,6 +14,12 @@ class CommunityEngagementService {
   
   // Database service instance for data persistence
   private val dbService = DatabaseService.getInstance
+  
+  // Discussion forum manager for managing discussion topics
+  private val discussionManager = new DiscussionForumManager()
+  
+  // Initialize with some sample data
+  initializeSampleDiscussionData()
   
   // Current logged-in user
   private var currentUser: Option[User] = None
@@ -242,20 +249,19 @@ class CommunityEngagementService {
         description = description,
         category = category
       )
-      // For now, return the topic (implement database storage later)
+      discussionManager.createTopic(topic)
       topic
     }
   }
-  
+
   def getDiscussionTopics: List[DiscussionTopic] = {
-    // Simplified implementation - return empty list for now
-    List.empty
+    discussionManager.getActiveTopics
   }
-  
+
   def getTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
-    List.empty
+    discussionManager.getTopicsByCategory(category)
   }
-  
+
   def addReplyToTopic(topicId: String, content: String): Boolean = {
     currentUser.exists { user =>
       val reply = Reply(
@@ -264,20 +270,139 @@ class CommunityEngagementService {
         authorId = user.userId,
         content = content
       )
-      // For now, return true (implement database storage later)
-      true
+      discussionManager.addReply(topicId, reply)
     }
   }
-  
+
   def searchTopics(searchTerm: String): List[DiscussionTopic] = {
-    List.empty
+    discussionManager.searchTopics(searchTerm)
   }
-  
+
   def likeTopic(topicId: String): Boolean = {
-    true
+    discussionManager.addLike(topicId)
   }
-  
+
   /**
+   * Initialize sample discussion data for testing
+   */
+  private def initializeSampleDiscussionData(): Unit = {
+    // Create sample topics
+    val topic1 = DiscussionTopic(
+      topicId = "topic-1",
+      authorId = "admin",
+      title = "Healthy eating tips for families",
+      description = "Let's share some practical tips for maintaining healthy eating habits for families with busy schedules. What works best in your household?",
+      category = DiscussionCategory.NUTRITION,
+      timestamp = LocalDateTime.now().minusDays(2)
+    )
+    topic1.addLike() // Add some likes
+    topic1.addLike()
+    topic1.addLike()
+    topic1.addLike()
+    topic1.addLike()
+    
+    val topic2 = DiscussionTopic(
+      topicId = "topic-2", 
+      authorId = "user1",
+      title = "Community garden project update",
+      description = "Our community garden project is making great progress! We've planted tomatoes, lettuce, and herbs. Looking for volunteers to help with watering schedule.",
+      category = DiscussionCategory.COMMUNITY_GARDEN,
+      timestamp = LocalDateTime.now().minusDays(1)
+    )
+    topic2.addLike()
+    topic2.addLike()
+    topic2.addLike()
+    
+    val topic3 = DiscussionTopic(
+      topicId = "topic-3",
+      authorId = "chef_mary",
+      title = "Easy recipes for busy schedules",
+      description = "Share your favorite quick and easy recipes that are perfect for weeknight dinners. Bonus points for one-pot meals!",
+      category = DiscussionCategory.COOKING_TIPS,
+      timestamp = LocalDateTime.now().minusHours(12)
+    )
+    topic3.addLike()
+    topic3.addLike()
+    
+    val topic4 = DiscussionTopic(
+      topicId = "topic-4",
+      authorId = "green_thumb",
+      title = "Urban farming techniques",
+      description = "Exploring different methods for growing food in small urban spaces. Let's discuss vertical gardening, container growing, and hydroponic systems.",
+      category = DiscussionCategory.SUSTAINABLE_AGRICULTURE,
+      timestamp = LocalDateTime.now().minusHours(6)
+    )
+    topic4.addLike()
+    
+    val topic5 = DiscussionTopic(
+      topicId = "topic-5",
+      authorId = "community_leader",
+      title = "Welcome to our discussion forum",
+      description = "Welcome everyone to our new community discussion forum! This is a place to share ideas, ask questions, and connect with neighbors. Please read our community guidelines and introduce yourself!",
+      category = DiscussionCategory.GENERAL,
+      timestamp = LocalDateTime.now().minusDays(7)
+    )
+    
+    val topic6 = DiscussionTopic(
+      topicId = "topic-6",
+      authorId = "organizer",
+      title = "Spring planting schedule",
+      description = "Planning our community garden for spring! Let's coordinate what everyone wants to plant and create a schedule for planting different crops.",
+      category = DiscussionCategory.COMMUNITY_GARDEN,
+      timestamp = LocalDateTime.now().minusHours(3)
+    )
+    
+    // Add sample replies
+    val reply1 = Reply(
+      replyId = "reply-1",
+      topicId = "topic-1",
+      authorId = "mom_of_three",
+      content = "Great topic! I've found that meal prepping on Sundays really helps. I cook grains and proteins in bulk, then just add fresh veggies during the week.",
+      timestamp = LocalDateTime.now().minusDays(1)
+    )
+    reply1.addLike()
+    reply1.addLike()
+    
+    val reply2 = Reply(
+      replyId = "reply-2", 
+      topicId = "topic-1",
+      authorId = "nutritionist_jane",
+      content = "Excellent advice! I'd also recommend involving kids in meal planning and preparation. It helps them develop healthy relationships with food.",
+      timestamp = LocalDateTime.now().minusHours(18)
+    )
+    reply2.addLike()
+    
+    val reply3 = Reply(
+      replyId = "reply-3",
+      topicId = "topic-2",
+      authorId = "volunteer_sam",
+      content = "I can help with the watering schedule! I'm available Tuesday and Thursday mornings. The plants are looking amazing!",
+      timestamp = LocalDateTime.now().minusHours(8)
+    )
+    
+    val reply4 = Reply(
+      replyId = "reply-4",
+      topicId = "topic-3",
+      authorId = "busy_parent",
+      content = "One-pot pasta with vegetables is my go-to! Just throw everything in one pot with some broth and pasta. Kids love it too.",
+      timestamp = LocalDateTime.now().minusHours(6)
+    )
+    reply4.addLike()
+    
+    // Add topics to manager
+    discussionManager.createTopic(topic1)
+    discussionManager.createTopic(topic2)
+    discussionManager.createTopic(topic3)
+    discussionManager.createTopic(topic4)
+    discussionManager.createTopic(topic5)
+    discussionManager.createTopic(topic6)
+    
+    // Add replies to topics
+    topic1.addReply(reply1)
+    topic1.addReply(reply2)
+    topic2.addReply(reply3)
+    topic3.addReply(reply4)
+  }  /**
    * Event Management Operations (Simplified)
    */
   

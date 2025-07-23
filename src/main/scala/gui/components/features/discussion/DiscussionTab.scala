@@ -7,6 +7,9 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
+import gui.dialogs.features.discussion.{DiscussionTopicDialog, DiscussionTopicDetailsDialog}
+import service.CommunityEngagementService
+import model.{DiscussionCategory, DiscussionTopic}
 
 /**
  * Discussion tab component for managing community discussions
@@ -17,7 +20,9 @@ class DiscussionTab(
   onLoginPrompt: () => Unit = () => {}
 ) extends BaseTabComponent {
   
+  private val service = CommunityEngagementService.getInstance
   private val topicsList = new ListView[String]()
+  private var currentTopics: List[DiscussionTopic] = List.empty
   private val categoryCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer(
       "All", "NUTRITION", "SUSTAINABLE_AGRICULTURE", "FOOD_SECURITY", 
@@ -100,6 +105,18 @@ class DiscussionTab(
       center = topicsList
     }
     
+    // Add double-click handler to show topic details
+    topicsList.onMouseClicked = (event) => {
+      if (event.clickCount == 2) {
+        val selectedIndex = topicsList.selectionModel().selectedIndex.value
+        if (selectedIndex >= 0 && selectedIndex < currentTopics.length) {
+          val selectedTopic = currentTopics(selectedIndex)
+          val detailsDialog = new DiscussionTopicDetailsDialog(selectedTopic, () => refreshTopics())
+          detailsDialog.showAndWait()
+        }
+      }
+    }
+    
     new Tab {
       text = if (readOnlyMode) "💬 Discussion Forum" else "Discussion Forum"
       content = mainContent
@@ -116,33 +133,40 @@ class DiscussionTab(
   }
   
   private def refreshTopics(): Unit = {
-    // Mock data for demonstration
-    val mockTopics = Seq(
-      "[NUTRITION] Healthy eating tips for families - 5 replies",
-      "[FOOD_SECURITY] Community garden project update - 12 replies", 
-      "[COOKING_TIPS] Easy recipes for busy schedules - 8 replies",
-      "[GENERAL] Welcome to our discussion forum - 3 replies",
-      "[SUSTAINABLE_AGRICULTURE] Urban farming techniques - 7 replies",
-      "[COMMUNITY_GARDEN] Spring planting schedule - 15 replies"
-    )
-    topicsList.items = scalafx.collections.ObservableBuffer(mockTopics: _*)
+    currentTopics = service.getDiscussionTopics
+    updateListView()
+  }
+  
+  private def updateListView(): Unit = {
+    val items = currentTopics.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies • ${t.likes} likes")
+    topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
   
   private def handleCategoryFilter(): Unit = {
     val category = categoryCombo.value.value
     if (category == "All") {
-      refreshTopics()
+      currentTopics = service.getDiscussionTopics
     } else {
-      // Filter mock data by category
-      val filteredTopics = Seq(s"[$category] Sample topic for $category - 2 replies")
-      topicsList.items = scalafx.collections.ObservableBuffer(filteredTopics: _*)
+      import model.DiscussionCategory
+      val cat = category match {
+        case "NUTRITION" => DiscussionCategory.NUTRITION
+        case "SUSTAINABLE_AGRICULTURE" => DiscussionCategory.SUSTAINABLE_AGRICULTURE
+        case "FOOD_SECURITY" => DiscussionCategory.FOOD_SECURITY
+        case "COMMUNITY_GARDEN" => DiscussionCategory.COMMUNITY_GARDEN
+        case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
+        case _ => DiscussionCategory.GENERAL
+      }
+      currentTopics = service.getTopicsByCategory(cat)
     }
+    updateListView()
   }
   
   private def handleAddReply(): Unit = {
     val selectedIndex = topicsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0) {
-      GuiUtils.showInfo("Add Reply", "Reply functionality will be available after login.")
+    if (selectedIndex >= 0 && selectedIndex < currentTopics.length) {
+      val selectedTopic = currentTopics(selectedIndex)
+      val detailsDialog = new DiscussionTopicDetailsDialog(selectedTopic, () => refreshTopics())
+      detailsDialog.showAndWait()
     } else {
       GuiUtils.showWarning("No Selection", "Please select a topic to reply to.")
     }
@@ -150,8 +174,19 @@ class DiscussionTab(
   
   private def handleLikeTopic(): Unit = {
     val selectedIndex = topicsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0) {
-      GuiUtils.showInfo("Like Topic", "Like functionality will be available after login.")
+    if (selectedIndex >= 0 && selectedIndex < currentTopics.length) {
+      val selectedTopic = currentTopics(selectedIndex)
+      service.getCurrentUser match {
+        case Some(_) =>
+          if (service.likeTopic(selectedTopic.topicId)) {
+            GuiUtils.showInfo("Success", "Topic liked!")
+            refreshTopics()
+          } else {
+            GuiUtils.showError("Error", "Failed to like topic.")
+          }
+        case None =>
+          GuiUtils.showWarning("Login Required", "Please log in to like topics.")
+      }
     } else {
       GuiUtils.showWarning("No Selection", "Please select a topic to like.")
     }
@@ -160,14 +195,15 @@ class DiscussionTab(
   private def handleSearchTopics(): Unit = {
     val searchTerm = searchField.text.value
     if (searchTerm.nonEmpty) {
-      val filteredTopics = Seq(s"[GENERAL] Search result for '$searchTerm' - 1 reply")
-      topicsList.items = scalafx.collections.ObservableBuffer(filteredTopics: _*)
+      currentTopics = service.searchTopics(searchTerm)
+      updateListView()
     } else {
       refreshTopics()
     }
   }
   
   private def createTopicDialog(): Unit = {
-    GuiUtils.showInfo("Create Topic", "Topic creation functionality will be available after login.")
+    val dialog = new DiscussionTopicDialog(() => refreshTopics())
+    dialog.showAndWait()
   }
 }
