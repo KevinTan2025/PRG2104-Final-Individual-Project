@@ -2,7 +2,6 @@ package service
 
 import database.service.DatabaseService
 import model._
-import manager.DiscussionForumManager
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -14,12 +13,6 @@ class CommunityEngagementService {
   
   // Database service instance for data persistence
   private val dbService = DatabaseService.getInstance
-  
-  // Discussion forum manager for managing discussion topics
-  private val discussionManager = new DiscussionForumManager()
-  
-  // Initialize with some sample data
-  initializeSampleDiscussionData()
   
   // Current logged-in user
   private var currentUser: Option[User] = None
@@ -237,7 +230,7 @@ class CommunityEngagementService {
   }
   
   /**
-   * Discussion Forum Operations (Simplified - using direct database calls)
+   * Discussion Forum Operations - Using Database Persistence
    */
   
   def createDiscussionTopic(title: String, description: String, category: DiscussionCategory): Option[DiscussionTopic] = {
@@ -249,17 +242,21 @@ class CommunityEngagementService {
         description = description,
         category = category
       )
-      discussionManager.createTopic(topic)
-      topic
-    }
+      
+      if (dbService.saveDiscussionTopic(topic)) {
+        Some(topic)
+      } else {
+        None
+      }
+    }.flatten
   }
 
   def getDiscussionTopics: List[DiscussionTopic] = {
-    discussionManager.getActiveTopics
+    dbService.getAllDiscussionTopics
   }
 
   def getTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
-    discussionManager.getTopicsByCategory(category)
+    dbService.getDiscussionTopicsByCategory(category)
   }
 
   def addReplyToTopic(topicId: String, content: String): Boolean = {
@@ -270,22 +267,22 @@ class CommunityEngagementService {
         authorId = user.userId,
         content = content
       )
-      discussionManager.addReply(topicId, reply)
+      dbService.saveDiscussionReply(reply)
     }
   }
 
   def searchTopics(searchTerm: String): List[DiscussionTopic] = {
-    discussionManager.searchTopics(searchTerm)
+    dbService.searchDiscussionTopics(searchTerm)
   }
 
   def likeTopic(topicId: String): Boolean = {
-    discussionManager.addLike(topicId)
+    dbService.likeDiscussionTopic(topicId)
   }
 
   /**
    * Initialize sample discussion data for testing
    */
-  private def initializeSampleDiscussionData(): Unit = {
+  def initializeSampleDiscussionData(): Unit = {
     // Create sample topics
     val topic1 = DiscussionTopic(
       topicId = "topic-1",
@@ -389,20 +386,22 @@ class CommunityEngagementService {
     )
     reply4.addLike()
     
-    // Add topics to manager
-    discussionManager.createTopic(topic1)
-    discussionManager.createTopic(topic2)
-    discussionManager.createTopic(topic3)
-    discussionManager.createTopic(topic4)
-    discussionManager.createTopic(topic5)
-    discussionManager.createTopic(topic6)
+    // Save topics to database
+    dbService.saveDiscussionTopic(topic1)
+    dbService.saveDiscussionTopic(topic2)
+    dbService.saveDiscussionTopic(topic3)
+    dbService.saveDiscussionTopic(topic4)
+    dbService.saveDiscussionTopic(topic5)
+    dbService.saveDiscussionTopic(topic6)
     
-    // Add replies to topics
-    topic1.addReply(reply1)
-    topic1.addReply(reply2)
-    topic2.addReply(reply3)
-    topic3.addReply(reply4)
-  }  /**
+    // Save replies to database
+    dbService.saveDiscussionReply(reply1)
+    dbService.saveDiscussionReply(reply2)
+    dbService.saveDiscussionReply(reply3)
+    dbService.saveDiscussionReply(reply4)
+  }
+
+  /**
    * Event Management Operations (Simplified)
    */
   
@@ -716,6 +715,10 @@ object CommunityEngagementService {
       case Some(service) => service
       case None =>
         val service = new CommunityEngagementService()
+        // Initialize sample data only if no topics exist
+        if (service.getDiscussionTopics.isEmpty) {
+          service.initializeSampleDiscussionData()
+        }
         instance = Some(service)
         service
     }

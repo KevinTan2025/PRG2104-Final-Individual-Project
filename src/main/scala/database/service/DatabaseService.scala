@@ -19,6 +19,8 @@ class DatabaseService {
   private val foodPostDAO = new FoodPostDAO()
   private val foodStockDAO = new FoodStockDAO()
   private val stockMovementDAO = new StockMovementDAO()
+  private val discussionTopicDAO = new DiscussionTopicDAO()
+  private val discussionReplyDAO = new DiscussionReplyDAO()
   
   // Manager instances for food stock
   val foodStockManager = new FoodStockManager()
@@ -373,6 +375,84 @@ class DatabaseService {
     } catch {
       case _: Exception => false
     }
+  }
+  
+  /**
+   * Discussion Forum Operations
+   */
+  
+  def saveDiscussionTopic(topic: DiscussionTopic): Boolean = {
+    discussionTopicDAO.insert(topic)
+  }
+  
+  def updateDiscussionTopic(topic: DiscussionTopic): Boolean = {
+    discussionTopicDAO.update(topic)
+  }
+  
+  def findDiscussionTopicById(topicId: String): Option[DiscussionTopic] = {
+    discussionTopicDAO.findById(topicId)
+  }
+  
+  def getAllDiscussionTopics: List[DiscussionTopic] = {
+    discussionTopicDAO.findAll()
+  }
+  
+  def getDiscussionTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
+    discussionTopicDAO.findByCategory(category)
+  }
+  
+  def getDiscussionTopicsByAuthor(authorId: String): List[DiscussionTopic] = {
+    discussionTopicDAO.findByAuthor(authorId)
+  }
+  
+  def searchDiscussionTopics(searchTerm: String): List[DiscussionTopic] = {
+    discussionTopicDAO.searchByTitleOrDescription(searchTerm)
+  }
+  
+  def likeDiscussionTopic(topicId: String): Boolean = {
+    discussionTopicDAO.incrementLikes(topicId)
+  }
+  
+  def deleteDiscussionTopic(topicId: String): Boolean = {
+    // First delete all replies
+    val replies = discussionReplyDAO.findByTopicId(topicId)
+    replies.foreach(reply => discussionReplyDAO.delete(reply.replyId))
+    
+    // Then delete the topic
+    discussionTopicDAO.delete(topicId)
+  }
+  
+  // Reply operations
+  def saveDiscussionReply(reply: Reply): Boolean = {
+    discussionReplyDAO.insert(reply)
+  }
+  
+  def updateDiscussionReply(reply: Reply): Boolean = {
+    discussionReplyDAO.update(reply)
+  }
+  
+  def findDiscussionReplyById(replyId: String): Option[Reply] = {
+    discussionReplyDAO.findById(replyId)
+  }
+  
+  def getRepliesForTopic(topicId: String): List[Reply] = {
+    discussionReplyDAO.findByTopicId(topicId)
+  }
+  
+  def getRepliesByAuthor(authorId: String): List[Reply] = {
+    discussionReplyDAO.findByAuthor(authorId)
+  }
+  
+  def likeDiscussionReply(replyId: String): Boolean = {
+    discussionReplyDAO.incrementLikes(replyId)
+  }
+  
+  def deleteDiscussionReply(replyId: String): Boolean = {
+    discussionReplyDAO.delete(replyId)
+  }
+  
+  def getReplyCountForTopic(topicId: String): Int = {
+    discussionReplyDAO.getReplyCountForTopic(topicId)
   }
 }
 
