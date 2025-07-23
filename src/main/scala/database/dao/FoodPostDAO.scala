@@ -201,7 +201,7 @@ class FoodPostDAO {
       val total = if (totalRs.next()) totalRs.getInt(1) else 0
       totalRs.close()
       
-      val activeRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM food_posts WHERE status = 'OPEN'")
+      val activeRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM food_posts WHERE status = 'PENDING'")
       val active = if (activeRs.next()) activeRs.getInt(1) else 0
       activeRs.close()
       

@@ -153,7 +153,10 @@ class DatabaseService {
   }
   
   def getActiveFoodPosts: List[FoodPost] = {
-    getFoodPostsByStatus(FoodPostStatus.PENDING)
+    // Get both PENDING and ACCEPTED food posts
+    val pendingPosts = getFoodPostsByStatus(FoodPostStatus.PENDING)
+    val acceptedPosts = getFoodPostsByStatus(FoodPostStatus.ACCEPTED)
+    (pendingPosts ++ acceptedPosts).sortBy(_.timestamp).reverse
   }
   
   def searchFoodPosts(searchTerm: String): List[FoodPost] = {

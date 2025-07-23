@@ -64,7 +64,7 @@ object DatabaseSchema {
         quantity TEXT NOT NULL,
         location TEXT NOT NULL,
         expiry_date TEXT,
-        status TEXT NOT NULL DEFAULT 'OPEN',
+        status TEXT NOT NULL DEFAULT 'PENDING',
         accepted_by TEXT,
         is_moderated BOOLEAN NOT NULL DEFAULT 0,
         moderator_id TEXT,

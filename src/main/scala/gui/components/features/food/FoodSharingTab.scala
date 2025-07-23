@@ -7,6 +7,7 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.utils.GuiUtils
 import gui.dialogs.features.food.FoodPostDialog
+import gui.dialogs.features.food.FoodPostDetailsDialog
 import gui.dialogs.common.CommentDialog
 import gui.components.common.public.BaseTabComponent
 import service.CommunityEngagementService
@@ -21,6 +22,7 @@ class FoodSharingTab(
 ) extends BaseTabComponent {
   
   private val foodPostsList = new ListView[String]()
+  private var currentPosts: List[model.FoodPost] = List.empty // Store current posts for reference
   private val filterCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer("All", "OFFER", "REQUEST")
     value = "All"
@@ -51,9 +53,8 @@ class FoodSharingTab(
         } else {
           import model.FoodPostType
           val postType = if (filterType == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-          val filtered = service.getFoodPostsByType(postType)
-          val items = filtered.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
-          foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
+          currentPosts = service.getFoodPostsByType(postType)
+          updateListView()
         }
       }
     }
@@ -101,6 +102,18 @@ class FoodSharingTab(
       center = foodPostsList
     }
     
+    // Add double-click handler to show details
+    foodPostsList.onMouseClicked = (event) => {
+      if (event.clickCount == 2) {
+        val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
+        if (selectedIndex >= 0 && selectedIndex < currentPosts.length) {
+          val selectedPost = currentPosts(selectedIndex)
+          val detailsDialog = new FoodPostDetailsDialog(selectedPost, () => refreshFoodPosts())
+          detailsDialog.showAndWait()
+        }
+      }
+    }
+    
     new Tab {
       text = if (readOnlyMode) "🍕 Food Sharing" else "Food Sharing"
       content = mainContent
@@ -117,29 +130,29 @@ class FoodSharingTab(
   }
   
   private def refreshFoodPosts(): Unit = {
-    val posts = service.getFoodPosts
-    val items = posts.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
+    currentPosts = service.getFoodPosts
+    updateListView()
+  }
+  
+  private def updateListView(): Unit = {
+    val items = currentPosts.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
     foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
   
   private def handleAcceptFoodPost(): Unit = {
     val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0) {
-      val posts = if (filterCombo.value.value == "All") {
-        service.getFoodPosts
-      } else {
-        import model.FoodPostType
-        val postType = if (filterCombo.value.value == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-        service.getFoodPostsByType(postType)
-      }
-      if (selectedIndex < posts.length) {
-        val post = posts(selectedIndex)
+    if (selectedIndex >= 0 && selectedIndex < currentPosts.length) {
+      val post = currentPosts(selectedIndex)
+      // Check if post is still pending
+      if (post.status == model.FoodPostStatus.PENDING) {
         if (service.acceptFoodPost(post.postId)) {
-          GuiUtils.showInfo("Success", "Food post accepted successfully!")
+          GuiUtils.showInfo("Success", "Food post accepted successfully! Status changed to ACCEPTED.")
           refreshFoodPosts()
         } else {
-          GuiUtils.showWarning("Failed", "Could not accept food post. It may already be accepted.")
+          GuiUtils.showWarning("Failed", "Could not accept food post. Please try again.")
         }
+      } else {
+        GuiUtils.showWarning("Cannot Accept", s"This post is already ${post.status}.")
       }
     } else {
       GuiUtils.showWarning("No Selection", "Please select a food post to accept.")
@@ -149,9 +162,8 @@ class FoodSharingTab(
   private def handleSearchFoodPosts(): Unit = {
     val searchTerm = searchField.text.value
     if (searchTerm.nonEmpty) {
-      val results = service.searchFoodPosts(searchTerm)
-      val items = results.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
-      foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
+      currentPosts = service.searchFoodPosts(searchTerm)
+      updateListView()
     } else {
       refreshFoodPosts()
     }

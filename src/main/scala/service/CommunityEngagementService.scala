@@ -219,6 +219,12 @@ class CommunityEngagementService {
   
   def acceptFoodPost(postId: String): Boolean = {
     currentUser.exists { user =>
+      dbService.updateFoodPostStatus(postId, FoodPostStatus.ACCEPTED, Some(user.userId))
+    }
+  }
+  
+  def completeFoodPost(postId: String): Boolean = {
+    currentUser.exists { user =>
       dbService.updateFoodPostStatus(postId, FoodPostStatus.COMPLETED, Some(user.userId))
     }
   }
