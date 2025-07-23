@@ -17,90 +17,120 @@ import model.{FoodStock, FoodCategory, StockStatus}
  */
 class FoodStockTab extends BaseTabComponent {
   
-  private val stocksList = new ListView[String]()
+  // Styled combo boxes
   private val categoryCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer(
       ("All" :: FoodCategory.values.map(_.toString).toList): _*
     )
     value = "All"
+    prefWidth = 180
   }
+  
   private val statusCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer(
       "All", "IN_STOCK", "LOW_STOCK", "OUT_OF_STOCK", "EXPIRED"
     )
     value = "All"
-  }
-  private val searchField = new TextField {
-    promptText = "Search food items..."
+    prefWidth = 150
   }
   
+  private val searchField = new TextField {
+    promptText = "Search food items..."
+    prefWidth = 250
+  }
+  
+  private var stocksList: ListView[String] = _
+  
   override def build(): Tab = {
+    // Enhanced stock list with better styling - initialize first
+    stocksList = new ListView[String]() {
+      prefHeight = 400
+    }
+    
+    // Now we can safely refresh stocks
     refreshStocks()
     
-    val addStockButton = new Button("➕ Add New Stock") {
-      style = "-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;"
+    val addStockButton = new Button("Add New Stock") {
+      prefWidth = 120
       onAction = (_: ActionEvent) => handleAddStock()
     }
     
-    val editStockButton = new Button("✏️ Edit Stock") {
-      style = "-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"
+    val editStockButton = new Button("Edit Stock") {
+      prefWidth = 120
       onAction = (_: ActionEvent) => handleEditStock()
     }
     
-    val manageStockButton = new Button("📦 Manage Stock") {
-      style = "-fx-background-color: #ffc107; -fx-text-fill: black; -fx-font-weight: bold;"
+    val manageStockButton = new Button("Manage Stock") {
+      prefWidth = 120
       onAction = (_: ActionEvent) => handleManageStock()
     }
     
-    val deleteStockButton = new Button("🗑️ Delete Stock") {
-      style = "-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold;"
+    val deleteStockButton = new Button("Delete Stock") {
+      prefWidth = 120
       onAction = (_: ActionEvent) => handleDeleteStock()
     }
     
-    val viewHistoryButton = new Button("📊 View History") {
-      style = "-fx-background-color: #6f42c1; -fx-text-fill: white; -fx-font-weight: bold;"
+    val viewHistoryButton = new Button("View History") {
+      prefWidth = 120
       onAction = (_: ActionEvent) => handleViewHistory()
     }
     
-    val filterButton = new Button("🔍 Filter") {
+    val filterButton = new Button("Filter") {
+      prefWidth = 80
       onAction = (_: ActionEvent) => handleFilter()
     }
     
     val searchButton = new Button("Search") {
+      prefWidth = 80
       onAction = (_: ActionEvent) => handleSearch()
     }
     
-    val refreshButton = new Button("🔄 Refresh") {
+    val refreshButton = new Button("Refresh") {
+      prefWidth = 80
       onAction = (_: ActionEvent) => refreshStocks()
     }
     
-    val exportButton = new Button("📋 Export") {
+    val exportButton = new Button("Export") {
+      prefWidth = 80
       onAction = (_: ActionEvent) => handleExport()
     }
     
-    val alertsButton = new Button("⚠️ Alerts") {
-      style = "-fx-background-color: #fd7e14; -fx-text-fill: white; -fx-font-weight: bold;"
+    val alertsButton = new Button("Alerts") {
+      prefWidth = 80
       onAction = (_: ActionEvent) => handleShowAlerts()
     }
     
-    // Main action buttons
-    val mainControls = new HBox {
-      spacing = 10
-      padding = Insets(10)
-      children = Seq(addStockButton, editStockButton, manageStockButton, deleteStockButton, viewHistoryButton)
+    // Main action buttons - arranged in a grid for better organization
+    val topButtonRow = new HBox {
+      spacing = 15
+      padding = Insets(15)
+      alignment = Pos.Center
+      children = Seq(addStockButton, editStockButton, manageStockButton)
     }
     
-    // Filter controls
+    val bottomButtonRow = new HBox {
+      spacing = 15
+      padding = Insets(0, 15, 15, 15)
+      alignment = Pos.Center
+      children = Seq(deleteStockButton, viewHistoryButton)
+    }
+    
+    // Filter controls with better spacing and alignment
     val filterControls = new HBox {
-      spacing = 10
-      padding = Insets(10)
+      spacing = 15
+      padding = Insets(15)
       alignment = Pos.CenterLeft
       children = Seq(
-        new Label("Category:"),
+        new Label("Category:") {
+          prefWidth = 80
+        },
         categoryCombo,
-        new Label("Status:"),
+        new Label("Status:") {
+          prefWidth = 60
+        },
         statusCombo,
         filterButton,
+        new Region { HBox.setHgrow(this, Priority.Always) }, // Spacer
         refreshButton,
         alertsButton,
         exportButton
@@ -110,8 +140,15 @@ class FoodStockTab extends BaseTabComponent {
     // Search controls
     val searchControls = new HBox {
       spacing = 10
-      padding = Insets(10)
-      children = Seq(searchField, searchButton)
+      padding = Insets(0, 15, 15, 15)
+      alignment = Pos.CenterLeft
+      children = Seq(
+        new Label("Search:") {
+          prefWidth = 60
+        },
+        searchField, 
+        searchButton
+      )
     }
     
     // Side panel with stats and info
@@ -119,15 +156,24 @@ class FoodStockTab extends BaseTabComponent {
     
     val mainContent = new HBox {
       spacing = 20
-      padding = Insets(20)
+      padding = Insets(10)
       children = Seq(
         new VBox {
-          spacing = 10
+          spacing = 0
           children = Seq(
-            mainControls,
-            filterControls, 
+            topButtonRow,
+            bottomButtonRow,
+            new Separator(),
+            filterControls,
             searchControls,
-            stocksList
+            new VBox {
+              spacing = 10
+              padding = Insets(15)
+              children = Seq(
+                new Label("Food Stock Items"),
+                stocksList
+              )
+            }
           )
           HBox.setHgrow(this, Priority.Always)
         },
@@ -161,26 +207,28 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def updateStocksList(stocks: List[FoodStock]): Unit = {
-    val items = stocks.map { stock =>
-      val status = stock.getStockStatus
-      val statusIcon = status match {
-        case StockStatus.IN_STOCK => "✅"
-        case StockStatus.LOW_STOCK => "⚠️"
-        case StockStatus.OUT_OF_STOCK => "❌"
-        case StockStatus.EXPIRED => "💀"
+    if (stocksList != null) {
+      val items = stocks.map { stock =>
+        val status = stock.getStockStatus
+        val statusIcon = status match {
+          case StockStatus.IN_STOCK => "✅"
+          case StockStatus.LOW_STOCK => "⚠️"
+          case StockStatus.OUT_OF_STOCK => "❌"
+          case StockStatus.EXPIRED => "💀"
+        }
+        
+        val expiryInfo = stock.getDaysUntilExpiry match {
+          case Some(days) if days <= 0 => " (EXPIRED)"
+          case Some(days) if days <= 7 => s" (${days}d left)"
+          case Some(days) => s" (${days}d left)"
+          case None => ""
+        }
+        
+        s"$statusIcon [${stock.category}] ${stock.foodName} - ${stock.currentQuantity} ${stock.unit} " +
+        s"(Min: ${stock.minimumThreshold}) @ ${stock.location}$expiryInfo"
       }
-      
-      val expiryInfo = stock.getDaysUntilExpiry match {
-        case Some(days) if days <= 0 => " (EXPIRED)"
-        case Some(days) if days <= 7 => s" (${days}d left)"
-        case Some(days) => s" (${days}d left)"
-        case None => ""
-      }
-      
-      s"$statusIcon [${stock.category}] ${stock.foodName} - ${stock.currentQuantity} ${stock.unit} " +
-      s"(Min: ${stock.minimumThreshold}) @ ${stock.location}$expiryInfo"
+      stocksList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
-    stocksList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
   
   private def handleAddStock(): Unit = {
@@ -302,32 +350,34 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def getSelectedStock(): Option[FoodStock] = {
-    val selectedIndex = stocksList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0) {
-      val allStocks = service.getAllFoodStocks
-      // Apply current filters to get the displayed list
-      val category = categoryCombo.value.value
-      val status = statusCombo.value.value
-      val searchTerm = searchField.text.value.trim
-      
-      var filteredStocks = allStocks
-      
-      if (category != "All") {
-        val categoryEnum = FoodCategory.valueOf(category)
-        filteredStocks = filteredStocks.filter(_.category == categoryEnum)
-      }
-      
-      if (status != "All") {
-        val statusEnum = StockStatus.valueOf(status)
-        filteredStocks = filteredStocks.filter(_.getStockStatus == statusEnum)
-      }
-      
-      if (searchTerm.nonEmpty) {
-        filteredStocks = service.searchFoodStocks(searchTerm)
-      }
-      
-      if (selectedIndex < filteredStocks.length) {
-        Some(filteredStocks(selectedIndex))
+    if (stocksList != null) {
+      val selectedIndex = stocksList.selectionModel().selectedIndex.value
+      if (selectedIndex >= 0) {
+        val allStocks = service.getAllFoodStocks
+        // Apply current filters to get the displayed list
+        val category = categoryCombo.value.value
+        val status = statusCombo.value.value
+        val searchTerm = searchField.text.value.trim
+        
+        var filteredStocks = allStocks
+        
+        if (category != "All") {
+          val categoryEnum = FoodCategory.valueOf(category)
+          filteredStocks = filteredStocks.filter(_.category == categoryEnum)
+        }
+        
+        if (status != "All") {
+          val statusEnum = StockStatus.valueOf(status)
+          filteredStocks = filteredStocks.filter(_.getStockStatus == statusEnum)
+        }
+        
+        if (searchTerm.nonEmpty) {
+          filteredStocks = service.searchFoodStocks(searchTerm)
+        }
+        
+        if (selectedIndex < filteredStocks.length) {
+          Some(filteredStocks(selectedIndex))
+        } else None
       } else None
     } else None
   }
