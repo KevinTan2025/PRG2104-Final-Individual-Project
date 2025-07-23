@@ -232,11 +232,21 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def handleAddStock(): Unit = {
+    if (!service.isLoggedIn) {
+      GuiUtils.showWarning("Login Required", "Please login to add new stock items.")
+      return
+    }
+    
     val dialog = new FoodStockDialog(None, () => refreshStocks())
     dialog.showAndWait()
   }
-  
+
   private def handleEditStock(): Unit = {
+    if (!service.isLoggedIn) {
+      GuiUtils.showWarning("Login Required", "Please login to edit stock items.")
+      return
+    }
+    
     getSelectedStock() match {
       case Some(stock) =>
         val dialog = new FoodStockDialog(Some(stock), () => refreshStocks())
@@ -245,8 +255,13 @@ class FoodStockTab extends BaseTabComponent {
         GuiUtils.showWarning("No Selection", "Please select a stock item to edit.")
     }
   }
-  
+
   private def handleManageStock(): Unit = {
+    if (!service.isLoggedIn) {
+      GuiUtils.showWarning("Login Required", "Please login to manage stock quantities.")
+      return
+    }
+    
     getSelectedStock() match {
       case Some(stock) =>
         val dialog = new StockMovementDialog(stock, () => refreshStocks())
@@ -255,8 +270,13 @@ class FoodStockTab extends BaseTabComponent {
         GuiUtils.showWarning("No Selection", "Please select a stock item to manage.")
     }
   }
-  
+
   private def handleDeleteStock(): Unit = {
+    if (!service.isLoggedIn) {
+      GuiUtils.showWarning("Login Required", "Please login to delete stock items.")
+      return
+    }
+    
     getSelectedStock() match {
       case Some(stock) =>
         val confirm = GuiUtils.showConfirmation(
@@ -327,6 +347,11 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def handleExport(): Unit = {
+    if (!service.isLoggedIn) {
+      GuiUtils.showWarning("Login Required", "Please login to export stock data.")
+      return
+    }
+    
     val stocks = service.getAllFoodStocks
     val exportDialog = new ExportStockDialog(stocks)
     exportDialog.showAndWait()
