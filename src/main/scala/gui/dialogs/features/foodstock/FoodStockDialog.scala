@@ -31,40 +31,48 @@ class FoodStockDialog(
     dialog.title = if (isEditing) "编辑库存商品 - Edit Food Stock Item" else "添加新库存 - Add New Food Stock"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
-    dialog.minWidth = 500
-    dialog.minHeight = 600
+    dialog.minWidth = 650
+    dialog.minHeight = 700
     
     val foodNameField = new EnhancedTextField("Food item name") { 
       text = existingStock.map(_.foodName).getOrElse("")
+      prefWidth = 350
     }
     
     val categoryCombo = new ComboBox[String] {
       items = scalafx.collections.ObservableBuffer(FoodCategory.values.map(_.toString): _*)
       value = existingStock.map(_.category.toString).getOrElse("OTHER")
+      prefWidth = 350
     }
     
     val quantityField = new EnhancedTextField("Current quantity") { 
       text = existingStock.map(_.currentQuantity.toString).getOrElse("")
+      prefWidth = 350
     }
     
     val unitField = new EnhancedTextField("Unit (kg, pieces, bottles, etc.)") { 
       text = existingStock.map(_.unit).getOrElse("")
+      prefWidth = 350
     }
     
     val thresholdField = new EnhancedTextField("Minimum threshold") { 
       text = existingStock.map(_.minimumThreshold.toString).getOrElse("")
+      prefWidth = 350
     }
     
     val locationField = new EnhancedTextField("Storage location") {
       text = existingStock.map(_.location).getOrElse("Main Storage")
+      prefWidth = 350
     }
     
     val isPackagedCheck = new CheckBox("Is packaged food") {
       selected = existingStock.map(_.isPackaged).getOrElse(false)
+      style = "-fx-font-size: 14px;"
     }
     
     val hasExpiryCheck = new CheckBox("Has expiry date") {
       selected = existingStock.flatMap(_.expiryDate).isDefined
+      style = "-fx-font-size: 14px;"
     }
     
     val expiryDatePicker = new EnhancedDatePicker()
@@ -80,7 +88,9 @@ class FoodStockDialog(
     
     val notesArea = new TextArea {
       promptText = "Notes (optional)"
-      prefRowCount = 2
+      prefRowCount = 3
+      prefWidth = 350
+      wrapText = true
       text = if (isEditing) "Stock item updated" else "Initial stock entry"
     }
     
@@ -163,42 +173,66 @@ class FoodStockDialog(
 
     val saveButton = new Button(if (isEditing) "Update" else "Add") {
       onAction = _ => handleSave()
+      style = "-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6;"
+      prefWidth = 100
     }
     
     val cancelButton = new Button("Cancel") {
       onAction = _ => dialog.close()
+      style = "-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 6;"
+      prefWidth = 100
     }
     
     val grid = new GridPane {
-      hgap = 10
-      vgap = 10
-      padding = Insets(20)
+      hgap = 15
+      vgap = 15
+      padding = Insets(25)
       
-      add(new Label("Food Name:"), 0, 0)
+      // Helper function to create styled labels
+      def createLabel(text: String): Label = new Label(text) {
+        style = "-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #495057;"
+        prefWidth = 180
+      }
+      
+      add(createLabel("Food Name:"), 0, 0)
       add(foodNameField, 1, 0)
-      add(new Label("Category:"), 0, 1)
+      
+      add(createLabel("Category:"), 0, 1)
       add(categoryCombo, 1, 1)
-      add(new Label("Current Quantity:"), 0, 2)
+      
+      add(createLabel("Current Quantity:"), 0, 2)
       add(quantityField, 1, 2)
-      add(new Label("Unit:"), 0, 3)
+      
+      add(createLabel("Unit:"), 0, 3)
       add(unitField, 1, 3)
-      add(new Label("Minimum Threshold:"), 0, 4)
+      
+      add(createLabel("Minimum Threshold:"), 0, 4)
       add(thresholdField, 1, 4)
-      add(new Label("Location:"), 0, 5)
+      
+      add(createLabel("Location:"), 0, 5)
       add(locationField, 1, 5)
-      add(isPackagedCheck, 0, 6)
-      add(new Label(""), 1, 6)
-      add(hasExpiryCheck, 0, 7)
-      add(expiryDatePicker.control, 1, 7)
-      add(new Label("Notes:"), 0, 8)
+      
+      add(createLabel("Packaging:"), 0, 6)
+      add(isPackagedCheck, 1, 6)
+      
+      add(createLabel("Expiry Date:"), 0, 7)
+      add(new VBox {
+        spacing = 5
+        children = Seq(hasExpiryCheck, expiryDatePicker.control)
+      }, 1, 7)
+      
+      add(createLabel("Notes:"), 0, 8)
       add(notesArea, 1, 8)
+      
+      add(new Label(), 0, 9) // Empty cell for spacing
       add(new HBox {
-        spacing = 10
+        spacing = 15
+        alignment = scalafx.geometry.Pos.CenterRight
         children = Seq(saveButton, cancelButton)
       }, 1, 9)
     }
     
-    dialog.scene = new Scene(grid, 550, 600)
+    dialog.scene = new Scene(grid, 650, 700)
     dialog.showAndWait()
   }
 }
