@@ -67,12 +67,11 @@ class FoodStockDialog(
       selected = existingStock.flatMap(_.expiryDate).isDefined
     }
     
-    val expiryDatePicker = new EnhancedDatePicker() {
-      control.disable = !hasExpiryCheck.selected.value
-      // Set existing expiry date if available
-      existingStock.flatMap(_.expiryDate).foreach { expiry =>
-        setValue(expiry.toLocalDate)
-      }
+    val expiryDatePicker = new EnhancedDatePicker()
+    expiryDatePicker.control.disable = !hasExpiryCheck.selected.value
+    // Set existing expiry date if available
+    existingStock.flatMap(_.expiryDate).foreach { expiry =>
+      expiryDatePicker.setValue(expiry.toLocalDate)
     }
     
     hasExpiryCheck.onAction = _ => {

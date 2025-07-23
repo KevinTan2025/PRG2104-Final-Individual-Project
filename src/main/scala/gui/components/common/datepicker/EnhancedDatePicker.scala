@@ -15,18 +15,26 @@ class EnhancedDatePicker {
   private var displayMonth: LocalDate = LocalDate.now().withDayOfMonth(1)
   
   private def updateDisplayText(): Unit = {
-    button.text = selectedDate.map(_.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-      .getOrElse("Select Date")
+    dateField.text = selectedDate.map(_.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+      .getOrElse("")
   }
   
-  val button = new Button("Select Date") {
-    style = "-fx-background-color: #f0f2f5; -fx-text-fill: #1c1e21; -fx-background-radius: 8; -fx-padding: 12 16;"
-    font = Font.font("System", 14)
-    minWidth = 150
+  private val dateField = new TextField {
+    promptText = "Select Date"
+    editable = false
+    style = "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 6;"
+  }
+  
+  private val dateButton = new Button("📅") {
+    style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6;"
     onAction = _ => showCalendar()
   }
   
-  val control: Button = button
+  val control: HBox = new HBox {
+    spacing = 5
+    children = Seq(dateField, dateButton)
+    alignment = Pos.CenterLeft
+  }
   
   def getValue: Option[LocalDate] = selectedDate
   
