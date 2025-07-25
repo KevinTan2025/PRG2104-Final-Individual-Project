@@ -341,7 +341,7 @@ object DatabaseSchema {
          (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
       eventId, "admin1",
-      "Community Garden Workshop",
+      "",
       "Learn how to start and maintain a community garden. All skill levels welcome!",
       "Community Center Room A",
       DatabaseConnection.formatDateTime(startTime),

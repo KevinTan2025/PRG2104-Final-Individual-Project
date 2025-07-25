@@ -402,13 +402,13 @@ class CommunityEngagementService {
   }
 
   /**
-   * Event Management Operations (Simplified)
+   * Event Management Operations (Database-backed)
    */
   
   def createEvent(title: String, description: String, location: String, 
                  startDateTime: LocalDateTime, endDateTime: LocalDateTime, 
                  maxParticipants: Option[Int] = None): Option[Event] = {
-    currentUser.map { user =>
+    currentUser.flatMap { user =>
       val event = Event(
         eventId = UUID.randomUUID().toString,
         organizerId = user.userId,
@@ -419,34 +419,62 @@ class CommunityEngagementService {
         endDateTime = endDateTime,
         maxParticipants = maxParticipants
       )
-      // For now, return the event (implement database storage later)
-      event
+      
+      if (dbService.saveEvent(event)) {
+        Some(event)
+      } else {
+        None
+      }
     }
   }
   
   def getUpcomingEvents: List[Event] = {
-    List.empty
+    dbService.getUpcomingEvents()
+  }
+  
+  def getAllEvents: List[Event] = {
+    dbService.getAllEvents()
   }
   
   def rsvpToEvent(eventId: String): Boolean = {
     currentUser.exists { user =>
-      // For now, return true (implement database storage later)
-      true
+      dbService.rsvpToEvent(eventId, user.userId)
     }
   }
   
   def cancelRsvp(eventId: String): Boolean = {
     currentUser.exists { user =>
-      true
+      dbService.cancelEventRsvp(eventId, user.userId)
     }
   }
   
   def getMyEvents(userId: String): List[Event] = {
-    List.empty
+    dbService.getUserEvents(userId)
   }
   
   def searchEvents(searchTerm: String): List[Event] = {
-    List.empty
+    dbService.searchEvents(searchTerm)
+  }
+  
+  def getEventsByOrganizer(organizerId: String): List[Event] = {
+    dbService.getEventsByOrganizer(organizerId)
+  }
+  
+  def getEventById(eventId: String): Option[Event] = {
+    dbService.getEventById(eventId)
+  }
+  
+  def updateEvent(event: Event): Boolean = {
+    dbService.updateEvent(event)
+  }
+  
+  def deleteEvent(eventId: String): Boolean = {
+    currentUser.exists { user =>
+      // Check if user is the organizer or an admin
+      val event = dbService.getEventById(eventId)
+      event.exists(e => e.organizerId == user.userId || user.hasAdminPrivileges) &&
+      dbService.deleteEvent(eventId)
+    }
   }
   
   /**

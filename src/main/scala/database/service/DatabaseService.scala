@@ -21,6 +21,7 @@ class DatabaseService {
   private val stockMovementDAO = new StockMovementDAO()
   private val discussionTopicDAO = new DiscussionTopicDAO()
   private val discussionReplyDAO = new DiscussionReplyDAO()
+  private val eventDAO = new EventDAO()
   
   // Manager instances for food stock
   val foodStockManager = new FoodStockManager()
@@ -453,6 +454,58 @@ class DatabaseService {
   
   def getReplyCountForTopic(topicId: String): Int = {
     discussionReplyDAO.getReplyCountForTopic(topicId)
+  }
+
+  /**
+   * Event Operations
+   */
+  
+  def saveEvent(event: Event): Boolean = {
+    eventDAO.insert(event)
+  }
+  
+  def updateEvent(event: Event): Boolean = {
+    eventDAO.update(event)
+  }
+  
+  def deleteEvent(eventId: String): Boolean = {
+    eventDAO.delete(eventId)
+  }
+  
+  def getEventById(eventId: String): Option[Event] = {
+    eventDAO.findById(eventId)
+  }
+  
+  def getAllEvents(): List[Event] = {
+    eventDAO.findAll()
+  }
+  
+  def getUpcomingEvents(): List[Event] = {
+    eventDAO.findUpcomingEvents()
+  }
+  
+  def getEventsByOrganizer(organizerId: String): List[Event] = {
+    eventDAO.findEventsByOrganizer(organizerId)
+  }
+  
+  def searchEvents(searchTerm: String): List[Event] = {
+    eventDAO.searchEvents(searchTerm)
+  }
+  
+  def rsvpToEvent(eventId: String, userId: String): Boolean = {
+    eventDAO.rsvpToEvent(eventId, userId)
+  }
+  
+  def cancelEventRsvp(eventId: String, userId: String): Boolean = {
+    eventDAO.cancelRsvp(eventId, userId)
+  }
+  
+  def getEventRsvpCount(eventId: String): Int = {
+    eventDAO.getRsvpCount(eventId)
+  }
+  
+  def getUserEvents(userId: String): List[Event] = {
+    eventDAO.getUserEvents(userId)
   }
 }
 
