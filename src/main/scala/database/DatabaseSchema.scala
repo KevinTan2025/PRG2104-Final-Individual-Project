@@ -239,31 +239,46 @@ object DatabaseSchema {
     import java.time.LocalDateTime
     import java.util.UUID
     
-    // Insert sample users with default passwords
-    val defaultPassword = "Password123!"  // Demo password for all sample users
+    // Insert sample users with different passwords for admins and users
+    val defaultPassword = "Password123!"  // Demo password for regular users
+    val adminPassword = "Admin123*"       // Demo password for admin users
     val defaultPasswordHash = PasswordHasher.hashPassword(defaultPassword)
-    
+    val adminPasswordHash = PasswordHasher.hashPassword(adminPassword)
+
     val sampleUsers = List(
       ("admin1", "admin", "admin@community.org", "System Administrator", "admin@community.org", true),
-      ("user1", "john_doe", "john@example.com", "John Doe", "john@example.com", false),
-      ("user2", "jane_smith", "jane@example.com", "Jane Smith", "jane@example.com", false)
+      ("admin2", "community_manager", "manager@community.org", "Community Manager", "manager@community.org", true),
+      ("user1", "john", "john@example.com", "John Doe", "john@example.com", false),
+      ("user2", "jane", "jane@example.com", "Jane Smith", "jane@example.com", false),
+      ("user3", "mike", "mike@example.com", "Mike Wilson", "mike@example.com", false),
+      ("user4", "sarah", "sarah@example.com", "Sarah Brown", "sarah@example.com", false),
+      ("user5", "david_", "david@example.com", "David Lee", "david@example.com", false),
+      ("user6", "emily", "emily@example.com", "Emily Chen", "emily@example.com", false),
+      ("user7", "alex", "alex@example.com", "Alex Garcia", "alex@example.com", false),
+      ("user8", "lisa", "lisa@example.com", "Lisa Taylor", "lisa@example.com", false),
+      ("user9", "ryan", "ryan@example.com", "Ryan Johnson", "ryan@example.com", false),
+      ("user10", "maria", "maria@example.com", "Maria Rodriguez", "maria@example.com", false)
     )
-    
+
     sampleUsers.foreach { case (userId, username, email, name, contactInfo, isAdmin) =>
+      // Use admin password hash for admin users, regular password hash for others
+      val passwordHash = if (isAdmin) adminPasswordHash else defaultPasswordHash
+      
       DatabaseConnection.executeUpdate(
         """INSERT OR IGNORE INTO users 
            (user_id, username, email, name, contact_info, is_admin, password_hash, created_at, updated_at) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        userId, username, email, name, contactInfo, isAdmin, defaultPasswordHash,
+        userId, username, email, name, contactInfo, isAdmin, passwordHash,
         DatabaseConnection.formatDateTime(LocalDateTime.now()),
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
-    }
-    
-    // Insert sample announcements
+    }    // Insert sample announcements
     val announcement1Id = UUID.randomUUID().toString
     val announcement2Id = UUID.randomUUID().toString
-    
+    val announcement3Id = UUID.randomUUID().toString
+    val announcement4Id = UUID.randomUUID().toString
+    val announcement5Id = UUID.randomUUID().toString
+
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO announcements 
          (announcement_id, author_id, title, content, announcement_type, created_at, updated_at) 
@@ -275,7 +290,7 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now()),
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
-    
+
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO announcements 
          (announcement_id, author_id, title, content, announcement_type, created_at, updated_at) 
@@ -287,11 +302,51 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now()),
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
-    
-    // Insert sample food posts
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO announcements 
+         (announcement_id, author_id, title, content, announcement_type, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      announcement3Id, "admin2",
+      "New Community Garden Project",
+      "Exciting news! We're starting a community garden project behind the community center. Everyone is welcome to participate and learn sustainable gardening techniques.",
+      "COMMUNITY_EVENT",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO announcements 
+         (announcement_id, author_id, title, content, announcement_type, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      announcement4Id, "admin1",
+      "Holiday Food Drive - Help Needed!",
+      "We're organizing a holiday food drive for families in need. Please donate non-perishable items or volunteer to help with distribution.",
+      "FOOD_DISTRIBUTION",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(3)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(3))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO announcements 
+         (announcement_id, author_id, title, content, announcement_type, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      announcement5Id, "admin2",
+      "Cooking Workshop Series Starting Soon",
+      "Learn how to prepare healthy, budget-friendly meals! Our cooking workshop series starts next week. Limited spots available.",
+      "SKILL_SHARING",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
+    )    // Insert sample food posts
     val foodPost1Id = UUID.randomUUID().toString
     val foodPost2Id = UUID.randomUUID().toString
-    
+    val foodPost3Id = UUID.randomUUID().toString
+    val foodPost4Id = UUID.randomUUID().toString
+    val foodPost5Id = UUID.randomUUID().toString
+    val foodPost6Id = UUID.randomUUID().toString
+    val foodPost7Id = UUID.randomUUID().toString
+    val foodPost8Id = UUID.randomUUID().toString
+
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
@@ -304,7 +359,7 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now()),
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
-    
+
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
@@ -316,9 +371,90 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now()),
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO food_posts 
+         (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      foodPost3Id, "user3",
+      "Homemade bread sharing",
+      "I bake too much bread every week! Come pick up some fresh loaves.",
+      "OFFER", "6 loaves", "Maple Street Community Kitchen",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(2)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(2))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO food_posts 
+         (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      foodPost4Id, "user4",
+      "Need ingredients for family dinner",
+      "Looking for rice, beans, and vegetables to cook for my elderly neighbors.",
+      "REQUEST", "Enough for 8 people", "West End",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO food_posts 
+         (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      foodPost5Id, "user5",
+      "Surplus from farmers market",
+      "Got extra fruits and vegetables from the farmers market. Perfect for families!",
+      "OFFER", "Mixed produce boxes", "Eastside Parking Lot",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(3)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO food_posts 
+         (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      foodPost6Id, "user6",
+      "Baby food and formula needed",
+      "New parent in need of baby food and formula. Any help appreciated!",
+      "REQUEST", "Baby supplies", "Central District",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO food_posts 
+         (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      foodPost7Id, "user7",
+      "Community soup kitchen donation",
+      "Restaurant closing early - have leftover prepared meals to share!",
+      "OFFER", "15 prepared meals", "River Street",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusHours(6)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusMinutes(30)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusMinutes(30))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO food_posts 
+         (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      foodPost8Id, "user8",
+      "Pantry staples for student housing",
+      "College students looking for pantry essentials - pasta, rice, canned goods.",
+      "REQUEST", "Pantry basics", "University District",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2))
+    )
     
-    // Insert sample discussion topic
+    // Insert sample discussion topics
     val topicId = UUID.randomUUID().toString
+    val topic2Id = UUID.randomUUID().toString
+    val topic3Id = UUID.randomUUID().toString
+    val topic4Id = UUID.randomUUID().toString
+    val topic5Id = UUID.randomUUID().toString
+    val topic6Id = UUID.randomUUID().toString
+
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
@@ -330,18 +466,84 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now()),
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_topics 
+         (topic_id, author_id, title, description, category, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      topic2Id, "user3",
+      "Best practices for food preservation",
+      "What are your favorite methods for preserving fresh produce? Share your techniques!",
+      "FOOD_PRESERVATION",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_topics 
+         (topic_id, author_id, title, description, category, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      topic3Id, "user5",
+      "Community cookbook project",
+      "Anyone interested in creating a community cookbook with budget-friendly recipes?",
+      "COMMUNITY_PROJECTS",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_topics 
+         (topic_id, author_id, title, description, category, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      topic4Id, "user7",
+      "Reducing food waste in our community",
+      "How can we work together to reduce food waste? Share your ideas and success stories.",
+      "SUSTAINABILITY",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_topics 
+         (topic_id, author_id, title, description, category, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      topic5Id, "user9",
+      "Local farmers market recommendations",
+      "Which farmers markets in our area offer the best value and quality? Let's help each other find great deals!",
+      "RESOURCE_SHARING",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(12)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(12))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_topics 
+         (topic_id, author_id, title, description, category, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)""",
+      topic6Id, "user10",
+      "Teaching kids about healthy eating",
+      "Parents and educators: how do you encourage children to eat healthy on a budget?",
+      "EDUCATION",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(3)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(3))
+    )
     
-    // Insert sample event
+    // Insert sample events
     val eventId = UUID.randomUUID().toString
+    val event2Id = UUID.randomUUID().toString
+    val event3Id = UUID.randomUUID().toString
+    val event4Id = UUID.randomUUID().toString
+    val event5Id = UUID.randomUUID().toString
+    val event6Id = UUID.randomUUID().toString
+
     val startTime = LocalDateTime.now().plusDays(7)
     val endTime = startTime.plusHours(3)
-    
+
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO events 
          (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
       eventId, "admin1",
-      "",
+      "Community Garden Workshop",
       "Learn how to start and maintain a community garden. All skill levels welcome!",
       "Community Center Room A",
       DatabaseConnection.formatDateTime(startTime),
@@ -350,7 +552,211 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now()),
       DatabaseConnection.formatDateTime(LocalDateTime.now())
     )
-    
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO events 
+         (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      event2Id, "user3",
+      "Cooking Class: Healthy Meals on a Budget",
+      "Learn to prepare nutritious, affordable meals for your family. Ingredients provided!",
+      "Community Kitchen",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(3)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(3).plusHours(2)),
+      15,
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO events 
+         (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      event3Id, "admin2",
+      "Monthly Food Distribution",
+      "Free groceries for community members in need. First come, first served!",
+      "Community Center Parking Lot",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(5)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(5).plusHours(4)),
+      null,
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO events 
+         (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      event4Id, "user5",
+      "Seed Swap and Plant Exchange",
+      "Bring your extra seeds, seedlings, or plants to trade with fellow gardeners!",
+      "Central Park Pavilion",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(10)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(10).plusHours(3)),
+      25,
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO events 
+         (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      event5Id, "user8",
+      "Food Preservation Workshop",
+      "Learn canning, pickling, and other preservation techniques to make your food last longer.",
+      "Library Meeting Room",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(14)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(14).plusHours(3)),
+      12,
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO events 
+         (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+      event6Id, "user10",
+      "Community Potluck Dinner",
+      "Bring a dish to share and meet your neighbors! A great way to build community connections.",
+      "Community Center Main Hall",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(12)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(12).plusHours(3)),
+      50,
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(18)),
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(18))
+    )
+
+    // Insert sample discussion replies
+    val reply1Id = UUID.randomUUID().toString
+    val reply2Id = UUID.randomUUID().toString
+    val reply3Id = UUID.randomUUID().toString
+    val reply4Id = UUID.randomUUID().toString
+    val reply5Id = UUID.randomUUID().toString
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_replies 
+         (reply_id, topic_id, author_id, content, created_at) 
+         VALUES (?, ?, ?, ?, ?)""",
+      reply1Id, topicId, "user4",
+      "Great question! I've had success with container gardening on my apartment balcony. Cherry tomatoes and herbs work really well in small spaces.",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(2))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_replies 
+         (reply_id, topic_id, author_id, content, created_at) 
+         VALUES (?, ?, ?, ?, ?)""",
+      reply2Id, topic2Id, "user6",
+      "I love dehydrating fruits and vegetables! It's a great way to preserve the harvest and they make healthy snacks.",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_replies 
+         (reply_id, topic_id, author_id, content, created_at) 
+         VALUES (?, ?, ?, ?, ?)""",
+      reply3Id, topic3Id, "user2",
+      "I'm definitely interested! I have some amazing family recipes that are both cheap and nutritious. When do we start?",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_replies 
+         (reply_id, topic_id, author_id, content, created_at) 
+         VALUES (?, ?, ?, ?, ?)""",
+      reply4Id, topic4Id, "user9",
+      "Meal planning has been a game changer for our family. We waste so much less food now that we plan our weeks in advance.",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO discussion_replies 
+         (reply_id, topic_id, author_id, content, created_at) 
+         VALUES (?, ?, ?, ?, ?)""",
+      reply5Id, topic5Id, "user7",
+      "The Saturday morning market at Central Square has amazing prices, especially in the last hour before closing!",
+      DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(3))
+    )
+
+    // Insert sample event RSVPs
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
+         VALUES (?, ?, ?)""",
+      eventId, "user1", DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
+         VALUES (?, ?, ?)""",
+      eventId, "user2", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
+         VALUES (?, ?, ?)""",
+      event2Id, "user4", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(12))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
+         VALUES (?, ?, ?)""",
+      event2Id, "user6", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
+         VALUES (?, ?, ?)""",
+      event3Id, "user8", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
+    )
+
+    // Insert sample notifications
+    val notif1Id = UUID.randomUUID().toString
+    val notif2Id = UUID.randomUUID().toString
+    val notif3Id = UUID.randomUUID().toString
+    val notif4Id = UUID.randomUUID().toString
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO notifications 
+         (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+      notif1Id, "user1", "admin1",
+      "ANNOUNCEMENT", "New Community Event",
+      "A new community garden workshop has been scheduled. Check it out!",
+      eventId, DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(2))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO notifications 
+         (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+      notif2Id, "user2", "user1",
+      "FOOD_POST", "Food Available",
+      "Fresh vegetables are available for pickup at the community center.",
+      foodPost1Id, DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(1))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO notifications 
+         (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+      notif3Id, "user3", "user4",
+      "DISCUSSION", "Reply to Your Post",
+      "Someone replied to your discussion about urban gardening tips.",
+      topicId, DatabaseConnection.formatDateTime(LocalDateTime.now().minusMinutes(30))
+    )
+
+    DatabaseConnection.executeUpdate(
+      """INSERT OR IGNORE INTO notifications 
+         (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+      notif4Id, "user5", "admin2",
+      "EVENT_REMINDER", "Event Tomorrow",
+      "Don't forget about the cooking class tomorrow at 2 PM!",
+      event2Id, DatabaseConnection.formatDateTime(LocalDateTime.now().minusMinutes(15))
+    )
+
     // Insert sample food stock items
     val sampleFoodStocks = List(
       ("stock1", "Rice", "GRAINS", 25.5, "kg", 5.0, Some(LocalDateTime.now().plusMonths(6)), true, "Dry Storage"),
@@ -389,8 +795,17 @@ object DatabaseSchema {
     }
     
     println("Sample data inserted successfully!")
-    println("Sample users created with default password: 'Password123!'")
-    println("Available users: admin/john_doe/jane_smith")
+    println("Sample users created with passwords:")
+    println("  - Admin users (admin, community_manager): 'Admin123*'")
+    println("  - Regular users: 'Password123!'")
+    println("Available users: admin/community_manager/john_doe/jane_smith/mike_wilson/sarah_brown/david_lee/emily_chen/alex_garcia/lisa_taylor/ryan_johnson/maria_rodriguez")
+    println("Sample community data includes:")
+    println("  - 5 announcements from admins and community members")
+    println("  - 8 food posts (offers and requests)")
+    println("  - 6 discussion topics on various community subjects")
+    println("  - 6 upcoming community events")
+    println("  - Discussion replies and event RSVPs")
+    println("  - Sample notifications for users")
     println("Sample food stock items created for testing inventory management.")
   }
   
