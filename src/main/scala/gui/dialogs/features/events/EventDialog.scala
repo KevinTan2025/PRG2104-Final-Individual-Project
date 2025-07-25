@@ -20,23 +20,31 @@ class EventDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "创建活动 - Create Event"
+    dialog.title = "Create Event"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
-    dialog.minWidth = 550
-    dialog.minHeight = 500
+    dialog.minWidth = 600
+    dialog.minHeight = 600
     
-    val titleField = new EnhancedTextField("Event title")
+    val titleField = new EnhancedTextField("Event title") {
+      prefWidth = 350
+    }
     val descriptionArea = new TextArea { 
       promptText = "Description"
       prefRowCount = 3
+      prefWidth = 350
+      wrapText = true
     }
-    val locationField = new EnhancedTextField("Event location")
+    val locationField = new EnhancedTextField("Event location") {
+      prefWidth = 350
+    }
     val startDatePicker = new EnhancedDatePicker()
     val startTimePicker = new EnhancedTimePicker()
     val endDatePicker = new EnhancedDatePicker()
     val endTimePicker = new EnhancedTimePicker()
-    val maxParticipantsField = new EnhancedTextField("Max participants (optional)")
+    val maxParticipantsField = new EnhancedTextField("Max participants (optional)") {
+      prefWidth = 350
+    }
     
     val createButton = new Button("Create") {
       onAction = _ => {
@@ -91,32 +99,56 @@ class EventDialog(onSuccess: () => Unit) {
     
     val grid = new GridPane {
       hgap = 10
-      vgap = 10
+      vgap = 15
       padding = Insets(20)
       
-      add(new Label("Title:"), 0, 0)
+      add(new Label("Title:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 0)
       add(titleField, 1, 0)
-      add(new Label("Location:"), 0, 1)
+      
+      add(new Label("Location:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 1)
       add(locationField, 1, 1)
-      add(new Label("Start Date:"), 0, 2)
+      
+      add(new Label("Start Date:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 2)
       add(startDatePicker.control, 1, 2)
-      add(new Label("Start Time:"), 0, 3)
+      
+      add(new Label("Start Time:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 3)
       add(startTimePicker.control, 1, 3)
-      add(new Label("End Date:"), 0, 4)
+      
+      add(new Label("End Date:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 4)
       add(endDatePicker.control, 1, 4)
-      add(new Label("End Time:"), 0, 5)
+      
+      add(new Label("End Time:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 5)
       add(endTimePicker.control, 1, 5)
-      add(new Label("Max Participants:"), 0, 6)
+      
+      add(new Label("Max Participants:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 6)
       add(maxParticipantsField, 1, 6)
-      add(new Label("Description:"), 0, 7)
+      
+      add(new Label("Description:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 7)
       add(descriptionArea, 1, 7)
+      
       add(new HBox {
         spacing = 10
         children = Seq(createButton, cancelButton)
       }, 1, 8)
     }
     
-    dialog.scene = new Scene(grid, 400, 500)
+    dialog.scene = new Scene(grid, 600, 600)
     dialog.showAndWait()
   }
 }

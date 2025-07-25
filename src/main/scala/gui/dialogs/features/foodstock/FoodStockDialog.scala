@@ -28,7 +28,7 @@ class FoodStockDialog(
   private val isEditing = existingStock.isDefined
   
   def showAndWait(): Unit = {
-    dialog.title = if (isEditing) "编辑库存商品 - Edit Food Stock Item" else "添加新库存 - Add New Food Stock"
+    dialog.title = if (isEditing) "Edit Food Stock Item" else "添加新库存 - Add New Food Stock"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
     dialog.minWidth = 650

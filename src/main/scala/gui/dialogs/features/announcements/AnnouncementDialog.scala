@@ -18,21 +18,26 @@ class AnnouncementDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "创建公告 - Create Announcement"
+    dialog.title = "Create Announcement"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
-    dialog.minWidth = 450
-    dialog.minHeight = 400
+    dialog.minWidth = 550
+    dialog.minHeight = 450
     
-    val titleField = new EnhancedTextField("Announcement title")
+    val titleField = new EnhancedTextField("Announcement title") {
+      prefWidth = 300
+    }
     val contentArea = new TextArea { 
       promptText = "Announcement content"
       prefRowCount = 5
+      prefWidth = 300
+      wrapText = true
     }
     
     val typeCombo = new ComboBox[String] {
       items = scalafx.collections.ObservableBuffer("GENERAL", "FOOD_DISTRIBUTION", "EVENTS", "TIPS", "EMERGENCY")
       value = "GENERAL"
+      prefWidth = 300
     }
     
     val createButton = new Button("Create") {
@@ -62,22 +67,31 @@ class AnnouncementDialog(onSuccess: () => Unit) {
     
     val grid = new GridPane {
       hgap = 10
-      vgap = 10
+      vgap = 15
       padding = Insets(20)
       
-      add(new Label("Title:"), 0, 0)
+      add(new Label("Title:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 0)
       add(titleField, 1, 0)
-      add(new Label("Type:"), 0, 1)
+      
+      add(new Label("Type:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 1)
       add(typeCombo, 1, 1)
-      add(new Label("Content:"), 0, 2)
+      
+      add(new Label("Content:") {
+        style = "-fx-font-weight: bold;"
+      }, 0, 2)
       add(contentArea, 1, 2)
+      
       add(new HBox {
         spacing = 10
         children = Seq(createButton, cancelButton)
       }, 1, 3)
     }
     
-    dialog.scene = new Scene(grid, 400, 300)
+    dialog.scene = new Scene(grid, 550, 450)
     dialog.showAndWait()
   }
 }

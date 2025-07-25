@@ -16,7 +16,7 @@ class CommentDialog(itemTitle: String, onSuccess: (String) => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "添加评论 - Add Comment"
+    dialog.title = "Add Comment"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
     dialog.minWidth = 500

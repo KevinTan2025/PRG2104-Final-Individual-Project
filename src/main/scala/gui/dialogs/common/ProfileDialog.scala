@@ -20,7 +20,7 @@ class ProfileDialog {
     service.getCurrentUser match {
       case Some(user) =>
         val dialog = new Dialog[Unit]()
-        dialog.title = "用户资料 - User Profile"
+        dialog.title = "User Profile"
         dialog.headerText = s"Edit profile for ${user.username}"
         dialog.resizable = true
         

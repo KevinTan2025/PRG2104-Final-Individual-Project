@@ -32,7 +32,7 @@ class StockMovementDialog(
   }
   
   def showAndWait(): Unit = {
-    dialog.title = s"库存管理 - Stock Management: ${stock.foodName}"
+    dialog.title = s"Stock Management: ${stock.foodName}"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
     dialog.minWidth = 500

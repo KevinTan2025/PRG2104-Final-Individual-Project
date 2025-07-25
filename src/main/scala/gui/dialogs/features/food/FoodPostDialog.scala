@@ -20,7 +20,7 @@ class FoodPostDialog(onSuccess: () => Unit) {
   private val dialog = new Stage()
   
   def showAndWait(): Unit = {
-    dialog.title = "创建食物分享 - Create Food Post"
+    dialog.title = "Create Food Post"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
     dialog.minWidth = 550
