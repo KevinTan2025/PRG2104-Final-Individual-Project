@@ -8,24 +8,17 @@ import scalafx.event.ActionEvent
 import scalafx.Includes._
 import gui.components.common.public.BaseTabComponent
 
-/**
- * Application information tab component
- * Displays app version, author information, GitHub repository, and other metadata
- * 安全级别: PUBLIC - 应用信息对所有用户可见
- */
+
+// This tab provides detailed information about the application, including version, author, and technical details.
+// It is designed to be informative and user-friendly, with a clean layout and easy navigation.
+
 class AppInfoTab extends BaseTabComponent {
   
   // Application metadata
   private val appName = "Community Engagement Platform"
-  private val appVersion = "0.1.0-SNAPSHOT"
+  private val appVersion = "Version 1.0.0"
   private val appDescription = "A platform to facilitate communication and collaboration among community members for ending hunger, achieving food security, improving nutrition, and promoting sustainable agriculture (UN Goal 2)."
-  private val authorName = "Kevin Tan"
-  private val authorEmail = "kevin.tan@student.example.com"
-  private val githubRepo = "https://github.com/KevinTan2025/PRG2104-Final-Individual-Project"
-  private val scalaVersion = "3.3.4"
-  private val javaVersion = System.getProperty("java.version")
   private val buildDate = "2025-07-17"
-  private val license = "MIT License"
   
   override def build(): Tab = {
     val tabContent = createInfoContent()
@@ -60,10 +53,6 @@ class AppInfoTab extends BaseTabComponent {
         createAppInfoSection(),
         createSeparator(),
         createAuthorInfoSection(),
-        createSeparator(),
-        createTechnicalInfoSection(),
-        createSeparator(),
-        createLinksSection(),
         createSeparator(),
         createLegalSection()
       )
@@ -126,49 +115,14 @@ class AppInfoTab extends BaseTabComponent {
       
       children = Seq(
         createSectionTitle("Author Information"),
-        createInfoRow("Developer:", authorName),
-        createInfoRow("Email:", authorEmail),
-        createInfoRow("Institution:", "Singapore Institute of Technology"),
+        createInfoRow("Developer:", "Kevin Tan"),
+        createInfoRow("Email:", "me@kevintan.pro"),
+        createInfoRow("Institution:", "Sunway University Malaysia"),
         createInfoRow("Course:", "PRG2104 - Object-Oriented Programming")
       )
     }
   }
   
-  /**
-   * Creates the technical information section
-   */
-  private def createTechnicalInfoSection(): VBox = {
-    new VBox {
-      spacing = 15
-      
-      children = Seq(
-        createSectionTitle("Technical Information"),
-        createInfoRow("Language:", "Scala"),
-        createInfoRow("Scala Version:", scalaVersion),
-        createInfoRow("Java Version:", javaVersion),
-        createInfoRow("GUI Framework:", "ScalaFX"),
-        createInfoRow("Database:", "SQLite"),
-        createInfoRow("Build Tool:", "SBT (Simple Build Tool)")
-      )
-    }
-  }
-  
-  /**
-   * Creates the links section
-   */
-  private def createLinksSection(): VBox = {
-    new VBox {
-      spacing = 15
-      
-      children = Seq(
-        createSectionTitle("Project Links"),
-        createLinkRow("GitHub Repository:", githubRepo),
-        createLinkRow("Scala Official:", "https://www.scala-lang.org/"),
-        createLinkRow("ScalaFX:", "https://www.scalafx.org/"),
-        createLinkRow("UN SDG Goal 2:", "https://sdgs.un.org/goals/goal2")
-      )
-    }
-  }
   
   /**
    * Creates the legal information section
@@ -179,8 +133,7 @@ class AppInfoTab extends BaseTabComponent {
       
       children = Seq(
         createSectionTitle("Legal Information"),
-        createInfoRow("License:", license),
-        createInfoRow("Copyright:", s"© 2025 $authorName"),
+        createInfoRow("Copyright:", s"© 2025 Kevin Tan"),
         createDescriptionBox("Disclaimer:", 
           "This application is developed for educational purposes as part of the PRG2104 course. " +
           "It is designed to demonstrate object-oriented programming principles using Scala and GUI development with ScalaFX.")
