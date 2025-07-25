@@ -248,16 +248,16 @@ object DatabaseSchema {
     val sampleUsers = List(
       ("admin1", "admin", "admin@community.org", "System Administrator", "admin@community.org", true),
       ("admin2", "community_manager", "manager@community.org", "Community Manager", "manager@community.org", true),
-      ("user1", "john", "john@example.com", "John Doe", "john@example.com", false),
-      ("user2", "jane", "jane@example.com", "Jane Smith", "jane@example.com", false),
-      ("user3", "mike", "mike@example.com", "Mike Wilson", "mike@example.com", false),
-      ("user4", "sarah", "sarah@example.com", "Sarah Brown", "sarah@example.com", false),
-      ("user5", "david_", "david@example.com", "David Lee", "david@example.com", false),
-      ("user6", "emily", "emily@example.com", "Emily Chen", "emily@example.com", false),
-      ("user7", "alex", "alex@example.com", "Alex Garcia", "alex@example.com", false),
-      ("user8", "lisa", "lisa@example.com", "Lisa Taylor", "lisa@example.com", false),
-      ("user9", "ryan", "ryan@example.com", "Ryan Johnson", "ryan@example.com", false),
-      ("user10", "maria", "maria@example.com", "Maria Rodriguez", "maria@example.com", false)
+      ("john_doe", "john", "john@example.com", "John Doe", "john@example.com", false),
+      ("jane_smith", "jane", "jane@example.com", "Jane Smith", "jane@example.com", false),
+      ("mike_wilson", "mike", "mike@example.com", "Mike Wilson", "mike@example.com", false),
+      ("sarah_brown", "sarah", "sarah@example.com", "Sarah Brown", "sarah@example.com", false),
+      ("david_lee", "david_", "david@example.com", "David Lee", "david@example.com", false),
+      ("emily_chen", "emily", "emily@example.com", "Emily Chen", "emily@example.com", false),
+      ("alex_garcia", "alex", "alex@example.com", "Alex Garcia", "alex@example.com", false),
+      ("lisa_taylor", "lisa", "lisa@example.com", "Lisa Taylor", "lisa@example.com", false),
+      ("ryan_johnson", "ryan", "ryan@example.com", "Ryan Johnson", "ryan@example.com", false),
+      ("maria_rodriguez", "maria", "maria@example.com", "Maria Rodriguez", "maria@example.com", false)
     )
 
     sampleUsers.foreach { case (userId, username, email, name, contactInfo, isAdmin) =>
@@ -351,7 +351,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost1Id, "user1",
+      foodPost1Id, "john_doe",
       "Fresh vegetables available",
       "I have excess vegetables from my garden. Free to good home!",
       "OFFER", "5 bags", "Downtown Community Center",
@@ -364,7 +364,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost2Id, "user2",
+      foodPost2Id, "jane_smith",
       "Looking for canned goods",
       "Family in need of non-perishable food items.",
       "REQUEST", "Any amount", "North Side",
@@ -376,7 +376,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost3Id, "user3",
+      foodPost3Id, "mike_wilson",
       "Homemade bread sharing",
       "I bake too much bread every week! Come pick up some fresh loaves.",
       "OFFER", "6 loaves", "Maple Street Community Kitchen",
@@ -389,7 +389,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost4Id, "user4",
+      foodPost4Id, "sarah_brown",
       "Need ingredients for family dinner",
       "Looking for rice, beans, and vegetables to cook for my elderly neighbors.",
       "REQUEST", "Enough for 8 people", "West End",
@@ -401,7 +401,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost5Id, "user5",
+      foodPost5Id, "david_lee",
       "Surplus from farmers market",
       "Got extra fruits and vegetables from the farmers market. Perfect for families!",
       "OFFER", "Mixed produce boxes", "Eastside Parking Lot",
@@ -414,7 +414,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost6Id, "user6",
+      foodPost6Id, "emily_chen",
       "Baby food and formula needed",
       "New parent in need of baby food and formula. Any help appreciated!",
       "REQUEST", "Baby supplies", "Central District",
@@ -426,7 +426,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, expiry_date, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost7Id, "user7",
+      foodPost7Id, "alex_garcia",
       "Community soup kitchen donation",
       "Restaurant closing early - have leftover prepared meals to share!",
       "OFFER", "15 prepared meals", "River Street",
@@ -439,7 +439,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO food_posts 
          (post_id, author_id, title, description, post_type, quantity, location, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      foodPost8Id, "user8",
+      foodPost8Id, "lisa_taylor",
       "Pantry staples for student housing",
       "College students looking for pantry essentials - pasta, rice, canned goods.",
       "REQUEST", "Pantry basics", "University District",
@@ -459,7 +459,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)""",
-      topicId, "user1",
+      topicId, "john_doe",
       "Tips for Urban Gardening",
       "Let's share tips and experiences about growing food in urban environments.",
       "SUSTAINABLE_AGRICULTURE",
@@ -471,7 +471,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)""",
-      topic2Id, "user3",
+      topic2Id, "mike_wilson",
       "Best practices for food preservation",
       "What are your favorite methods for preserving fresh produce? Share your techniques!",
       "FOOD_PRESERVATION",
@@ -483,7 +483,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)""",
-      topic3Id, "user5",
+      topic3Id, "david_lee",
       "Community cookbook project",
       "Anyone interested in creating a community cookbook with budget-friendly recipes?",
       "COMMUNITY_PROJECTS",
@@ -495,7 +495,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)""",
-      topic4Id, "user7",
+      topic4Id, "alex_garcia",
       "Reducing food waste in our community",
       "How can we work together to reduce food waste? Share your ideas and success stories.",
       "SUSTAINABILITY",
@@ -507,7 +507,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)""",
-      topic5Id, "user9",
+      topic5Id, "ryan_johnson",
       "Local farmers market recommendations",
       "Which farmers markets in our area offer the best value and quality? Let's help each other find great deals!",
       "RESOURCE_SHARING",
@@ -519,7 +519,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_topics 
          (topic_id, author_id, title, description, category, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?)""",
-      topic6Id, "user10",
+      topic6Id, "maria_rodriguez",
       "Teaching kids about healthy eating",
       "Parents and educators: how do you encourage children to eat healthy on a budget?",
       "EDUCATION",
@@ -557,7 +557,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO events 
          (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      event2Id, "user3",
+      event2Id, "mike_wilson",
       "Cooking Class: Healthy Meals on a Budget",
       "Learn to prepare nutritious, affordable meals for your family. Ingredients provided!",
       "Community Kitchen",
@@ -587,7 +587,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO events 
          (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      event4Id, "user5",
+      event4Id, "david_lee",
       "Seed Swap and Plant Exchange",
       "Bring your extra seeds, seedlings, or plants to trade with fellow gardeners!",
       "Central Park Pavilion",
@@ -602,7 +602,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO events 
          (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      event5Id, "user8",
+      event5Id, "lisa_taylor",
       "Food Preservation Workshop",
       "Learn canning, pickling, and other preservation techniques to make your food last longer.",
       "Library Meeting Room",
@@ -617,7 +617,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO events 
          (event_id, organizer_id, title, description, location, start_datetime, end_datetime, max_participants, created_at, updated_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-      event6Id, "user10",
+      event6Id, "maria_rodriguez",
       "Community Potluck Dinner",
       "Bring a dish to share and meet your neighbors! A great way to build community connections.",
       "Community Center Main Hall",
@@ -639,7 +639,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_replies 
          (reply_id, topic_id, author_id, content, created_at) 
          VALUES (?, ?, ?, ?, ?)""",
-      reply1Id, topicId, "user4",
+      reply1Id, topicId, "sarah_brown",
       "Great question! I've had success with container gardening on my apartment balcony. Cherry tomatoes and herbs work really well in small spaces.",
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(2))
     )
@@ -648,7 +648,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_replies 
          (reply_id, topic_id, author_id, content, created_at) 
          VALUES (?, ?, ?, ?, ?)""",
-      reply2Id, topic2Id, "user6",
+      reply2Id, topic2Id, "emily_chen",
       "I love dehydrating fruits and vegetables! It's a great way to preserve the harvest and they make healthy snacks.",
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
     )
@@ -657,7 +657,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_replies 
          (reply_id, topic_id, author_id, content, created_at) 
          VALUES (?, ?, ?, ?, ?)""",
-      reply3Id, topic3Id, "user2",
+      reply3Id, topic3Id, "jane_smith",
       "I'm definitely interested! I have some amazing family recipes that are both cheap and nutritious. When do we start?",
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
     )
@@ -666,7 +666,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_replies 
          (reply_id, topic_id, author_id, content, created_at) 
          VALUES (?, ?, ?, ?, ?)""",
-      reply4Id, topic4Id, "user9",
+      reply4Id, topic4Id, "ryan_johnson",
       "Meal planning has been a game changer for our family. We waste so much less food now that we plan our weeks in advance.",
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8))
     )
@@ -675,7 +675,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO discussion_replies 
          (reply_id, topic_id, author_id, content, created_at) 
          VALUES (?, ?, ?, ?, ?)""",
-      reply5Id, topic5Id, "user7",
+      reply5Id, topic5Id, "alex_garcia",
       "The Saturday morning market at Central Square has amazing prices, especially in the last hour before closing!",
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(3))
     )
@@ -684,31 +684,31 @@ object DatabaseSchema {
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
          VALUES (?, ?, ?)""",
-      eventId, "user1", DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
+      eventId, "john_doe", DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(1))
     )
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
          VALUES (?, ?, ?)""",
-      eventId, "user2", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8))
+      eventId, "jane_smith", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(8))
     )
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
          VALUES (?, ?, ?)""",
-      event2Id, "user4", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(12))
+      event2Id, "sarah_brown", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(12))
     )
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
          VALUES (?, ?, ?)""",
-      event2Id, "user6", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
+      event2Id, "emily_chen", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
     )
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO event_rsvps (event_id, user_id, rsvp_date) 
          VALUES (?, ?, ?)""",
-      event3Id, "user8", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
+      event3Id, "lisa_taylor", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
     )
 
     // Insert sample notifications - use fixed IDs to prevent duplicates
@@ -721,7 +721,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO notifications 
          (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-      notif1Id, "user1", "admin1",
+      notif1Id, "john_doe", "admin1",
       "ANNOUNCEMENT", "New Community Event",
       "A new community garden workshop has been scheduled. Check it out!",
       eventId, DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(2))
@@ -731,7 +731,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO notifications 
          (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-      notif2Id, "user2", "user1",
+      notif2Id, "jane_smith", "john_doe",
       "FOOD_POST", "Food Available",
       "Fresh vegetables are available for pickup at the community center.",
       foodPost1Id, DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(1))
@@ -741,7 +741,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO notifications 
          (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-      notif3Id, "user3", "user4",
+      notif3Id, "mike_wilson", "sarah_brown",
       "DISCUSSION", "Reply to Your Post",
       "Someone replied to your discussion about urban gardening tips.",
       topicId, DatabaseConnection.formatDateTime(LocalDateTime.now().minusMinutes(30))
@@ -751,7 +751,7 @@ object DatabaseSchema {
       """INSERT OR IGNORE INTO notifications 
          (notification_id, recipient_id, sender_id, type, title, message, related_id, created_at) 
          VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
-      notif4Id, "user5", "admin2",
+      notif4Id, "david_lee", "admin2",
       "EVENT_REMINDER", "Event Tomorrow",
       "Don't forget about the cooking class tomorrow at 2 PM!",
       event2Id, DatabaseConnection.formatDateTime(LocalDateTime.now().minusMinutes(15))
@@ -836,7 +836,7 @@ object DatabaseSchema {
     println("Sample users created with passwords:")
     println("  - Admin users (admin, community_manager): 'Admin123*'")
     println("  - Regular users: 'Password123!'")
-    println("Available users: admin/community_manager/john_doe/jane_smith/mike_wilson/sarah_brown/david_lee/emily_chen/alex_garcia/lisa_taylor/ryan_johnson/maria_rodriguez")
+    println("Available users: admin/community_manager/john/jane/mike/sarah/david_/emily/alex/lisa/ryan/maria")
     println("Sample community data includes:")
     println("  - 5 announcements from admins and community members")
     println("  - 8 food posts (offers and requests)")
