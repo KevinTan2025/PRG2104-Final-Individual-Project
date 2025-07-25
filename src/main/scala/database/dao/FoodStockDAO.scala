@@ -283,7 +283,14 @@ class FoodStockDAO {
   private def resultSetToFoodStock(rs: ResultSet): FoodStock = {
     val stockId = rs.getString("stock_id")
     val foodName = rs.getString("food_name")
-    val category = FoodCategory.valueOf(rs.getString("category"))
+    val categoryStr = rs.getString("category")
+    val category = try {
+      FoodCategory.valueOf(categoryStr)
+    } catch {
+      case _: IllegalArgumentException =>
+        println(s"Unknown food category: $categoryStr, defaulting to OTHER")
+        FoodCategory.OTHER
+    }
     val currentQuantity = rs.getDouble("current_quantity")
     val unit = rs.getString("unit")
     val minimumThreshold = rs.getDouble("minimum_threshold")

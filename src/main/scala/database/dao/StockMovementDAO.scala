@@ -212,7 +212,14 @@ class StockMovementDAO {
   private def resultSetToStockMovement(rs: ResultSet): StockMovement = {
     val movementId = rs.getString("movement_id")
     val stockId = rs.getString("stock_id")
-    val actionType = StockActionType.valueOf(rs.getString("action_type"))
+    val actionTypeStr = rs.getString("action_type")
+    val actionType = try {
+      StockActionType.valueOf(actionTypeStr)
+    } catch {
+      case _: IllegalArgumentException =>
+        println(s"Unknown stock action type: $actionTypeStr, defaulting to ADJUSTMENT")
+        StockActionType.ADJUSTMENT
+    }
     val quantity = rs.getDouble("quantity")
     val previousQuantity = rs.getDouble("previous_quantity")
     val newQuantity = rs.getDouble("new_quantity")

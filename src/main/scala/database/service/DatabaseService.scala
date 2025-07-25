@@ -507,6 +507,90 @@ class DatabaseService {
   def getUserEvents(userId: String): List[Event] = {
     eventDAO.getUserEvents(userId)
   }
+  
+  /**
+   * Food Stock Operations
+   */
+  
+  def saveFoodStock(foodStock: FoodStock): Boolean = {
+    foodStockDAO.insert(foodStock)
+  }
+  
+  def findFoodStockById(stockId: String): Option[FoodStock] = {
+    foodStockDAO.findById(stockId)
+  }
+  
+  def getAllFoodStocks: List[FoodStock] = {
+    foodStockDAO.findAll()
+  }
+  
+  def getFoodStocksByCategory(category: FoodCategory): List[FoodStock] = {
+    foodStockDAO.findByCategory(category)
+  }
+  
+  def getFoodStocksByLocation(location: String): List[FoodStock] = {
+    foodStockDAO.findByLocation(location)
+  }
+  
+  def searchFoodStocks(searchTerm: String): List[FoodStock] = {
+    foodStockDAO.search(searchTerm)
+  }
+  
+  def updateFoodStock(foodStock: FoodStock): Boolean = {
+    foodStockDAO.update(foodStock)
+  }
+  
+  def deleteFoodStock(stockId: String): Boolean = {
+    foodStockDAO.delete(stockId)
+  }
+  
+  def getLowStockItems: List[FoodStock] = {
+    foodStockDAO.findLowStock()
+  }
+  
+  def getExpiredItems: List[FoodStock] = {
+    foodStockDAO.findExpired()
+  }
+  
+  def getExpiringSoonItems(days: Int = 7): List[FoodStock] = {
+    foodStockDAO.findExpiringSoon(days)
+  }
+  
+  def getFoodStockStatistics: (Int, Int, Int, Int) = {
+    foodStockDAO.getStatistics
+  }
+  
+  /**
+   * Stock Movement Operations
+   */
+  
+  def saveStockMovement(movement: StockMovement): Boolean = {
+    stockMovementDAO.insert(movement)
+  }
+  
+  def findStockMovementById(movementId: String): Option[StockMovement] = {
+    stockMovementDAO.findById(movementId)
+  }
+  
+  def getAllStockMovements: List[StockMovement] = {
+    stockMovementDAO.findAll()
+  }
+  
+  def getStockMovementsByStockId(stockId: String): List[StockMovement] = {
+    stockMovementDAO.findByStockId(stockId)
+  }
+  
+  def getStockMovementsByUser(userId: String): List[StockMovement] = {
+    stockMovementDAO.findByUserId(userId)
+  }
+  
+  def getStockMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
+    stockMovementDAO.findByActionType(actionType)
+  }
+  
+  def getStockMovementsByDateRange(startDate: java.time.LocalDateTime, endDate: java.time.LocalDateTime): List[StockMovement] = {
+    stockMovementDAO.findByDateRange(startDate, endDate)
+  }
 }
 
 /**
