@@ -1313,25 +1313,13 @@ This project comprehensively demonstrates the practical application of OOP core 
 
 ## 📞 Contact Information
 
-### 👨‍💻 Developer Information
+### 👨‍💻 Developer / Student Information
 
 ```
 Developer: Kevin Tan
-Student ID: [Student ID]
 Course: PRG2104 - Object-Oriented Programming
-Semester: Semester 4, 2025
+Intake: April 2024
 ```
-
-### 📧 Technical Support
-
-```
-Project Repository: https://github.com/KevinTan2025/final-project-KevinTan2025
-Issue Feedback: GitHub Issues
-Technical Documentation: See project Wiki
-Demo Video: [To be provided]
-```
-
----
 
 ## 📜 Copyright Notice
 
