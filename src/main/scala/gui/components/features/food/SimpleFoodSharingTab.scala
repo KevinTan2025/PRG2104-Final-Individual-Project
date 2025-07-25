@@ -9,17 +9,16 @@ import gui.dialogs.features.food.FoodPostDialog
 import gui.utils.GuiUtils
 import service.CommunityEngagementService
 
-/**
- * 简化的 Food Sharing 组件 - 完全自包含
- */
+
+// Minimalist Food Sharing tab component
 class SimpleFoodSharingTab extends BaseTabComponent {
   
-  // === 组件定义 - 直接设置尺寸 ===
+  // Customized list view for food posts
   private val foodPostsList = SimpleComponentBuilder.listView[String](650, 450)
   private val searchField = SimpleComponentBuilder.searchBox("Search food posts...", 250)
   private val typeFilterBox = SimpleComponentBuilder.filterBox("All", "OFFER", "REQUEST")
   
-  // === 按钮定义 ===
+  // Button Definitions - Unified API
   private val createBtn = SimpleComponentBuilder.button("Create Post", handleCreate)
   private val refreshBtn = SimpleComponentBuilder.button("Refresh", handleRefresh)
   private val searchBtn = SimpleComponentBuilder.button("Search", handleSearch)
@@ -27,10 +26,10 @@ class SimpleFoodSharingTab extends BaseTabComponent {
   private val filterBtn = SimpleComponentBuilder.button("Filter", handleFilter)
   
   override def build(): Tab = {
-    // 初始数据加载
+    // Load initial food posts
     handleRefresh()
-    
-    // 组合按钮 - 包含筛选器
+
+    // Button layout - including filter
     val buttons = new HBox(10) {
       children = List(createBtn, refreshBtn, typeFilterBox, filterBtn, acceptBtn)
       padding = Insets(10)
@@ -53,7 +52,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
     }
   }
   
-  // === 功能实现 ===
+  // Handles the refresh action to load food posts
   
   private def handleRefresh(): Unit = {
     val posts = service.getFoodPosts

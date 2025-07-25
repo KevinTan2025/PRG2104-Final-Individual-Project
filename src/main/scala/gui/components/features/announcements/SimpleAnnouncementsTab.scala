@@ -11,17 +11,21 @@ import gui.dialogs.common.CommentDialog
 import gui.components.common.public.{BaseTabComponent, SimpleComponentBuilder}
 import service.CommunityEngagementService
 
+
+
 /**
- * 简化版公告标签页 - 使用 SimpleComponentBuilder 统一构建组件
- * 安全级别: USER - 注册用户可以查看和创建公告
- */
+  * Minimalist Announcements Tab Component
+  * Provides a simple interface for viewing, creating, searching, commenting, and liking announcements.
+  * Uses SimpleComponentBuilder for consistent UI components.
+  */
+
 class SimpleAnnouncementsTab extends BaseTabComponent {
   
-  // === 组件定义 - 直接设置尺寸和样式 ===
+  // Customized list view for announcements
   private val announcementsList = SimpleComponentBuilder.listView[String](650, 450)
   private val searchField = SimpleComponentBuilder.searchBox("Search announcements...", 250)
-  
-  // === 按钮定义 - 使用统一 API ===  
+
+  // Button Definitions - Unified API
   private val createBtn = SimpleComponentBuilder.button("Create", handleCreate)
   private val refreshBtn = SimpleComponentBuilder.button("Refresh", handleRefresh)
   private val searchBtn = SimpleComponentBuilder.button("Search", handleSearch)
@@ -29,10 +33,10 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
   private val likeBtn = SimpleComponentBuilder.button("Like", handleLike)
   
   override def build(): Tab = {
-    // 初始数据加载
+    // Initial data loading
     handleRefresh()
-    
-    // 创建布局
+
+    // Create layout
     val buttons = new HBox(10) {
       children = List(createBtn, refreshBtn, commentBtn, likeBtn)
       padding = Insets(10)
@@ -55,8 +59,8 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
     }
   }
   
-  // === 功能实现 - 简单清晰 ===
-  
+  // Handles the refresh action to load announcements
+
   private def handleRefresh(): Unit = {
     val announcements = service.getAnnouncements
     val items = announcements.map(a => s"[${a.announcementType}] ${a.title} - ${a.timestamp}")

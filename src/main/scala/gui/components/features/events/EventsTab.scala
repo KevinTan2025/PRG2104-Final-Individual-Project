@@ -10,10 +10,9 @@ import gui.dialogs.features.events.EventDialog
 import gui.components.common.public.BaseTabComponent
 import service.CommunityEngagementService
 
-/**
- * Events tab component for managing community events
- * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以创建和参与活动
- */
+
+// This tab allows users to create, view, RSVP, cancel RSVP, and search for events.
+// It also supports read-only mode for users who are not logged in.
 class EventsTab(
   readOnlyMode: Boolean = false,
   onLoginPrompt: () => Unit = () => {}
@@ -80,7 +79,7 @@ class EventsTab(
       onAction = (_: ActionEvent) => refreshEvents()
     }
     
-    // 在只读模式下修改按钮文本
+    // Reading mode adjustments
     if (readOnlyMode) {
       createEventButton.text = "🔒 Login to Create Event"
       rsvpButton.text = "🔒 Login to RSVP"

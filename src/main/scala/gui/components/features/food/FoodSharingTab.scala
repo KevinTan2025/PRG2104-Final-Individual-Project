@@ -12,10 +12,10 @@ import gui.dialogs.common.CommentDialog
 import gui.components.common.public.BaseTabComponent
 import service.CommunityEngagementService
 
-/**
- * Food Sharing tab component for managing food posts
- * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以分享和请求食物
- */
+
+
+// This tab allows users to create, view, filter, search, and accept food posts.
+// It also supports read-only mode for users who are not logged in.
 class FoodSharingTab(
   readOnlyMode: Boolean = false,
   onLoginPrompt: () => Unit = () => {}
@@ -77,7 +77,7 @@ class FoodSharingTab(
       onAction = (_: ActionEvent) => refreshFoodPosts()
     }
     
-    // 在只读模式下修改按钮文本
+    // Reading mode adjustments
     if (readOnlyMode) {
       createButton.text = "🔒 Login to Post"
       acceptButton.text = "🔒 Login to Accept"

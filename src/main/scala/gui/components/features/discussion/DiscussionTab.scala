@@ -11,10 +11,9 @@ import gui.dialogs.features.discussion.{DiscussionTopicDialog, DiscussionTopicDe
 import service.CommunityEngagementService
 import model.{DiscussionCategory, DiscussionTopic}
 
-/**
- * Discussion tab component for managing community discussions
- * 安全级别: PUBLIC/USER - 匿名用户可以查看，注册用户可以参与讨论
- */
+
+// This tab allows users to create, view, filter, search, and interact with discussion topics.
+// It also supports read-only mode for users who are not logged in.
 class DiscussionTab(
   readOnlyMode: Boolean = false,
   onLoginPrompt: () => Unit = () => {}
@@ -79,7 +78,7 @@ class DiscussionTab(
       onAction = (_: ActionEvent) => refreshTopics()
     }
     
-    // 在只读模式下修改按钮文本
+    // Reading mode adjustments
     if (readOnlyMode) {
       createTopicButton.text = "🔒 Login to Create Topic"
       replyButton.text = "🔒 Login to Reply"
