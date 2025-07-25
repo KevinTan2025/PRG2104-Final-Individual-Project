@@ -272,12 +272,12 @@ object DatabaseSchema {
         DatabaseConnection.formatDateTime(LocalDateTime.now()),
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
-    }    // Insert sample announcements
-    val announcement1Id = UUID.randomUUID().toString
-    val announcement2Id = UUID.randomUUID().toString
-    val announcement3Id = UUID.randomUUID().toString
-    val announcement4Id = UUID.randomUUID().toString
-    val announcement5Id = UUID.randomUUID().toString
+    }    // Insert sample announcements - use fixed IDs to prevent duplicates
+    val announcement1Id = "announce-001-welcome"
+    val announcement2Id = "announce-002-food-dist"
+    val announcement3Id = "announce-003-garden"
+    val announcement4Id = "announce-004-holiday"
+    val announcement5Id = "announce-005-cooking"
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO announcements 
@@ -337,15 +337,15 @@ object DatabaseSchema {
       "SKILL_SHARING",
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6)),
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(6))
-    )    // Insert sample food posts
-    val foodPost1Id = UUID.randomUUID().toString
-    val foodPost2Id = UUID.randomUUID().toString
-    val foodPost3Id = UUID.randomUUID().toString
-    val foodPost4Id = UUID.randomUUID().toString
-    val foodPost5Id = UUID.randomUUID().toString
-    val foodPost6Id = UUID.randomUUID().toString
-    val foodPost7Id = UUID.randomUUID().toString
-    val foodPost8Id = UUID.randomUUID().toString
+    )    // Insert sample food posts - use fixed IDs to prevent duplicates
+    val foodPost1Id = "food-post-001-vegetables"
+    val foodPost2Id = "food-post-002-canned-goods"
+    val foodPost3Id = "food-post-003-bread"
+    val foodPost4Id = "food-post-004-family-dinner"
+    val foodPost5Id = "food-post-005-farmers-market"
+    val foodPost6Id = "food-post-006-baby-food"
+    val foodPost7Id = "food-post-007-soup-kitchen"
+    val foodPost8Id = "food-post-008-student-pantry"
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO food_posts 
@@ -447,13 +447,13 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(2))
     )
     
-    // Insert sample discussion topics
-    val topicId = UUID.randomUUID().toString
-    val topic2Id = UUID.randomUUID().toString
-    val topic3Id = UUID.randomUUID().toString
-    val topic4Id = UUID.randomUUID().toString
-    val topic5Id = UUID.randomUUID().toString
-    val topic6Id = UUID.randomUUID().toString
+    // Insert sample discussion topics - use fixed IDs to prevent duplicates
+    val topicId = "topic-001-urban-gardening"
+    val topic2Id = "topic-002-food-preservation"
+    val topic3Id = "topic-003-cookbook"
+    val topic4Id = "topic-004-food-waste"
+    val topic5Id = "topic-005-farmers-market"
+    val topic6Id = "topic-006-kids-nutrition"
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO discussion_topics 
@@ -527,13 +527,13 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusDays(3))
     )
     
-    // Insert sample events
-    val eventId = UUID.randomUUID().toString
-    val event2Id = UUID.randomUUID().toString
-    val event3Id = UUID.randomUUID().toString
-    val event4Id = UUID.randomUUID().toString
-    val event5Id = UUID.randomUUID().toString
-    val event6Id = UUID.randomUUID().toString
+    // Insert sample events - use fixed IDs to prevent duplicates
+    val eventId = "event-001-garden-workshop"
+    val event2Id = "event-002-cooking-class"
+    val event3Id = "event-003-food-distribution"
+    val event4Id = "event-004-seed-swap"
+    val event5Id = "event-005-preservation-workshop"
+    val event6Id = "event-006-potluck-dinner"
 
     val startTime = LocalDateTime.now().plusDays(7)
     val endTime = startTime.plusHours(3)
@@ -628,12 +628,12 @@ object DatabaseSchema {
       DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(18))
     )
 
-    // Insert sample discussion replies
-    val reply1Id = UUID.randomUUID().toString
-    val reply2Id = UUID.randomUUID().toString
-    val reply3Id = UUID.randomUUID().toString
-    val reply4Id = UUID.randomUUID().toString
-    val reply5Id = UUID.randomUUID().toString
+    // Insert sample discussion replies - use fixed IDs to prevent duplicates
+    val reply1Id = "reply-001-container-garden"
+    val reply2Id = "reply-002-dehydrating"
+    val reply3Id = "reply-003-cookbook-interest"
+    val reply4Id = "reply-004-meal-planning"
+    val reply5Id = "reply-005-market-tips"
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO discussion_replies 
@@ -711,11 +711,11 @@ object DatabaseSchema {
       event3Id, "user8", DatabaseConnection.formatDateTime(LocalDateTime.now().minusHours(4))
     )
 
-    // Insert sample notifications
-    val notif1Id = UUID.randomUUID().toString
-    val notif2Id = UUID.randomUUID().toString
-    val notif3Id = UUID.randomUUID().toString
-    val notif4Id = UUID.randomUUID().toString
+    // Insert sample notifications - use fixed IDs to prevent duplicates
+    val notif1Id = "notif-001-new-event"
+    val notif2Id = "notif-002-food-available"
+    val notif3Id = "notif-003-discussion-reply"
+    val notif4Id = "notif-004-event-reminder"
 
     DatabaseConnection.executeUpdate(
       """INSERT OR IGNORE INTO notifications 
@@ -782,8 +782,8 @@ object DatabaseSchema {
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
       
-      // Add initial stock movement record
-      val movementId = UUID.randomUUID().toString
+      // Add initial stock movement record - use stock ID based movement ID to prevent duplicates
+      val movementId = s"movement-initial-$stockId"
       DatabaseConnection.executeUpdate(
         """INSERT OR IGNORE INTO stock_movements 
            (movement_id, stock_id, action_type, quantity, previous_quantity, 

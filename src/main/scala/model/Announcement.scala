@@ -84,7 +84,7 @@ case class Announcement(
  * Enumeration for announcement types
  */
 enum AnnouncementType:
-  case FOOD_DISTRIBUTION, EVENTS, TIPS, GENERAL, EMERGENCY
+  case FOOD_DISTRIBUTION, EVENTS, TIPS, GENERAL, EMERGENCY, SKILL_SHARING, COMMUNITY_EVENT
 
 /**
  * Enumeration for priority levels

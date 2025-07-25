@@ -201,12 +201,21 @@ class DiscussionTopicDAO {
   }
   
   private def mapResultSetToTopic(rs: ResultSet): DiscussionTopic = {
+    val categoryStr = rs.getString("category")
+    val category = try {
+      DiscussionCategory.valueOf(categoryStr)
+    } catch {
+      case _: IllegalArgumentException =>
+        println(s"Unknown discussion category: $categoryStr, defaulting to GENERAL")
+        DiscussionCategory.GENERAL
+    }
+    
     val topic = DiscussionTopic(
       topicId = rs.getString("topic_id"),
       authorId = rs.getString("author_id"),
       title = rs.getString("title"),
       description = rs.getString("description"),
-      category = DiscussionCategory.valueOf(rs.getString("category")),
+      category = category,
       timestamp = DatabaseConnection.parseDateTime(rs.getString("created_at"))
     )
     

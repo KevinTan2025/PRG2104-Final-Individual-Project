@@ -153,7 +153,14 @@ class AnnouncementDAO {
     val authorId = rs.getString("author_id")
     val title = rs.getString("title")
     val content = rs.getString("content")
-    val announcementType = AnnouncementType.valueOf(rs.getString("announcement_type"))
+    val announcementTypeStr = rs.getString("announcement_type")
+    val announcementType = try {
+      AnnouncementType.valueOf(announcementTypeStr)
+    } catch {
+      case _: IllegalArgumentException =>
+        println(s"Unknown announcement type: $announcementTypeStr, defaulting to GENERAL")
+        AnnouncementType.GENERAL
+    }
     val isModerated = rs.getBoolean("is_moderated")
     val moderatorId = Option(rs.getString("moderator_id"))
     val likes = rs.getInt("likes")
