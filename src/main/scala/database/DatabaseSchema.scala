@@ -759,14 +759,52 @@ object DatabaseSchema {
 
     // Insert sample food stock items
     val sampleFoodStocks = List(
+      // IN_STOCK items (current quantity > minimum threshold)
       ("stock1", "Rice", "GRAINS", 25.5, "kg", 5.0, Some(LocalDateTime.now().plusMonths(6)), true, "Dry Storage"),
       ("stock2", "Apples", "FRUITS", 8.0, "kg", 2.0, Some(LocalDateTime.now().plusDays(14)), false, "Refrigerator"),
       ("stock3", "Canned Beans", "PROTEIN", 12.0, "cans", 3.0, Some(LocalDateTime.now().plusYears(1)), true, "Pantry"),
       ("stock4", "Fresh Milk", "DAIRY", 6.0, "liters", 2.0, Some(LocalDateTime.now().plusDays(7)), false, "Refrigerator"),
       ("stock5", "Bread", "GRAINS", 4.0, "loaves", 1.0, Some(LocalDateTime.now().plusDays(3)), true, "Bread Box"),
-      ("stock6", "Carrots", "VEGETABLES", 3.5, "kg", 1.0, Some(LocalDateTime.now().plusDays(10)), false, "Refrigerator"),
-      ("stock7", "Instant Noodles", "PACKAGED_FOOD", 20.0, "packs", 5.0, Some(LocalDateTime.now().plusMonths(8)), true, "Pantry"),
-      ("stock8", "Orange Juice", "BEVERAGES", 2.0, "bottles", 1.0, Some(LocalDateTime.now().plusDays(5)), true, "Refrigerator")
+      ("stock6", "Instant Noodles", "PACKAGED_FOOD", 20.0, "packs", 5.0, Some(LocalDateTime.now().plusMonths(8)), true, "Pantry"),
+      ("stock7", "Frozen Chicken", "FROZEN_FOOD", 15.0, "kg", 3.0, Some(LocalDateTime.now().plusMonths(3)), true, "Freezer"),
+      ("stock8", "Cookies", "SNACKS", 10.0, "boxes", 2.0, Some(LocalDateTime.now().plusDays(30)), true, "Pantry"),
+      
+      // LOW_STOCK items (current quantity <= minimum threshold but > 0)
+      ("stock9", "Carrots", "VEGETABLES", 1.5, "kg", 2.0, Some(LocalDateTime.now().plusDays(10)), false, "Refrigerator"),
+      ("stock10", "Orange Juice", "BEVERAGES", 1.0, "bottles", 2.0, Some(LocalDateTime.now().plusDays(5)), true, "Refrigerator"),
+      ("stock11", "Canned Tomatoes", "CANNED_FOOD", 2.0, "cans", 3.0, Some(LocalDateTime.now().plusMonths(18)), true, "Pantry"),
+      ("stock12", "Cheese", "DAIRY", 0.5, "kg", 1.0, Some(LocalDateTime.now().plusDays(12)), false, "Refrigerator"),
+      ("stock13", "Pasta", "GRAINS", 2.0, "kg", 3.0, Some(LocalDateTime.now().plusMonths(12)), true, "Dry Storage"),
+      ("stock14", "Bananas", "FRUITS", 1.0, "kg", 2.0, Some(LocalDateTime.now().plusDays(4)), false, "Counter"),
+      
+      // OUT_OF_STOCK items (current quantity = 0)
+      ("stock15", "Potato Chips", "SNACKS", 0.0, "bags", 5.0, Some(LocalDateTime.now().plusDays(45)), true, "Pantry"),
+      ("stock16", "Yogurt", "DAIRY", 0.0, "cups", 8.0, Some(LocalDateTime.now().plusDays(8)), false, "Refrigerator"),
+      ("stock17", "Frozen Vegetables", "FROZEN_FOOD", 0.0, "bags", 4.0, Some(LocalDateTime.now().plusMonths(6)), true, "Freezer"),
+      ("stock18", "Canned Soup", "CANNED_FOOD", 0.0, "cans", 6.0, Some(LocalDateTime.now().plusMonths(24)), true, "Pantry"),
+      
+      // EXPIRED items (past expiry date but may still have stock)
+      ("stock19", "Old Lettuce", "VEGETABLES", 2.0, "heads", 1.0, Some(LocalDateTime.now().minusDays(3)), false, "Refrigerator"),
+      ("stock20", "Expired Milk", "DAIRY", 1.5, "liters", 2.0, Some(LocalDateTime.now().minusDays(2)), false, "Refrigerator"),
+      ("stock21", "Stale Bread", "GRAINS", 1.0, "loaves", 1.0, Some(LocalDateTime.now().minusDays(5)), true, "Bread Box"),
+      ("stock22", "Old Yogurt", "DAIRY", 3.0, "cups", 2.0, Some(LocalDateTime.now().minusDays(1)), false, "Refrigerator"),
+      
+      // EXPIRING SOON items (expires within 3 days)
+      ("stock23", "Fresh Fish", "PROTEIN", 2.5, "kg", 1.0, Some(LocalDateTime.now().plusDays(1)), false, "Refrigerator"),
+      ("stock24", "Soft Cheese", "DAIRY", 0.8, "kg", 0.5, Some(LocalDateTime.now().plusDays(2)), false, "Refrigerator"),
+      ("stock25", "Fresh Berries", "FRUITS", 1.2, "kg", 0.5, Some(LocalDateTime.now().plusDays(3)), false, "Refrigerator"),
+      
+      // More diverse categories and locations
+      ("stock26", "Cooking Oil", "OTHER", 3.0, "bottles", 1.0, Some(LocalDateTime.now().plusMonths(18)), true, "Pantry"),
+      ("stock27", "Green Tea", "BEVERAGES", 5.0, "boxes", 2.0, Some(LocalDateTime.now().plusYears(2)), true, "Dry Storage"),
+      ("stock28", "Frozen Pizza", "FROZEN_FOOD", 6.0, "boxes", 2.0, Some(LocalDateTime.now().plusMonths(8)), true, "Freezer"),
+      ("stock29", "Peanut Butter", "PROTEIN", 4.0, "jars", 1.0, Some(LocalDateTime.now().plusMonths(12)), true, "Pantry"),
+      ("stock30", "Onions", "VEGETABLES", 5.0, "kg", 2.0, Some(LocalDateTime.now().plusDays(21)), false, "Storage Room"),
+      ("stock31", "Breakfast Cereal", "GRAINS", 8.0, "boxes", 3.0, Some(LocalDateTime.now().plusMonths(9)), true, "Pantry"),
+      ("stock32", "Ice Cream", "FROZEN_FOOD", 2.0, "tubs", 1.0, Some(LocalDateTime.now().plusMonths(6)), true, "Freezer"),
+      ("stock33", "Crackers", "SNACKS", 12.0, "boxes", 4.0, Some(LocalDateTime.now().plusMonths(10)), true, "Pantry"),
+      ("stock34", "Canned Corn", "CANNED_FOOD", 8.0, "cans", 3.0, Some(LocalDateTime.now().plusYears(2)), true, "Pantry"),
+      ("stock35", "Energy Drinks", "BEVERAGES", 24.0, "cans", 6.0, Some(LocalDateTime.now().plusMonths(15)), true, "Storage Room")
     )
     
     sampleFoodStocks.foreach { case (stockId, foodName, category, quantity, unit, threshold, expiryDate, isPackaged, location) =>

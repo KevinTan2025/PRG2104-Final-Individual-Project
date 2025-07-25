@@ -6,7 +6,7 @@ import java.time.LocalDateTime
  * Enumeration for food category
  */
 enum FoodCategory:
-  case VEGETABLES, FRUITS, GRAINS, PROTEIN, DAIRY, BEVERAGES, SNACKS, PACKAGED_FOOD, FROZEN_FOOD, CANNED_FOOD, OTHER
+  case ETABLES, FRUITS, GRAINS, PROTEIN, DAIRY, BEVERAGES, SNACKS, PACKAGED_FOOD, FROZEN_FOOD, CANNED_FOOD, OTHER
 
 /**
  * Enumeration for stock status
