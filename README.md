@@ -465,21 +465,6 @@ class UserDAO extends BaseDAO[User] {
 }
 ```
 
-### 📈 Database Performance Optimization
-
-#### Indexing Strategy
-
-```sql
--- Performance optimization indexes
-CREATE INDEX idx_announcements_author ON announcements(author_id);
-CREATE INDEX idx_food_posts_type ON food_posts(post_type);
-CREATE INDEX idx_food_posts_status ON food_posts(status);
-CREATE INDEX idx_events_datetime ON events(start_datetime);
-CREATE INDEX idx_notifications_recipient ON notifications(recipient_id);
-```
-
----
-
 ## 🎨 User Interface
 
 ### 🏠 Main Interface Tab System
@@ -789,9 +774,9 @@ class EnhancedActivityFeedComponent(
 
 ### 🏠 Main Interface
 
-```
-[screenshot_here: Main interface display with tab navigation]
+![Home Page - Guest](images/homepage.png)
 
+```
 Main Interface Features:
 ✅ Responsive tab layout
 ✅ Unified navigation bar
@@ -801,9 +786,9 @@ Main Interface Features:
 
 ### 🔐 Authentication Interface
 
-```
-[screenshot_here: Facebook-style authentication dialog]
+![Login / Register Dialog](images/login_register.png)
 
+```
 Authentication Interface Features:
 ✅ Modern design style
 ✅ Real-time input validation
@@ -813,9 +798,9 @@ Authentication Interface Features:
 
 ### 📧 OTP Verification Interface
 
-```
-[screenshot_here: Email verification code interface]
+![OTP Dialog](images/otp.png)
 
+```
 OTP Interface Features:
 ✅ Complete email simulation
 ✅ One-click copy verification code
@@ -825,9 +810,9 @@ OTP Interface Features:
 
 ### 📊 User Dashboard
 
-```
-[screenshot_here: User personal dashboard]
+![User Dialog](images/user.png)
 
+```
 Dashboard Features:
 ✅ Personal statistics
 ✅ Community activity updates
@@ -837,9 +822,9 @@ Dashboard Features:
 
 ### 🔧 Admin Panel
 
-```
-[screenshot_here: Administrator control panel]
+![Admin Dialog](images/admin.png)
 
+```
 Admin Panel Features:
 ✅ System overview statistics
 ✅ User management tools
@@ -849,9 +834,9 @@ Admin Panel Features:
 
 ### 🍽️ Food Sharing Interface
 
-```
-[screenshot_here: Food sharing list and creation dialog]
+![Food Sharing](images/foodsharing.png)
 
+```
 Food Sharing Features:
 ✅ Post food supply and demand information
 ✅ Search and filter functions
@@ -861,9 +846,9 @@ Food Sharing Features:
 
 ### 📦 Stock Management Interface
 
-```
-[screenshot_here: Food stock management interface]
+![Food Stock](images/foodstock.png)
 
+```
 Stock Management Features:
 ✅ Real-time stock monitoring
 ✅ Low stock alerts
@@ -873,9 +858,9 @@ Stock Management Features:
 
 ### 💬 Discussion Forum Interface
 
-```
-[screenshot_here: Community discussion forum]
+![Discussion Forum](images/discussion.png)
 
+```
 Forum Features:
 ✅ Categorized discussion topics
 ✅ Reply and like functions
@@ -885,29 +870,15 @@ Forum Features:
 
 ### 📅 Event Management Interface
 
-```
-[screenshot_here: Community event management]
+![Event](images/event.png)
 
+```
 Event Management Features:
 ✅ Event creation and editing
 ✅ RSVP registration system
 ✅ Participant management
 ✅ Event status tracking
 ```
-
-### 🔔 Notification Center
-
-```
-[screenshot_here: Notification management interface]
-
-Notification Center Features:
-✅ Real-time notification push
-✅ Categorized notification management
-✅ Read/unread status
-✅ Batch operation functions
-```
-
----
 
 ## 🚀 Getting Started
 
