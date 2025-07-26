@@ -810,7 +810,8 @@ OTP Interface Features:
 
 ### 📊 User Dashboard
 
-![User Dialog](images/user.png)
+<img src="images/user.png" alt="User Dialog" width="50%" />
+
 
 ```
 Dashboard Features:
