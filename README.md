@@ -823,7 +823,7 @@ Dashboard Features:
 
 ### 🔧 Admin Panel
 
-![Admin Dialog](images/admin.png)
+<img src="images/admin.png" alt="Admin Dialog" width="50%" />
 
 ```
 Admin Panel Features:
