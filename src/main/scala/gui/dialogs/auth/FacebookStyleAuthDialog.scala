@@ -263,7 +263,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
         loginUsernameField,
         loginPasswordField,
         loginButton,
-        new Label("Demo: admin/Admin123* or john_doe/Password123!") {
+        new Label("Demo: admin/Admin123* or john/Password123!") {
           style = "-fx-font-size: 11px; -fx-text-fill: #666; -fx-text-alignment: center;"
           wrapText = true
         },

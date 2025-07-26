@@ -85,7 +85,7 @@ object CommunityEngagementApp extends JFXApp3 {
           alignment = Pos.Center
           children = Seq(loginButton, registerButton)
         },
-        new Label("Demo credentials: admin/Admin123*, john_doe/Password123!") {
+        new Label("Demo credentials: admin/Admin123*, john/Password123!") {
           style = "-fx-font-size: 12px; -fx-text-fill: gray;"
         }
       )
