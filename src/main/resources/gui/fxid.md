@@ -41,6 +41,38 @@
 | `tabDiscussionForum` | Tab | 讨论论坛标签 - 社区讨论交流页面 |
 | `tabEvents` | Tab | 活动标签 - 社区活动信息页面 |
 
+## login.fxml - 登录界面
+
+该文件包含用户登录界面的组件。
+
+| FX:ID | 组件类型 | 用途说明 |
+|-------|----------|----------|
+| `loginUser` | TextField | 用户名或邮箱输入框 |
+| `loginPassword` | PasswordField | 密码输入框 |
+| `btnLogin` | Button | 登录按钮 - 用户点击进入登录流程 |
+| `btnRegister` | Button | 注册按钮 - 跳转到注册页面 |
+| `btnBack` | Button | 返回按钮 - 返回到上一个界面 |
+
+## register.fxml - 注册界面
+
+该文件包含用户注册界面的组件。
+
+| FX:ID | 组件类型 | 用途说明 |
+|-------|----------|----------|
+| `registerUser` | TextField | 用户名输入框 |
+| `registerName` | TextField | 用户全名输入框 |
+| `registerContact` | TextField | 联系信息输入框 |
+| `registerEmail` | TextField | 邮箱输入框 |
+| `registerPassword` | PasswordField | 密码输入框 |
+| `registerPassword1` | PasswordField | 重复密码输入框 |
+| `btnLogin` | Button | 发送验证邮件按钮 |
+| `btnRegister` | Button | 注册按钮 - 提交注册信息 |
+| `btnBack` | Button | 返回按钮 - 返回到上一个界面 |
+| `lblUsernameStatus` | Text | 用户名状态提示 |
+| `lblEmailStatus` | Text | 邮箱状态提示 |
+| `lblPasswordStatus` | Text | 密码状态提示 |
+| `lblPasswordRepeatStatus` | Text | 重复密码状态提示 |
+
 ## 使用说明
 
 ### FX:ID 的作用
