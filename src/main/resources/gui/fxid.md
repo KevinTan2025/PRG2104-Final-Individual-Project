@@ -2,9 +2,9 @@
 
 这个文档总结了项目中所有 FXML 文件的 FX:ID 及其用途说明。
 
-## auth.fxml - 认证界面
+## auth.fxml - 认证主界面
 
-该文件包含应用程序的登录/注册界面组件。
+该文件包含应用程序的主认证界面组件（欢迎页面）。
 
 | FX:ID | 组件类型 | 用途说明 |
 |-------|----------|----------|
@@ -84,6 +84,17 @@
 | `btnVerify` | Button | 验证按钮 - 验证用户输入的验证码 |
 | `btnResend` | Button | 重发按钮 - 重新发送验证邮件 |
 
+## emailNotification.fxml - 邮件通知界面
+
+该文件包含模拟邮件通知界面的组件，用于显示验证码邮件内容。
+
+| FX:ID | 组件类型 | 用途说明 |
+|-------|----------|----------|
+| `lblUserEmail` | Label | 收件人邮箱地址显示 |
+| `lblOTPCode` | Label | 验证码显示标签 |
+| `btnCopyOTP` | Button | 复制验证码按钮 - 将验证码复制到剪贴板 |
+| `btnCloseEmail` | Button | 关闭邮件按钮 - 关闭邮件通知窗口 |
+
 ## 使用说明
 
 ### FX:ID 的作用
@@ -93,11 +104,13 @@
 
 ### 命名规范
 项目中的 FX:ID 遵循以下命名规范：
-- **按钮**: `btn` + 功能描述 (如 `btnLogin`, `btnRegister`)
+- **按钮**: `btn` + 功能描述 (如 `btnLogin`, `btnRegister`, `btnCopyOTP`)
 - **菜单**: `menu` + 功能描述 (如 `menuFile`, `menuAccount`)
 - **菜单项**: `menuItem` + 功能描述 (如 `menuItemLogin`, `menuItemAbout`)
 - **标签页**: `tab` + 功能描述 (如 `tabHome`, `tabEvents`)
 - **容器**: 功能描述 + 类型 (如 `tabPaneMain`)
+- **标签**: `lbl` + 功能描述 (如 `lblUserEmail`, `lblOTPCode`)
+- **输入框**: 功能描述 + 类型 (如 `loginUser`, `registerOTP`)
 
 ### 开发建议
 1. 确保在控制器类中声明对应的 `@FXML` 字段
