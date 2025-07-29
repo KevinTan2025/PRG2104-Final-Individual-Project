@@ -1,0 +1,107 @@
+/* Main Layout */
+#grdMainLayout {
+    -fx-background-color: white;
+}
+
+/* Field Labels */
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+/* Input Fields */
+#txtTitle,
+#txtQuantity,
+#txtLocation {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8;
+}
+
+#txtTitle:focused,
+#txtQuantity:focused,
+#txtLocation:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 123, 255, 0.25), 4, 0, 0, 0);
+}
+
+/* Text Area */
+#txtDescription {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8;
+}
+
+#txtDescription:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 123, 255, 0.25), 4, 0, 0, 0);
+}
+
+/* ComboBox */
+#cmbType {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+#cmbType:focused {
+    -fx-border-color: #007bff;
+}
+
+/* DatePicker */
+#dpExpiry {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+#dpExpiry:focused {
+    -fx-border-color: #007bff;
+}
+
+#dpExpiry:disabled {
+    -fx-opacity: 0.6;
+}
+
+/* CheckBox */
+#chkHasExpiry {
+    -fx-text-fill: #495057;
+}
+
+/* Button Styles */
+.create-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.create-button:hover {
+    -fx-background-color: #218838;
+}
+
+.create-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.cancel-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #545b62;
+}
+
+.cancel-button:pressed {
+    -fx-background-color: #495057;
+}

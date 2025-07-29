@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout">
+   <top>
+      <VBox fx:id="vboxHeader" spacing="10.0" styleClass="header-section">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Label fx:id="lblTitle" styleClass="title-label" text="Food Post Title">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <HBox fx:id="hboxStatusInfo" alignment="CENTER_LEFT" spacing="15.0">
+               <children>
+                  <Label fx:id="lblPostType" styleClass="post-type-label" text="[OFFER]">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="lblStatus" styleClass="status-label status-pending" text="Status: PENDING">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ScrollPane fx:id="spMainContent" fitToWidth="true">
+         <content>
+            <VBox fx:id="vboxMainContent">
+               <children>
+                  <GridPane fx:id="grdDetails" hgap="15.0" vgap="15.0">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <Label fx:id="lblQuantityLabel" styleClass="detail-label" text="Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblQuantityValue" styleClass="detail-value" text="5 kg" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblLocationLabel" styleClass="detail-label" text="Location:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblLocationValue" styleClass="detail-value" text="Community Center" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblPostedLabel" styleClass="detail-label" text="Posted:" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblPostedValue" styleClass="detail-value" text="2024-01-15 10:30" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblExpiresLabel" styleClass="detail-label" text="Expires:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblExpiresValue" styleClass="detail-value" text="2024-01-20 18:00" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblAcceptedByLabel" styleClass="detail-label" text="Accepted by:" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblAcceptedByValue" styleClass="detail-value" text="User 123" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblAcceptedDateLabel" styleClass="detail-label" text="Accepted on:" GridPane.columnIndex="0" GridPane.rowIndex="5">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lblAcceptedDateValue" styleClass="detail-value" text="2024-01-16 14:30" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </GridPane>
+                  <VBox fx:id="vboxDescription" spacing="10.0">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <Label fx:id="lblDescriptionTitle" styleClass="section-title" text="Description:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <TextArea fx:id="txtDescription" editable="false" prefRowCount="4" styleClass="description-text" text="Fresh vegetables from local garden. Perfect for families." wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="vboxComments" spacing="10.0">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <Label fx:id="lblCommentsTitle" styleClass="section-title" text="Comments:">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                        <ListView fx:id="lstComments" prefHeight="150.0" />
+                        <Label fx:id="lblNoComments" styleClass="no-comments-label" text="No comments yet." />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <bottom>
+      <HBox fx:id="hboxButtons" alignment="CENTER_RIGHT" spacing="10.0">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Button fx:id="btnAccept" onAction="#handleAcceptPost" styleClass="accept-button" text="Accept Post" />
+            <Button fx:id="btnComplete" onAction="#handleCompletePost" styleClass="complete-button" text="Mark Complete" />
+            <Button fx:id="btnClose" onAction="#handleClose" styleClass="close-button" text="Close" />
+         </children>
+      </HBox>
+   </bottom>
+   <stylesheets>
+      <URL value="@FoodPostDetailsDialog.css" />
+   </stylesheets>
+</BorderPane>
