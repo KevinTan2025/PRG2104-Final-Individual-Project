@@ -1,6 +1,7 @@
 # Temporary ignore md files
 pathway/
 sample-gui/
+.kiro/
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
