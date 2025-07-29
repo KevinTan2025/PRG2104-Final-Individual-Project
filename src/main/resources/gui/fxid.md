@@ -73,6 +73,17 @@
 | `lblPasswordStatus` | Text | 密码状态提示 |
 | `lblPasswordRepeatStatus` | Text | 重复密码状态提示 |
 
+## emailVerify.fxml - 邮箱验证界面
+
+该文件包含用户邮箱验证界面的组件。
+
+| FX:ID | 组件类型 | 用途说明 |
+|-------|----------|----------|
+| `lblUserEmail` | Text | 用户邮箱显示标签 |
+| `registerOTP` | TextField | 验证码输入框 |
+| `btnVerify` | Button | 验证按钮 - 验证用户输入的验证码 |
+| `btnResend` | Button | 重发按钮 - 重新发送验证邮件 |
+
 ## 使用说明
 
 ### FX:ID 的作用
