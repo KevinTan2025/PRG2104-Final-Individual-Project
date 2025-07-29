@@ -1,5 +1,6 @@
 # Temporary ignore md files
 pathway/
+sample/
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
