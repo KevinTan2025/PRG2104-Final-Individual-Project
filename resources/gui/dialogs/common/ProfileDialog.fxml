@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+          hgap="10.0" vgap="10.0" styleClass="profile-dialog-container" 
+          stylesheets="@ProfileDialog.css">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <!-- User Information Section -->
+      <Label text="Username:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+      <Label fx:id="lblUsername" text="username" styleClass="profile-value-bold" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+      
+      <Label text="Email:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+      <TextField fx:id="txtEmail" text="user@example.com" editable="false" styleClass="profile-email-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      
+      <Label text="Full Name:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+      <TextField fx:id="txtFullName" text="Full Name" styleClass="enhanced-text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+      <Label text="Contact Info:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+      <TextField fx:id="txtContactInfo" text="Contact Info" styleClass="enhanced-text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      
+      <Label text="Role:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+      <Label fx:id="lblRole" text="USER" styleClass="profile-role-label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      
+      <Label text="Registration Date:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+      <Label fx:id="lblRegistrationDate" text="2024-01-01" styleClass="profile-value" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      
+      <!-- Password Change Section -->
+      <Separator styleClass="section-separator" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="6" />
+      
+      <Label text="Change Password" styleClass="section-header" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+      
+      <Label text="Current Password:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="8" />
+      <PasswordField fx:id="pwdCurrent" promptText="Current Password" styleClass="password-field" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      
+      <Label text="New Password:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="9" />
+      <PasswordField fx:id="pwdNew" promptText="New Password (8+ chars, letter, digit, special char)" styleClass="password-field" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+      
+      <Label text="Confirm Password:" styleClass="profile-label" GridPane.columnIndex="0" GridPane.rowIndex="10" />
+      <PasswordField fx:id="pwdConfirm" promptText="Confirm New Password" styleClass="password-field" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+      
+      <Button fx:id="btnChangePassword" text="Change Password" styleClass="change-password-button" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+      
+      <!-- Admin Section (conditionally visible) -->
+      <Separator fx:id="sepAdmin" styleClass="section-separator" visible="false" managed="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="12" />
+      
+      <Label fx:id="lblDangerZone" text="⚠️ DANGER ZONE ⚠️" styleClass="danger-zone-header" visible="false" managed="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="13" />
+      
+      <Label fx:id="lblResetWarning" text="WARNING!!! Only click if you know what you are doing!!!" styleClass="reset-warning-label" wrapText="true" visible="false" managed="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="14" />
+      
+      <Label fx:id="lblResetDescription" text="This will completely reset the database, removing ALL data and recreating sample data. The application will exit after reset." styleClass="reset-description-label" wrapText="true" maxWidth="400.0" visible="false" managed="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="15" />
+      
+      <Button fx:id="btnResetDatabase" text="🗑️ RESET DATABASE" styleClass="reset-database-button" visible="false" managed="false" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="16" />
+   </children>
+</GridPane>

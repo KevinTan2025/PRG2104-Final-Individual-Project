@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" 
+      spacing="15.0" styleClass="comment-dialog-container" stylesheets="@CommentDialog.css">
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+   <children>
+      <Label fx:id="lblTitle" text="💬 Comment on: Item Title" 
+             styleClass="comment-title" wrapText="true" />
+      
+      <Label fx:id="lblSubtitle" text="Share your thoughts and engage with the community:" 
+             styleClass="comment-subtitle" />
+      
+      <TextArea fx:id="txtComment" prefRowCount="4" prefWidth="450.0" 
+                promptText="Share your thoughts... (Be respectful and constructive)" 
+                wrapText="true" styleClass="comment-text-area" />
+      
+      <Label fx:id="lblCharCount" text="0/500 characters" 
+             styleClass="char-count-label" />
+      
+      <Label fx:id="lblTip" text="💡 Tip: Be respectful and constructive in your comments" 
+             styleClass="tip-label" />
+      
+      <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="button-container">
+         <children>
+            <Button fx:id="btnCancel" text="Cancel" 
+                    styleClass="cancel-button" />
+            <Button fx:id="btnPost" text="💬 Post Comment" 
+                    styleClass="post-button" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

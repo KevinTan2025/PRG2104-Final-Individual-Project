@@ -1,0 +1,75 @@
+/* Comment Dialog Styles */
+
+.comment-dialog-container {
+    -fx-background-color: white;
+}
+
+.comment-title {
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #1c1e21;
+}
+
+.comment-subtitle {
+    -fx-font-family: "System";
+    -fx-font-size: 12px;
+    -fx-text-fill: #65676b;
+}
+
+.comment-text-area {
+    -fx-border-color: #ddd;
+    -fx-border-radius: 8px;
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+}
+
+.char-count-label {
+    -fx-font-family: "System";
+    -fx-font-size: 11px;
+    -fx-text-fill: #8a8d91;
+}
+
+.char-count-label.over-limit {
+    -fx-text-fill: red;
+}
+
+.tip-label {
+    -fx-font-family: "System";
+    -fx-font-size: 11px;
+    -fx-text-fill: #65676b;
+    -fx-background-color: #f0f8ff;
+    -fx-padding: 8px;
+    -fx-background-radius: 4px;
+}
+
+.button-container {
+    -fx-alignment: center-right;
+}
+
+.post-button {
+    -fx-background-color: #1877f2;
+    -fx-text-fill: white;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 16px;
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.post-button:hover {
+    -fx-background-color: #166fe5;
+}
+
+.cancel-button {
+    -fx-background-color: #e4e6ea;
+    -fx-text-fill: #65676b;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 16px;
+    -fx-font-family: "System";
+    -fx-font-size: 14px;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #d8dadf;
+}
