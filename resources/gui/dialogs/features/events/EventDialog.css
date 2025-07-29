@@ -1,0 +1,96 @@
+/* Event Dialog Styles */
+
+/* Field Labels */
+.field-label {
+    -fx-font-weight: bold;
+}
+
+/* Primary Button (Create) */
+.primary-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.primary-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.primary-button:pressed {
+    -fx-background-color: #004085;
+}
+
+/* Secondary Button (Cancel) */
+.secondary-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-padding: 8 16;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #545b62;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #3d4043;
+}
+
+/* Text Fields */
+.text-field {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-padding: 8 12;
+}
+
+.text-field:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2;
+}
+
+/* Text Area */
+.text-area {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.text-area:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2;
+}
+
+.text-area .content {
+    -fx-padding: 8 12;
+}
+
+/* Date Picker */
+.date-picker {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.date-picker:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2;
+}
+
+/* Button Container */
+#hboxButtons {
+    -fx-alignment: center-left;
+    -fx-padding: 10 0 0 0;
+}
+
+/* Grid Layout */
+.grid-pane {
+    -fx-background-color: #ffffff;
+}

@@ -1,0 +1,95 @@
+/* Export Stock Dialog Styles */
+
+/* Info Label */
+.info-label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 12px;
+    -fx-font-weight: normal;
+}
+
+/* Export Content Text Area */
+.export-content {
+    -fx-font-family: 'Courier New', monospace;
+    -fx-font-size: 12px;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.export-content .content {
+    -fx-padding: 10;
+}
+
+/* Copy Button */
+.copy-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.copy-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.copy-button:pressed {
+    -fx-background-color: #004085;
+}
+
+/* Copy Button Success State */
+.copy-button-success {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+/* Download Button */
+.download-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.download-button:hover {
+    -fx-background-color: #218838;
+}
+
+.download-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+/* Scroll Pane */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* Button Container */
+#hboxButtons {
+    -fx-alignment: center;
+}
+
+/* Main Container */
+.vbox {
+    -fx-background-color: #ffffff;
+}

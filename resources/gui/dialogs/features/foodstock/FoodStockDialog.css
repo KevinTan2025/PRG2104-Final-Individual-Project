@@ -1,0 +1,183 @@
+/* Food Stock Dialog Styles */
+
+/* Field Labels */
+.field-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #495057;
+    -fx-pref-width: 180;
+}
+
+/* Text Fields */
+.text-field {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-padding: 8 12;
+}
+
+.text-field:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+/* Text Area */
+.text-area {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.text-area:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+.text-area .content {
+    -fx-padding: 8 12;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.combo-box:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+.combo-box .arrow-button {
+    -fx-background-radius: 0 4 4 0;
+}
+
+/* CheckBoxes */
+.packaging-checkbox, .expiry-checkbox {
+    -fx-font-size: 14px;
+    -fx-text-fill: #495057;
+}
+
+.packaging-checkbox .box, .expiry-checkbox .box {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+}
+
+.packaging-checkbox:selected .box, .expiry-checkbox:selected .box {
+    -fx-background-color: #fd7e14;
+    -fx-border-color: #fd7e14;
+}
+
+.packaging-checkbox:selected .mark, .expiry-checkbox:selected .mark {
+    -fx-background-color: white;
+}
+
+/* Date Picker */
+.date-picker {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.date-picker:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+.date-picker:disabled {
+    -fx-opacity: 0.5;
+}
+
+/* Save Button */
+.save-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.save-button:hover {
+    -fx-background-color: #218838;
+}
+
+.save-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+/* Cancel Button */
+.cancel-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #545b62;
+}
+
+.cancel-button:pressed {
+    -fx-background-color: #3d4043;
+}
+
+/* Food Category Specific Colors */
+.category-vegetables {
+    -fx-background-color: #28a745;
+}
+
+.category-fruits {
+    -fx-background-color: #fd7e14;
+}
+
+.category-grains {
+    -fx-background-color: #ffc107;
+}
+
+.category-dairy {
+    -fx-background-color: #17a2b8;
+}
+
+.category-meat {
+    -fx-background-color: #dc3545;
+}
+
+.category-beverages {
+    -fx-background-color: #007bff;
+}
+
+.category-canned-goods {
+    -fx-background-color: #6c757d;
+}
+
+.category-snacks {
+    -fx-background-color: #e83e8c;
+}
+
+.category-other {
+    -fx-background-color: #6f42c1;
+}
+
+/* Button Container */
+#hboxButtons {
+    -fx-alignment: center-right;
+}
+
+/* Expiry VBox */
+#vboxExpiry {
+    -fx-spacing: 5;
+}
+
+/* Grid Layout */
+.grid-pane {
+    -fx-background-color: #ffffff;
+}

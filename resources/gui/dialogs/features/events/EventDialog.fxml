@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" hgap="10.0" vgap="15.0">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Label fx:id="lblTitle" styleClass="field-label" text="Title:" />
+      <TextField fx:id="txtTitle" prefWidth="350.0" promptText="Event title" GridPane.columnIndex="1" />
+      
+      <Label fx:id="lblLocation" styleClass="field-label" text="Location:" GridPane.rowIndex="1" />
+      <TextField fx:id="txtLocation" prefWidth="350.0" promptText="Event location" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      
+      <Label fx:id="lblStartDate" styleClass="field-label" text="Start Date:" GridPane.rowIndex="2" />
+      <DatePicker fx:id="dpStartDate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+      <Label fx:id="lblStartTime" styleClass="field-label" text="Start Time:" GridPane.rowIndex="3" />
+      <TextField fx:id="txtStartTime" promptText="HH:MM" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      
+      <Label fx:id="lblEndDate" styleClass="field-label" text="End Date:" GridPane.rowIndex="4" />
+      <DatePicker fx:id="dpEndDate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      
+      <Label fx:id="lblEndTime" styleClass="field-label" text="End Time:" GridPane.rowIndex="5" />
+      <TextField fx:id="txtEndTime" promptText="HH:MM" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      
+      <Label fx:id="lblMaxParticipants" styleClass="field-label" text="Max Participants:" GridPane.rowIndex="6" />
+      <TextField fx:id="txtMaxParticipants" prefWidth="350.0" promptText="Max participants (optional)" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      
+      <Label fx:id="lblDescription" styleClass="field-label" text="Description:" GridPane.rowIndex="7" />
+      <TextArea fx:id="txtDescription" prefRowCount="3" prefWidth="350.0" promptText="Description" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      
+      <HBox fx:id="hboxButtons" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+         <children>
+            <Button fx:id="btnCreate" onAction="#handleCreate" styleClass="primary-button" text="Create" />
+            <Button fx:id="btnCancel" onAction="#handleCancel" styleClass="secondary-button" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <URL value="@EventDialog.css" />
+   </stylesheets>
+</GridPane>

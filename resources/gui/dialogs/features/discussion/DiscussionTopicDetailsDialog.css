@@ -1,0 +1,184 @@
+/* Discussion Topic Details Dialog Styles */
+
+/* Header Section */
+.header-section {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.topic-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212529;
+}
+
+.category-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+}
+
+.author-info {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 12px;
+}
+
+.stats-label {
+    -fx-text-fill: #495057;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+/* Description Section */
+.description-section {
+    -fx-background-color: #ffffff;
+}
+
+.section-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #212529;
+}
+
+.description-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #212529;
+}
+
+/* Replies Section */
+.replies-section {
+    -fx-background-color: #ffffff;
+}
+
+.no-replies-text {
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+    -fx-font-size: 13px;
+}
+
+/* Reply Item Styles */
+.reply-item {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+}
+
+.reply-header {
+    -fx-alignment: center-left;
+    -fx-spacing: 10;
+}
+
+.reply-author {
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-text-fill: #212529;
+}
+
+.reply-timestamp {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 11px;
+}
+
+.reply-likes {
+    -fx-text-fill: #495057;
+    -fx-font-size: 11px;
+}
+
+.reply-content {
+    -fx-font-size: 13px;
+    -fx-text-fill: #212529;
+}
+
+/* Action Buttons */
+.action-buttons {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1 0 0 0;
+}
+
+.like-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.like-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.like-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.reply-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.reply-button:hover {
+    -fx-background-color: #218838;
+}
+
+.reply-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.refresh-button {
+    -fx-background-color: #17a2b8;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.refresh-button:hover {
+    -fx-background-color: #138496;
+}
+
+.refresh-button:pressed {
+    -fx-background-color: #0f6674;
+}
+
+.close-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.close-button:hover {
+    -fx-background-color: #545b62;
+}
+
+.close-button:pressed {
+    -fx-background-color: #3d4043;
+}
+
+/* Scroll Panes */
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .content {
+    -fx-background-color: transparent;
+}
+
+/* Separator */
+.separator .line {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1 0 0 0;
+}

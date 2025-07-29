@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+
+<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" hgap="10.0" vgap="15.0">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Label fx:id="lblTitle" styleClass="field-label" text="Title:" />
+      <TextField fx:id="txtTitle" prefWidth="300.0" promptText="Announcement title" GridPane.columnIndex="1" />
+      
+      <Label fx:id="lblType" styleClass="field-label" text="Type:" GridPane.rowIndex="1" />
+      <ComboBox fx:id="cmbType" prefWidth="300.0" value="GENERAL" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <items>
+            <FXCollections fx:factory="observableArrayList">
+               <String fx:value="GENERAL" />
+               <String fx:value="FOOD_DISTRIBUTION" />
+               <String fx:value="EVENTS" />
+               <String fx:value="TIPS" />
+               <String fx:value="EMERGENCY" />
+            </FXCollections>
+         </items>
+      </ComboBox>
+      
+      <Label fx:id="lblContent" styleClass="field-label" text="Content:" GridPane.rowIndex="2" />
+      <TextArea fx:id="txtContent" prefRowCount="5" prefWidth="300.0" promptText="Announcement content" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+      <HBox fx:id="hboxButtons" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+         <children>
+            <Button fx:id="btnCreate" onAction="#handleCreate" styleClass="primary-button" text="Create" />
+            <Button fx:id="btnCancel" onAction="#handleCancel" styleClass="secondary-button" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <URL value="@AnnouncementDialog.css" />
+   </stylesheets>
+</GridPane>

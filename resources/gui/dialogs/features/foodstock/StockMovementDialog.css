@@ -1,0 +1,174 @@
+/* Stock Movement Dialog Styles */
+
+/* Stock Info Box */
+.stock-info-box {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-width: 1;
+}
+
+.food-item-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #212529;
+}
+
+.current-stock-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #495057;
+}
+
+.stock-status-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* Stock Status Colors */
+.status-in-stock {
+    -fx-text-fill: #28a745;
+}
+
+.status-low-stock {
+    -fx-text-fill: #ffc107;
+}
+
+.status-out-of-stock {
+    -fx-text-fill: #dc3545;
+}
+
+.status-expired {
+    -fx-text-fill: #6c757d;
+}
+
+.threshold-label, .location-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+.expiry-label {
+    -fx-font-size: 12px;
+}
+
+.expiry-warning {
+    -fx-text-fill: #dc3545;
+}
+
+.expiry-safe {
+    -fx-text-fill: #28a745;
+}
+
+/* Field Labels */
+.field-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #495057;
+}
+
+/* Text Fields */
+.text-field {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+    -fx-padding: 8 12;
+}
+
+.text-field:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+/* Text Area */
+.text-area {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.text-area:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+.text-area .content {
+    -fx-padding: 8 12;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1;
+}
+
+.combo-box:focused {
+    -fx-border-color: #fd7e14;
+    -fx-border-width: 2;
+}
+
+.combo-box .arrow-button {
+    -fx-background-radius: 0 4 4 0;
+}
+
+/* Execute Button */
+.execute-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-font-weight: bold;
+}
+
+.execute-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.execute-button:pressed {
+    -fx-background-color: #004085;
+}
+
+/* Cancel Button */
+.cancel-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #545b62;
+}
+
+.cancel-button:pressed {
+    -fx-background-color: #3d4043;
+}
+
+/* Action Type Specific Styles */
+.action-add {
+    -fx-background-color: #28a745;
+}
+
+.action-remove {
+    -fx-background-color: #dc3545;
+}
+
+.action-adjust {
+    -fx-background-color: #ffc107;
+}
+
+/* Button Container */
+#hboxButtons {
+    -fx-alignment: center-left;
+}
+
+/* Grid Layout */
+.grid-pane {
+    -fx-background-color: #ffffff;
+}
