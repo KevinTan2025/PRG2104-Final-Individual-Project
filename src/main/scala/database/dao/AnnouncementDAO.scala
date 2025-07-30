@@ -5,6 +5,8 @@ import model._
 import java.time.LocalDateTime
 import java.sql.ResultSet
 import java.util.UUID
+import scala.util.{Try, Success, Failure}
+import scala.util.Using
 
 /**
  * Data Access Object for Announcement operations
@@ -148,6 +150,106 @@ class AnnouncementDAO {
     }
   }
   
+  // 安全方法版本 - 使用 Try 类型进行错误处理
+  
+  /**
+   * 安全插入公告
+   */
+  def insertSafe(announcement: Announcement): Try[Boolean] = {
+    Try {
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        """INSERT INTO announcements 
+           (announcement_id, author_id, title, content, announcement_type, likes, created_at, updated_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+        announcement.announcementId, announcement.authorId, announcement.title, 
+        announcement.content, announcement.announcementType.toString, announcement.likes,
+        DatabaseConnection.formatDateTime(announcement.timestamp),
+        DatabaseConnection.formatDateTime(LocalDateTime.now())
+      )
+      rowsAffected > 0
+    }
+  }
+  
+  /**
+   * 安全根据ID查找公告
+   */
+  def findByIdSafe(announcementId: String): Try[Option[Announcement]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM announcements WHERE announcement_id = ?", announcementId
+      )) { rs =>
+        if (rs.next()) {
+          Some(resultSetToAnnouncement(rs))
+        } else {
+          None
+        }
+      }
+    }
+  }
+  
+  /**
+   * 安全查找所有公告
+   */
+  def findAllSafe(): Try[List[Announcement]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery("SELECT * FROM announcements ORDER BY created_at DESC")) { rs =>
+        val announcements = scala.collection.mutable.ListBuffer[Announcement]()
+        while (rs.next()) {
+          announcements += resultSetToAnnouncement(rs)
+        }
+        announcements.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全搜索公告
+   */
+  def searchSafe(searchTerm: String): Try[List[Announcement]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        """SELECT * FROM announcements 
+           WHERE title LIKE ? OR content LIKE ? 
+           ORDER BY created_at DESC""",
+        s"%$searchTerm%", s"%$searchTerm%"
+      )) { rs =>
+        val announcements = scala.collection.mutable.ListBuffer[Announcement]()
+        while (rs.next()) {
+          announcements += resultSetToAnnouncement(rs)
+        }
+        announcements.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全更新点赞数
+   */
+  def updateLikesSafe(announcementId: String, likes: Int): Try[Boolean] = {
+    Try {
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        "UPDATE announcements SET likes = ?, updated_at = ? WHERE announcement_id = ?",
+        likes, DatabaseConnection.formatDateTime(LocalDateTime.now()), announcementId
+      )
+      rowsAffected > 0
+    }
+  }
+  
+  /**
+   * 安全审核公告
+   */
+  def moderateSafe(announcementId: String, moderatorId: String): Try[Boolean] = {
+    Try {
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        """UPDATE announcements 
+           SET is_moderated = 1, moderator_id = ?, updated_at = ? 
+           WHERE announcement_id = ?""",
+        moderatorId, DatabaseConnection.formatDateTime(LocalDateTime.now()), announcementId
+      )
+      rowsAffected > 0
+    }
+  }
+
   private def resultSetToAnnouncement(rs: ResultSet): Announcement = {
     val announcementId = rs.getString("announcement_id")
     val authorId = rs.getString("author_id")

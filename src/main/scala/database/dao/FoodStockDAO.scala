@@ -4,6 +4,8 @@ import database.DatabaseConnection
 import model._
 import java.time.LocalDateTime
 import java.sql.ResultSet
+import scala.util.{Try, Success, Failure}
+import scala.util.Using
 
 /**
  * Data Access Object for FoodStock operations
@@ -280,6 +282,239 @@ class FoodStockDAO {
     }
   }
   
+  // 安全方法版本 - 使用 Try 类型进行错误处理
+  
+  /**
+   * 安全插入食物库存
+   */
+  def insertSafe(foodStock: FoodStock): Try[Boolean] = {
+    Try {
+      val expiryDateStr = foodStock.expiryDate.map(DatabaseConnection.formatDateTime)
+      val lastModifiedByStr = foodStock.lastModifiedBy.orNull
+      
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        """INSERT INTO food_stocks 
+           (stock_id, food_name, category, current_quantity, unit, minimum_threshold, 
+            expiry_date, is_packaged, location, last_modified_by, last_modified_date, created_at) 
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        foodStock.stockId, foodStock.foodName, foodStock.category.toString,
+        foodStock.currentQuantity, foodStock.unit, foodStock.minimumThreshold,
+        expiryDateStr.orNull, foodStock.isPackaged, foodStock.location,
+        lastModifiedByStr, DatabaseConnection.formatDateTime(foodStock.lastModifiedDate),
+        DatabaseConnection.formatDateTime(foodStock.createdAt)
+      )
+      rowsAffected > 0
+    }
+  }
+  
+  /**
+   * 安全根据ID查找食物库存
+   */
+  def findByIdSafe(stockId: String): Try[Option[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE stock_id = ?", stockId
+      )) { rs =>
+        if (rs.next()) {
+          Some(resultSetToFoodStock(rs))
+        } else {
+          None
+        }
+      }
+    }
+  }
+  
+  /**
+   * 安全查找所有食物库存
+   */
+  def findAllSafe(): Try[List[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery("SELECT * FROM food_stocks ORDER BY food_name ASC")) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全根据分类查找食物库存
+   */
+  def findByCategorySafe(category: FoodCategory): Try[List[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE category = ? ORDER BY food_name ASC", category.toString
+      )) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全根据位置查找食物库存
+   */
+  def findByLocationSafe(location: String): Try[List[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE location = ? ORDER BY food_name ASC", location
+      )) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全搜索食物库存
+   */
+  def searchSafe(searchTerm: String): Try[List[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE food_name LIKE ? ORDER BY food_name ASC",
+        s"%$searchTerm%"
+      )) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全更新食物库存
+   */
+  def updateSafe(foodStock: FoodStock): Try[Boolean] = {
+    Try {
+      val expiryDateStr = foodStock.expiryDate.map(DatabaseConnection.formatDateTime)
+      val lastModifiedByStr = foodStock.lastModifiedBy.orNull
+      
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        """UPDATE food_stocks 
+           SET food_name = ?, category = ?, current_quantity = ?, unit = ?, 
+               minimum_threshold = ?, expiry_date = ?, is_packaged = ?, 
+               location = ?, last_modified_by = ?, last_modified_date = ?
+           WHERE stock_id = ?""",
+        foodStock.foodName, foodStock.category.toString, foodStock.currentQuantity,
+        foodStock.unit, foodStock.minimumThreshold, expiryDateStr.orNull,
+        foodStock.isPackaged, foodStock.location, lastModifiedByStr,
+        DatabaseConnection.formatDateTime(foodStock.lastModifiedDate), foodStock.stockId
+      )
+      rowsAffected > 0
+    }
+  }
+  
+  /**
+   * 安全删除食物库存
+   */
+  def deleteSafe(stockId: String): Try[Boolean] = {
+    Try {
+      val rowsAffected = DatabaseConnection.executeUpdate(
+        "DELETE FROM food_stocks WHERE stock_id = ?", stockId
+      )
+      rowsAffected > 0
+    }
+  }
+  
+  /**
+   * 安全查找低库存项目
+   */
+  def findLowStockSafe(): Try[List[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE current_quantity <= minimum_threshold ORDER BY food_name ASC"
+      )) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全查找过期项目
+   */
+  def findExpiredSafe(): Try[List[FoodStock]] = {
+    Try {
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE expiry_date IS NOT NULL AND expiry_date < ? ORDER BY expiry_date ASC",
+        DatabaseConnection.formatDateTime(LocalDateTime.now())
+      )) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全查找即将过期项目
+   */
+  def findExpiringSoonSafe(days: Int = 7): Try[List[FoodStock]] = {
+    Try {
+      val futureDate = LocalDateTime.now().plusDays(days)
+      Using.resource(DatabaseConnection.executeQuery(
+        "SELECT * FROM food_stocks WHERE expiry_date IS NOT NULL AND expiry_date BETWEEN ? AND ? ORDER BY expiry_date ASC",
+        DatabaseConnection.formatDateTime(LocalDateTime.now()),
+        DatabaseConnection.formatDateTime(futureDate)
+      )) { rs =>
+        val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
+        while (rs.next()) {
+          foodStocks += resultSetToFoodStock(rs)
+        }
+        foodStocks.toList
+      }
+    }
+  }
+  
+  /**
+   * 安全获取统计信息
+   */
+  def getStatisticsSafe: Try[(Int, Int, Int, Int)] = {
+    Try {
+      val totalItems = Using.resource(DatabaseConnection.executeQuery("SELECT COUNT(*) FROM food_stocks")) { rs =>
+        if (rs.next()) rs.getInt(1) else 0
+      }
+      
+      val lowStockItems = Using.resource(DatabaseConnection.executeQuery(
+        "SELECT COUNT(*) FROM food_stocks WHERE current_quantity <= minimum_threshold"
+      )) { rs =>
+        if (rs.next()) rs.getInt(1) else 0
+      }
+      
+      val expiredItems = Using.resource(DatabaseConnection.executeQuery(
+        "SELECT COUNT(*) FROM food_stocks WHERE expiry_date IS NOT NULL AND expiry_date < ?",
+        DatabaseConnection.formatDateTime(LocalDateTime.now())
+      )) { rs =>
+        if (rs.next()) rs.getInt(1) else 0
+      }
+      
+      val expiringSoonItems = Using.resource(DatabaseConnection.executeQuery(
+        "SELECT COUNT(*) FROM food_stocks WHERE expiry_date IS NOT NULL AND expiry_date BETWEEN ? AND ?",
+        DatabaseConnection.formatDateTime(LocalDateTime.now()),
+        DatabaseConnection.formatDateTime(LocalDateTime.now().plusDays(7))
+      )) { rs =>
+        if (rs.next()) rs.getInt(1) else 0
+      }
+      
+      (totalItems, lowStockItems, expiredItems, expiringSoonItems)
+    }
+  }
+
   private def resultSetToFoodStock(rs: ResultSet): FoodStock = {
     val stockId = rs.getString("stock_id")
     val foodName = rs.getString("food_name")
