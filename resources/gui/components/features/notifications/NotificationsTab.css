@@ -1,0 +1,148 @@
+/* Notifications Tab Styles */
+.notifications-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Stats Box */
+.stats-box {
+    -fx-background-color: #e3f2fd;
+    -fx-border-color: #2196F3;
+    -fx-border-width: 0 0 2 0;
+}
+
+.stats-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2196F3;
+    -fx-font-size: 14px;
+}
+
+/* Control Container */
+.top-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}
+
+/* Button Styles */
+.mark-read-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.mark-read-button:hover {
+    -fx-background-color: #218838;
+}
+
+.mark-all-read-button {
+    -fx-background-color: #17a2b8;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.mark-all-read-button:hover {
+    -fx-background-color: #138496;
+}
+
+.view-unread-button, .view-all-button {
+    -fx-background-color: #6f42c1;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.view-unread-button:hover, .view-all-button:hover {
+    -fx-background-color: #5a32a3;
+}
+
+.delete-button {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.delete-button:hover {
+    -fx-background-color: #c82333;
+}
+
+.details-button, .refresh-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.details-button:hover, .refresh-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* Notifications List */
+.notifications-list {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.notifications-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f1f3f4;
+}
+
+.notifications-list .list-cell:last-child {
+    -fx-border-width: 0;
+}
+
+.notifications-list .list-cell:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+}
+
+.notifications-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.notifications-list .list-cell:selected:hover {
+    -fx-background-color: #1976D2;
+}
+
+/* Notification Status Indicators */
+.notification-unread {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2196F3;
+}
+
+.notification-read {
+    -fx-text-fill: #6c757d;
+}
+
+/* Notification Type Indicators */
+.notification-system {
+    -fx-text-fill: #17a2b8;
+}
+
+.notification-user {
+    -fx-text-fill: #28a745;
+}
+
+.notification-alert {
+    -fx-text-fill: #dc3545;
+}
+
+.notification-info {
+    -fx-text-fill: #6f42c1;
+}

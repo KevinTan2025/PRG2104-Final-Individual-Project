@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="food-stock-tab">
+   <content>
+      <HBox spacing="20.0" styleClass="main-content">
+         <children>
+            <!-- Main Content Area -->
+            <VBox spacing="0.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <!-- Top Button Row -->
+                  <HBox spacing="15.0" styleClass="top-button-row">
+                     <children>
+                        <Button fx:id="btnAddStock" onAction="#handleAddStock" prefWidth="120.0" text="Add New Stock" styleClass="add-button" />
+                        <Button fx:id="btnEditStock" onAction="#handleEditStock" prefWidth="120.0" text="Edit Stock" styleClass="edit-button" />
+                        <Button fx:id="btnManageStock" onAction="#handleManageStock" prefWidth="120.0" text="Manage Stock" styleClass="manage-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </HBox>
+                  
+                  <!-- Bottom Button Row -->
+                  <HBox spacing="15.0" styleClass="bottom-button-row">
+                     <children>
+                        <Button fx:id="btnDeleteStock" onAction="#handleDeleteStock" prefWidth="120.0" text="Delete Stock" styleClass="delete-button" />
+                        <Button fx:id="btnViewHistory" onAction="#handleViewHistory" prefWidth="120.0" text="View History" styleClass="history-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="0.0" />
+                     </padding>
+                  </HBox>
+                  
+                  <Separator />
+                  
+                  <!-- Filter Controls -->
+                  <HBox spacing="15.0" styleClass="filter-controls">
+                     <children>
+                        <Label prefWidth="80.0" text="Category:" styleClass="filter-label" />
+                        <ComboBox fx:id="cmbCategory" prefWidth="150.0" styleClass="category-combo" />
+                        <Label prefWidth="60.0" text="Status:" styleClass="filter-label" />
+                        <ComboBox fx:id="cmbStatus" prefWidth="150.0" styleClass="status-combo" />
+                        <Button fx:id="btnFilter" onAction="#handleFilter" prefWidth="80.0" text="Filter" styleClass="filter-button" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnRefresh" onAction="#handleRefresh" prefWidth="80.0" text="Refresh" styleClass="refresh-button" />
+                        <Button fx:id="btnAlerts" onAction="#handleAlerts" prefWidth="80.0" text="Alerts" styleClass="alerts-button" />
+                        <Button fx:id="btnExport" onAction="#handleExport" prefWidth="80.0" text="Export" styleClass="export-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </HBox>
+                  
+                  <!-- Search Controls -->
+                  <HBox spacing="10.0" styleClass="search-controls">
+                     <children>
+                        <Label prefWidth="60.0" text="Search:" styleClass="search-label" />
+                        <TextField fx:id="txtSearch" prefWidth="250.0" promptText="Search food items..." styleClass="search-field" />
+                        <Button fx:id="btnSearch" onAction="#handleSearch" prefWidth="80.0" text="Search" styleClass="search-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="0.0" />
+                     </padding>
+                  </HBox>
+                  
+                  <!-- Stock List -->
+                  <VBox spacing="10.0" styleClass="stock-list-container">
+                     <children>
+                        <Label text="Food Stock Items" styleClass="list-title" />
+                        <ListView fx:id="lstStocks" prefHeight="400.0" styleClass="stocks-list" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <!-- Side Panel -->
+            <VBox prefWidth="280.0" spacing="15.0" styleClass="side-panel">
+               <children>
+                  <!-- Stock Statistics Card -->
+                  <VBox spacing="10.0" styleClass="stats-card">
+                     <children>
+                        <Label text="📊 Stock Statistics" styleClass="card-title" />
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Total Items" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblTotalItems" text="0" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Low Stock" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblLowStock" text="0" styleClass="stat-value stat-warning" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Out of Stock" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblOutOfStock" text="0" styleClass="stat-value stat-danger" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Expired" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblExpired" text="0" styleClass="stat-value stat-muted" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Quick Actions Card -->
+                  <VBox spacing="10.0" styleClass="quick-actions-card">
+                     <children>
+                        <Label text="⚡ Quick Actions" styleClass="card-title" />
+                        <Button fx:id="btnViewLowStock" onAction="#handleViewLowStock" prefWidth="200.0" text="View Low Stock" styleClass="quick-action-warning" />
+                        <Button fx:id="btnViewExpired" onAction="#handleViewExpired" prefWidth="200.0" text="View Expired Items" styleClass="quick-action-muted" />
+                        <Button fx:id="btnViewOutOfStock" onAction="#handleViewOutOfStock" prefWidth="200.0" text="View Out of Stock" styleClass="quick-action-danger" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Recent Alerts Card -->
+                  <VBox spacing="10.0" styleClass="alerts-card">
+                     <children>
+                        <Label text="🚨 Recent Alerts" styleClass="card-title" />
+                        <VBox fx:id="vboxAlerts" spacing="5.0" styleClass="alerts-container">
+                           <children>
+                              <Label text="No alerts at this time" styleClass="no-alerts-label" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </content>
+</ScrollPane>

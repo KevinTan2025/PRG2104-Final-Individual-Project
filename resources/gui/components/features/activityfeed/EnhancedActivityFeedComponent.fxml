@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="enhanced-activity-feed">
+   <children>
+      <!-- Header Section -->
+      <VBox spacing="10.0" styleClass="header-section">
+         <children>
+            <Label fx:id="lblTitle" text="🔥 Community Activity Feed" styleClass="feed-title" />
+            <Label fx:id="lblSubtitle" text="Stay connected with your community" styleClass="feed-subtitle" />
+         </children>
+      </VBox>
+      
+      <!-- Feed Container -->
+      <VBox fx:id="vboxFeedContainer" spacing="15.0" styleClass="feed-container" />
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>
