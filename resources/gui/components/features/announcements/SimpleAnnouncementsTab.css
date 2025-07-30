@@ -1,0 +1,193 @@
+/* Simple Announcements Tab Styles */
+.simple-announcements-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Layout Containers */
+.button-row {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.search-row {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Unified Button Styles */
+.create-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 70;
+}
+
+.create-button:hover {
+    -fx-background-color: #218838;
+}
+
+.create-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.refresh-button, .search-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 70;
+}
+
+.refresh-button:hover, .search-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.refresh-button:pressed, .search-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.comment-button {
+    -fx-background-color: #6f42c1;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 70;
+}
+
+.comment-button:hover {
+    -fx-background-color: #5a32a3;
+}
+
+.comment-button:pressed {
+    -fx-background-color: #4e2a8e;
+}
+
+.like-button {
+    -fx-background-color: #e83e8c;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 70;
+}
+
+.like-button:hover {
+    -fx-background-color: #e21e7b;
+}
+
+.like-button:pressed {
+    -fx-background-color: #d91a72;
+}
+
+/* Form Controls */
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10;
+    -fx-prompt-text-fill: #6c757d;
+}
+
+.search-field:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 2, 0, 0, 0);
+}
+
+/* Customized List View */
+.announcements-list {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.announcements-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f1f3f4;
+}
+
+.announcements-list .list-cell:last-child {
+    -fx-border-width: 0;
+}
+
+.announcements-list .list-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.announcements-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.announcements-list .list-cell:selected:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* Announcement Type and Status Styling */
+.announcements-list .list-cell .label {
+    -fx-text-fill: inherit;
+}
+
+/* Announcement type indicators */
+.announcement-emergency {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+
+.announcement-event {
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+.announcement-food {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.announcement-tips {
+    -fx-text-fill: #ffc107;
+    -fx-font-weight: bold;
+}
+
+.announcement-general {
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: bold;
+}
+
+/* Minimalist design adjustments */
+.simple-announcements-tab .button-row,
+.simple-announcements-tab .search-row {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 1, 0, 0, 1);
+}
+
+/* Responsive design for smaller components */
+@media (max-width: 800px) {
+    .button-row {
+        -fx-spacing: 5;
+    }
+    
+    .create-button, .refresh-button, .comment-button, .like-button, .search-button {
+        -fx-min-width: 60;
+        -fx-padding: 4 8;
+        -fx-font-size: 12px;
+    }
+    
+    .search-field {
+        -fx-pref-width: 200;
+    }
+}
