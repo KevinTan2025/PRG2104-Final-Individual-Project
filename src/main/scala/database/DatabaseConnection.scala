@@ -4,6 +4,8 @@ import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet, SQLExc
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.io.File
+import scala.util.{Try, Success, Failure}
+import scala.util.Using
 
 /**
  * Database connection manager for SQLite
@@ -48,7 +50,7 @@ object DatabaseConnection {
   }
   
   /**
-   * Execute SQL query and return ResultSet
+   * 执行 SQL 查询并返回 ResultSet
    */
   def executeQuery(sql: String, params: Any*): ResultSet = {
     val conn = getConnection
@@ -58,7 +60,19 @@ object DatabaseConnection {
   }
   
   /**
-   * Execute SQL update/insert/delete and return affected rows count
+   * 安全执行 SQL 查询，返回 Try 类型
+   */
+  def executeQuerySafe(sql: String, params: Any*): Try[ResultSet] = {
+    Try {
+      val conn = getConnection
+      val stmt = conn.prepareStatement(sql)
+      setParameters(stmt, params: _*)
+      stmt.executeQuery()
+    }
+  }
+  
+  /**
+   * 执行 SQL 更新/插入/删除并返回受影响的行数
    */
   def executeUpdate(sql: String, params: Any*): Int = {
     val conn = getConnection
@@ -70,7 +84,19 @@ object DatabaseConnection {
   }
   
   /**
-   * Execute SQL update/insert and return generated ID
+   * 安全执行 SQL 更新，返回 Try 类型
+   */
+  def executeUpdateSafe(sql: String, params: Any*): Try[Int] = {
+    Try {
+      Using.resource(getConnection.prepareStatement(sql)) { stmt =>
+        setParameters(stmt, params: _*)
+        stmt.executeUpdate()
+      }
+    }
+  }
+  
+  /**
+   * 执行 SQL 更新/插入并返回生成的 ID
    */
   def executeUpdateWithGeneratedKey(sql: String, params: Any*): Option[String] = {
     val conn = getConnection
@@ -83,6 +109,22 @@ object DatabaseConnection {
     keys.close()
     stmt.close()
     result
+  }
+  
+  /**
+   * 安全执行 SQL 更新并返回生成的 ID，返回 Try 类型
+   */
+  def executeUpdateWithGeneratedKeySafe(sql: String, params: Any*): Try[Option[String]] = {
+    Try {
+      Using.resource(getConnection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) { stmt =>
+        setParameters(stmt, params: _*)
+        stmt.executeUpdate()
+        
+        Using.resource(stmt.getGeneratedKeys) { keys =>
+          if (keys.next()) Some(keys.getString(1)) else None
+        }
+      }
+    }
   }
   
   /**

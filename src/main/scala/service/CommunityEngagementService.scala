@@ -4,6 +4,7 @@ import database.service.DatabaseService
 import model._
 import java.time.LocalDateTime
 import java.util.UUID
+import scala.util.{Try, Success, Failure}
 
 /**
  * Main service class that coordinates all operations and provides high-level business logic
@@ -84,10 +85,9 @@ class CommunityEngagementService {
       new CommunityMember(userId, username, email, name, contactInfo)
     }
 
-    if (user.setPassword(password)) {
-      dbService.saveUser(user)
-    } else {
-      false
+    User.setPassword(user, password) match {
+      case Success(updatedUser) => dbService.saveUser(updatedUser)
+      case Failure(_) => false
     }
   }  /**
    * Announcement Operations
@@ -596,8 +596,8 @@ class CommunityEngagementService {
   
   def updateUserProfile(newName: String, newContactInfo: String): Boolean = {
     currentUser.exists { user =>
-      user.updateProfile(newName, newContactInfo)
-      dbService.updateUser(user)
+      val updatedUser = User.updateProfile(user, newName, newContactInfo)
+      dbService.updateUser(updatedUser)
     }
   }
   
