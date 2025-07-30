@@ -1,14 +1,48 @@
 package manager
 
 import model._
-import scala.collection.mutable
+import scala.util.{Try, Success, Failure}
+import scala.util.control.NonFatal
 
 /**
- * Generic trait for managing collections of items
- * @tparam T the type of items being managed
+ * 不可变状态表示，用于管理集合项目
+ * @tparam T 被管理项目的类型
+ */
+case class ManagerState[T](
+  items: Map[String, T] = Map.empty
+) {
+  /**
+   * 获取所有项目
+   * @return 项目列表
+   */
+  def getAll: List[T] = items.values.toList
+  
+  /**
+   * 检查项目是否存在
+   * @param id 项目ID
+   * @return 如果存在返回true
+   */
+  def exists(id: String): Boolean = items.contains(id)
+  
+  /**
+   * 获取项目数量
+   * @return 项目数量
+   */
+  def size: Int = items.size
+  
+  /**
+   * 检查是否为空
+   * @return 如果为空返回true
+   */
+  def isEmpty: Boolean = items.isEmpty
+}
+
+/**
+ * 传统管理器trait，保持向后兼容
+ * @tparam T 被管理项目的类型
  */
 trait Manager[T] {
-  protected val items: mutable.Map[String, T] = mutable.Map.empty
+  protected val items: scala.collection.mutable.Map[String, T] = scala.collection.mutable.Map.empty
   
   def add(id: String, item: T): Unit = {
     items(id) = item
@@ -38,102 +72,334 @@ trait Manager[T] {
 }
 
 /**
- * Manager class for handling user operations
+ * 函数式管理器工具对象，提供不可变状态操作
+ */
+object FunctionalManager {
+  
+  /**
+   * 添加项目到状态
+   * @param state 当前状态
+   * @param id 项目ID
+   * @param item 项目
+   * @return 新状态
+   */
+  def add[T](state: ManagerState[T], id: String, item: T): ManagerState[T] = {
+    state.copy(items = state.items + (id -> item))
+  }
+  
+  /**
+   * 从状态中移除项目
+   * @param state 当前状态
+   * @param id 项目ID
+   * @return (新状态, 被移除的项目)
+   */
+  def remove[T](state: ManagerState[T], id: String): (ManagerState[T], Option[T]) = {
+    val item = state.items.get(id)
+    val newState = state.copy(items = state.items - id)
+    (newState, item)
+  }
+  
+  /**
+   * 从状态中获取项目
+   * @param state 当前状态
+   * @param id 项目ID
+   * @return 项目（如果存在）
+   */
+  def get[T](state: ManagerState[T], id: String): Option[T] = {
+    state.items.get(id)
+  }
+  
+  /**
+   * 清空状态
+   * @param state 当前状态
+   * @return 空状态
+   */
+  def clear[T](state: ManagerState[T]): ManagerState[T] = {
+    state.copy(items = Map.empty)
+  }
+}
+
+/**
+ * 用户管理器状态，包含用户数据和索引
+ */
+case class UserManagerState(
+  users: ManagerState[User] = ManagerState(),
+  usernames: Set[String] = Set.empty,
+  emails: Set[String] = Set.empty
+) {
+  /**
+   * 检查用户名是否可用
+   * @param username 用户名
+   * @return 如果可用返回true
+   */
+  def isUsernameAvailable(username: String): Boolean = !usernames.contains(username)
+  
+  /**
+   * 检查邮箱是否可用
+   * @param email 邮箱
+   * @return 如果可用返回true
+   */
+  def isEmailAvailable(email: String): Boolean = !emails.contains(email)
+}
+
+/**
+ * 函数式用户管理器，处理用户操作
  */
 class UserManager extends Manager[User] {
   
-  private val usernames: mutable.Set[String] = mutable.Set.empty
-  private val emails: mutable.Set[String] = mutable.Set.empty
-  
   /**
-   * Register a new user
-   * @param user the user to register
-   * @return true if successful, false if username or email already exists
+   * 注册新用户
+   * @param state 当前状态
+   * @param user 要注册的用户
+   * @return Try包装的(新状态, 注册结果)
    */
-  def registerUser(user: User): Boolean = {
-    if (usernames.contains(user.username) || emails.contains(user.email)) {
-      false
-    } else {
-      add(user.userId, user)
-      usernames.add(user.username)
-      emails.add(user.email)
-      true
+  def registerUser(state: UserManagerState, user: User): Try[(UserManagerState, Boolean)] = {
+    Try {
+      if (state.usernames.contains(user.username) || state.emails.contains(user.email)) {
+        (state, false)
+      } else {
+         val newUsers = FunctionalManager.add(state.users, user.userId, user)
+         val newState = state.copy(
+           users = newUsers,
+           usernames = state.usernames + user.username,
+           emails = state.emails + user.email
+         )
+         (newState, true)
+       }
+    }.recover {
+      case NonFatal(e) =>
+        println(s"注册用户失败: ${e.getMessage}")
+        (state, false)
     }
   }
   
   /**
-   * Authenticate a user by username and password
-   * @param username the username
-   * @param password the password (simplified for demo)
-   * @return the user if authentication successful, None otherwise
+   * 安全版本的用户注册
+   * @param state 当前状态
+   * @param user 要注册的用户
+   * @return (新状态, 注册结果)
    */
-  def authenticate(username: String, password: String): Option[User] = {
-    // Simplified authentication - in real app, password would be hashed
-    items.values.find(_.username == username)
+  def registerUserSafe(state: UserManagerState, user: User): (UserManagerState, Boolean) = {
+    registerUser(state, user).getOrElse((state, false))
   }
   
   /**
-   * Get user by username
-   * @param username the username to search for
-   * @return the user if found, None otherwise
+   * 用户认证
+   * @param state 当前状态
+   * @param username 用户名
+   * @param password 密码（简化版本用于演示）
+   * @return Try包装的用户（如果认证成功）
    */
-  def getUserByUsername(username: String): Option[User] = {
-    items.values.find(_.username == username)
-  }
-  
-  /**
-   * Get user by email
-   * @param email the email to search for
-   * @return the user if found, None otherwise
-   */
-  def getUserByEmail(email: String): Option[User] = {
-    items.values.find(_.email == email)
-  }
-  
-  /**
-   * Get all admin users
-   * @return list of admin users
-   */
-  def getAdminUsers: List[AdminUser] = {
-    items.values.collect {
-      case admin: AdminUser => admin
-    }.toList
-  }
-  
-  /**
-   * Get all community members
-   * @return list of community members
-   */
-  def getCommunityMembers: List[CommunityMember] = {
-    items.values.collect {
-      case member: CommunityMember => member
-    }.toList
-  }
-  
-  /**
-   * Check if username is available
-   * @param username the username to check
-   * @return true if available, false otherwise
-   */
-  def isUsernameAvailable(username: String): Boolean = {
-    !usernames.contains(username)
-  }
-  
-  /**
-   * Check if email is available
-   * @param email the email to check
-   * @return true if available, false otherwise
-   */
-  def isEmailAvailable(email: String): Boolean = {
-    !emails.contains(email)
-  }
-  
-  override def remove(id: String): Option[User] = {
-    val user = super.remove(id)
-    user.foreach { u =>
-      usernames.remove(u.username)
-      emails.remove(u.email)
+  def authenticate(state: UserManagerState, username: String, password: String): Try[Option[User]] = {
+    Try {
+      // 简化的认证 - 实际应用中密码应该被哈希处理
+      state.users.items.values.find(_.username == username)
+    }.recover {
+      case NonFatal(e) =>
+        println(s"用户认证失败: ${e.getMessage}")
+        None
     }
-    user
+  }
+  
+  /**
+   * 安全版本的用户认证
+   * @param state 当前状态
+   * @param username 用户名
+   * @param password 密码
+   * @return 用户（如果认证成功）
+   */
+  def authenticateSafe(state: UserManagerState, username: String, password: String): Option[User] = {
+    authenticate(state, username, password).getOrElse(None)
+  }
+  
+  /**
+   * 根据用户名获取用户
+   * @param state 当前状态
+   * @param username 要搜索的用户名
+   * @return Try包装的用户（如果找到）
+   */
+  def getUserByUsername(state: UserManagerState, username: String): Try[Option[User]] = {
+    Try {
+      state.users.items.values.find(_.username == username)
+    }.recover {
+      case NonFatal(e) =>
+        println(s"根据用户名获取用户失败: ${e.getMessage}")
+        None
+    }
+  }
+  
+  /**
+   * 安全版本的根据用户名获取用户
+   * @param state 当前状态
+   * @param username 用户名
+   * @return 用户（如果找到）
+   */
+  def getUserByUsernameSafe(state: UserManagerState, username: String): Option[User] = {
+    getUserByUsername(state, username).getOrElse(None)
+  }
+  
+  /**
+   * 根据邮箱获取用户
+   * @param state 当前状态
+   * @param email 要搜索的邮箱
+   * @return Try包装的用户（如果找到）
+   */
+  def getUserByEmail(state: UserManagerState, email: String): Try[Option[User]] = {
+    Try {
+      state.users.items.values.find(_.email == email)
+    }.recover {
+      case NonFatal(e) =>
+        println(s"根据邮箱获取用户失败: ${e.getMessage}")
+        None
+    }
+  }
+  
+  /**
+   * 安全版本的根据邮箱获取用户
+   * @param state 当前状态
+   * @param email 邮箱
+   * @return 用户（如果找到）
+   */
+  def getUserByEmailSafe(state: UserManagerState, email: String): Option[User] = {
+    getUserByEmail(state, email).getOrElse(None)
+  }
+  
+  /**
+   * 获取所有管理员用户
+   * @param state 当前状态
+   * @return Try包装的管理员用户列表
+   */
+  def getAdminUsers(state: UserManagerState): Try[List[AdminUser]] = {
+    Try {
+      state.users.items.values.collect {
+        case admin: AdminUser => admin
+      }.toList
+    }.recover {
+      case NonFatal(e) =>
+        println(s"获取管理员用户失败: ${e.getMessage}")
+        List.empty
+    }
+  }
+  
+  /**
+   * 安全版本的获取所有管理员用户
+   * @param state 当前状态
+   * @return 管理员用户列表
+   */
+  def getAdminUsersSafe(state: UserManagerState): List[AdminUser] = {
+    getAdminUsers(state).getOrElse(List.empty)
+  }
+  
+  /**
+   * 获取所有社区成员
+   * @param state 当前状态
+   * @return Try包装的社区成员列表
+   */
+  def getCommunityMembers(state: UserManagerState): Try[List[CommunityMember]] = {
+    Try {
+      state.users.items.values.collect {
+        case member: CommunityMember => member
+      }.toList
+    }.recover {
+      case NonFatal(e) =>
+        println(s"获取社区成员失败: ${e.getMessage}")
+        List.empty
+    }
+  }
+  
+  /**
+   * 安全版本的获取所有社区成员
+   * @param state 当前状态
+   * @return 社区成员列表
+   */
+  def getCommunityMembersSafe(state: UserManagerState): List[CommunityMember] = {
+    getCommunityMembers(state).getOrElse(List.empty)
+  }
+  
+  /**
+   * 移除用户
+   * @param state 当前状态
+   * @param id 用户ID
+   * @return Try包装的(新状态, 被移除的用户)
+   */
+  def removeUser(state: UserManagerState, id: String): Try[(UserManagerState, Option[User])] = {
+    Try {
+       val (newUsers, removedUser) = FunctionalManager.remove(state.users, id)
+       removedUser match {
+         case Some(user) =>
+           val newState = state.copy(
+             users = newUsers,
+             usernames = state.usernames - user.username,
+             emails = state.emails - user.email
+           )
+           (newState, Some(user))
+         case None =>
+           (state, None)
+       }
+     }.recover {
+      case NonFatal(e) =>
+        println(s"移除用户失败: ${e.getMessage}")
+        (state, None)
+    }
+  }
+  
+  /**
+   * 安全版本的移除用户
+   * @param state 当前状态
+   * @param id 用户ID
+   * @return (新状态, 被移除的用户)
+   */
+  def removeUserSafe(state: UserManagerState, id: String): (UserManagerState, Option[User]) = {
+    removeUser(state, id).getOrElse((state, None))
+  }
+  
+  /**
+   * 获取用户
+   * @param state 当前状态
+   * @param id 用户ID
+   * @return Try包装的用户（如果存在）
+   */
+  def getUser(state: UserManagerState, id: String): Try[Option[User]] = {
+     Try {
+       FunctionalManager.get(state.users, id)
+     }.recover {
+      case NonFatal(e) =>
+        println(s"获取用户失败: ${e.getMessage}")
+        None
+    }
+  }
+  
+  /**
+   * 安全版本的获取用户
+   * @param state 当前状态
+   * @param id 用户ID
+   * @return 用户（如果存在）
+   */
+  def getUserSafe(state: UserManagerState, id: String): Option[User] = {
+    getUser(state, id).getOrElse(None)
+  }
+  
+  /**
+   * 获取所有用户
+   * @param state 当前状态
+   * @return Try包装的用户列表
+   */
+  def getAllUsers(state: UserManagerState): Try[List[User]] = {
+    Try {
+      state.users.getAll
+    }.recover {
+      case NonFatal(e) =>
+        println(s"获取所有用户失败: ${e.getMessage}")
+        List.empty
+    }
+  }
+  
+  /**
+   * 安全版本的获取所有用户
+   * @param state 当前状态
+   * @return 用户列表
+   */
+  def getAllUsersSafe(state: UserManagerState): List[User] = {
+    getAllUsers(state).getOrElse(List.empty)
   }
 }
