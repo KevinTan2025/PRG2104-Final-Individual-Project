@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" prefHeight="700.0" prefWidth="1000.0" styleClass="scene-root" stylesheets="@SceneManager.css">
+   <top>
+      <fx:include fx:id="menuBarContainer" source="../components/layout/MenuBarComponent.fxml" />
+   </top>
+   <center>
+      <fx:include fx:id="mainTabContainer" source="../components/layout/MainTabPane.fxml" />
+   </center>
+</BorderPane>
