@@ -3,6 +3,7 @@ pathway/
 sample-gui/
 .kiro/
 *.py
+sample-old-scala/
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
