@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.utils.LoginPromptDialogController" styleClass="login-prompt-dialog">
+   <children>
+      <VBox fx:id="vboxHeader" styleClass="dialog-header">
+         <children>
+            <Label fx:id="lblTitle" styleClass="dialog-title" text="Login Required" />
+            <Label fx:id="lblHeaderText" styleClass="dialog-header-text" text="🔐 Account Required" />
+         </children>
+      </VBox>
+      <VBox fx:id="vboxContent" styleClass="dialog-content">
+         <children>
+            <Label fx:id="lblMessage" styleClass="dialog-message" text="This feature requires an account. Would you like to login or create a new account?" wrapText="true" />
+         </children>
+      </VBox>
+      <HBox fx:id="hboxButtons" styleClass="dialog-buttons">
+         <children>
+            <Button fx:id="btnLogin" styleClass="btn-primary" text="Login" onAction="#handleLoginAction" />
+            <Button fx:id="btnRegister" styleClass="btn-success" text="Register" onAction="#handleRegisterAction" />
+            <Button fx:id="btnCancel" styleClass="btn-secondary" text="Cancel" onAction="#handleCancelAction" />
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <String fx:value="@LoginPromptDialog.css" />
+   </stylesheets>
+</VBox>

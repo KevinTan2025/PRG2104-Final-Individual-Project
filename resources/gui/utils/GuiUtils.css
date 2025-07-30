@@ -1,0 +1,188 @@
+/* Common GUI Utility Styles */
+
+/* Base Dialog Styles */
+.utility-dialog {
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 3);
+}
+
+.utility-dialog-pane {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Common Button Styles */
+.utility-button {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+    -fx-min-width: 80px;
+    -fx-border: none;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.2), 2, 0, 0, 1);
+}
+
+.utility-button:hover {
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 2);
+}
+
+.utility-button:pressed {
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.1), 1, 0, 0, 0);
+    -fx-translate-y: 1px;
+}
+
+/* Primary Button */
+.btn-primary {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #0056b3;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #004085;
+}
+
+/* Success Button */
+.btn-success {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+}
+
+.btn-success:hover {
+    -fx-background-color: #218838;
+}
+
+.btn-success:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+/* Danger Button */
+.btn-danger {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+}
+
+.btn-danger:hover {
+    -fx-background-color: #c82333;
+}
+
+.btn-danger:pressed {
+    -fx-background-color: #a71e2a;
+}
+
+/* Warning Button */
+.btn-warning {
+    -fx-background-color: #ffc107;
+    -fx-text-fill: #212529;
+}
+
+.btn-warning:hover {
+    -fx-background-color: #e0a800;
+}
+
+.btn-warning:pressed {
+    -fx-background-color: #d39e00;
+}
+
+/* Info Button */
+.btn-info {
+    -fx-background-color: #17a2b8;
+    -fx-text-fill: white;
+}
+
+.btn-info:hover {
+    -fx-background-color: #138496;
+}
+
+.btn-info:pressed {
+    -fx-background-color: #0f6674;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #5a6268;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #545b62;
+}
+
+/* Common Text Styles */
+.utility-title {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212529;
+}
+
+.utility-header {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.utility-message {
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-text-fill: #495057;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 2px;
+}
+
+/* Common Layout Styles */
+.utility-content {
+    -fx-spacing: 15px;
+    -fx-padding: 20px;
+    -fx-alignment: center;
+}
+
+.utility-header-container {
+    -fx-spacing: 8px;
+    -fx-padding: 20px 20px 10px 20px;
+    -fx-alignment: center;
+}
+
+.utility-button-bar {
+    -fx-spacing: 10px;
+    -fx-padding: 10px 20px 20px 20px;
+    -fx-alignment: center-right;
+}
+
+/* Icon Styles */
+.utility-icon {
+    -fx-font-size: 24px;
+    -fx-text-alignment: center;
+}
+
+.icon-info {
+    -fx-text-fill: #17a2b8;
+}
+
+.icon-error {
+    -fx-text-fill: #dc3545;
+}
+
+.icon-warning {
+    -fx-text-fill: #ffc107;
+}
+
+.icon-success {
+    -fx-text-fill: #28a745;
+}
+
+.icon-question {
+    -fx-text-fill: #6c757d;
+}
