@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" styleClass="anonymous-menu-container">
+   <left>
+      <MenuBar fx:id="menuBar" styleClass="anonymous-menu-bar">
+         <menus>
+            <Menu fx:id="menuAccount" text="👤 Account">
+               <items>
+                  <MenuItem fx:id="menuItemLoginRegister" onAction="#handleLoginRegister" text="✨ Login / Register" />
+                  <SeparatorMenuItem />
+                  <MenuItem fx:id="menuItemLogin" onAction="#handleLogin" text="🔐 Login" />
+                  <MenuItem fx:id="menuItemRegister" onAction="#handleRegister" text="📝 Register" />
+                  <SeparatorMenuItem />
+                  <MenuItem fx:id="menuItemBackToLogin" onAction="#handleBackToLogin" text="🏠 Back to Login" />
+               </items>
+            </Menu>
+            <Menu fx:id="menuHelp" text="ℹ️ Help">
+               <items>
+                  <MenuItem fx:id="menuItemAboutAnonymous" onAction="#handleAboutAnonymous" text="About Anonymous Mode" />
+                  <MenuItem fx:id="menuItemWhyRegister" onAction="#handleWhyRegister" text="Why Register?" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </left>
+   <right>
+      <HBox fx:id="hboxStatusContainer" alignment="CENTER_RIGHT" styleClass="status-container">
+         <children>
+            <Label fx:id="lblAnonymousStatus" styleClass="anonymous-status-label" text="🔍 Anonymous Mode - Limited Features" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="0.0" right="10.0" top="5.0" />
+         </padding>
+      </HBox>
+   </right>
+   <stylesheets>
+      <URL value="@AnonymousMenuBarComponent.css" />
+   </stylesheets>
+</BorderPane>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="tabPaneAnonymous" styleClass="anonymous-tab-pane" tabClosingPolicy="UNAVAILABLE">
+   <tabs>
+      <Tab fx:id="tabAnonymousDashboard" closable="false" text="🔍 Dashboard">
+         <content>
+            <VBox fx:id="vboxAnonymousDashboardContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousDashboardTitle" styleClass="anonymous-tab-title" text="Anonymous Dashboard" />
+                  <Label fx:id="lblAnonymousDashboardPlaceholder" styleClass="anonymous-placeholder-text" text="Limited dashboard view for anonymous users" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnonymousAnnouncements" closable="false" text="📢 Announcements">
+         <content>
+            <VBox fx:id="vboxAnonymousAnnouncementsContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousAnnouncementsTitle" styleClass="anonymous-tab-title" text="Announcements (Read Only)" />
+                  <Label fx:id="lblAnonymousAnnouncementsPlaceholder" styleClass="anonymous-placeholder-text" text="View announcements in read-only mode" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnonymousFoodSharing" closable="false" text="🍕 Food Sharing">
+         <content>
+            <VBox fx:id="vboxAnonymousFoodSharingContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousFoodSharingTitle" styleClass="anonymous-tab-title" text="Food Sharing (Read Only)" />
+                  <Label fx:id="lblAnonymousFoodSharingPlaceholder" styleClass="anonymous-placeholder-text" text="Browse food sharing posts without posting ability" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnonymousFoodStock" closable="false" text="📦 Food Stock">
+         <content>
+            <VBox fx:id="vboxAnonymousFoodStockContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousFoodStockTitle" styleClass="anonymous-tab-title" text="Food Stock" />
+                  <Label fx:id="lblAnonymousFoodStockPlaceholder" styleClass="anonymous-placeholder-text" text="View food stock information" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnonymousDiscussion" closable="false" text="💬 Discussion">
+         <content>
+            <VBox fx:id="vboxAnonymousDiscussionContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousDiscussionTitle" styleClass="anonymous-tab-title" text="Discussion (Read Only)" />
+                  <Label fx:id="lblAnonymousDiscussionPlaceholder" styleClass="anonymous-placeholder-text" text="Read discussions without commenting ability" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnonymousEvents" closable="false" text="📅 Events">
+         <content>
+            <VBox fx:id="vboxAnonymousEventsContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousEventsTitle" styleClass="anonymous-tab-title" text="Events (Read Only)" />
+                  <Label fx:id="lblAnonymousEventsPlaceholder" styleClass="anonymous-placeholder-text" text="View events without participation ability" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnonymousAppInfo" closable="false" text="ℹ️ App Info">
+         <content>
+            <VBox fx:id="vboxAnonymousAppInfoContent" alignment="CENTER" spacing="20.0" styleClass="anonymous-tab-content">
+               <children>
+                  <Label fx:id="lblAnonymousAppInfoTitle" styleClass="anonymous-tab-title" text="App Information" />
+                  <Label fx:id="lblAnonymousAppInfoPlaceholder" styleClass="anonymous-placeholder-text" text="Learn about the application" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+   </tabs>
+   <stylesheets>
+      <URL value="@AnonymousMainTabPane.css" />
+   </stylesheets>
+</TabPane>

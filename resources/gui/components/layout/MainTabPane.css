@@ -1,0 +1,139 @@
+/* MainTabPane Styles */
+
+.main-tab-pane {
+    -fx-background-color: #ffffff;
+}
+
+.main-tab-pane .tab-header-area {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.main-tab-pane .tab-header-background {
+    -fx-background-color: #f8f9fa;
+}
+
+.main-tab-pane .tab {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 8 16;
+}
+
+.main-tab-pane .tab:selected {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #007bff;
+    -fx-border-width: 0 0 2 0;
+}
+
+.main-tab-pane .tab:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.main-tab-pane .tab .tab-label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.main-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+.main-tab-pane .tab-content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+/* Individual tab styling */
+.main-tab-pane .tab:nth-child(1) .tab-label {
+    /* Dashboard tab */
+    -fx-text-fill: #28a745;
+}
+
+.main-tab-pane .tab:nth-child(1):selected .tab-label {
+    -fx-text-fill: #28a745;
+}
+
+.main-tab-pane .tab:nth-child(2) .tab-label {
+    /* Announcements tab */
+    -fx-text-fill: #17a2b8;
+}
+
+.main-tab-pane .tab:nth-child(2):selected .tab-label {
+    -fx-text-fill: #17a2b8;
+}
+
+.main-tab-pane .tab:nth-child(3) .tab-label {
+    /* Food Sharing tab */
+    -fx-text-fill: #fd7e14;
+}
+
+.main-tab-pane .tab:nth-child(3):selected .tab-label {
+    -fx-text-fill: #fd7e14;
+}
+
+.main-tab-pane .tab:nth-child(4) .tab-label {
+    /* Food Stock tab */
+    -fx-text-fill: #6f42c1;
+}
+
+.main-tab-pane .tab:nth-child(4):selected .tab-label {
+    -fx-text-fill: #6f42c1;
+}
+
+.main-tab-pane .tab:nth-child(5) .tab-label {
+    /* Discussion tab */
+    -fx-text-fill: #e83e8c;
+}
+
+.main-tab-pane .tab:nth-child(5):selected .tab-label {
+    -fx-text-fill: #e83e8c;
+}
+
+.main-tab-pane .tab:nth-child(6) .tab-label {
+    /* Events tab */
+    -fx-text-fill: #20c997;
+}
+
+.main-tab-pane .tab:nth-child(6):selected .tab-label {
+    -fx-text-fill: #20c997;
+}
+
+.main-tab-pane .tab:nth-child(7) .tab-label {
+    /* Notifications tab */
+    -fx-text-fill: #ffc107;
+}
+
+.main-tab-pane .tab:nth-child(7):selected .tab-label {
+    -fx-text-fill: #ffc107;
+}
+
+.main-tab-pane .tab:nth-child(8) .tab-label {
+    /* App Info tab */
+    -fx-text-fill: #6c757d;
+}
+
+.main-tab-pane .tab:nth-child(8):selected .tab-label {
+    -fx-text-fill: #6c757d;
+}
+
+/* Tab content styling */
+.tab-content {
+    -fx-background-color: #ffffff;
+    -fx-padding: 40;
+}
+
+.tab-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.placeholder-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+}
