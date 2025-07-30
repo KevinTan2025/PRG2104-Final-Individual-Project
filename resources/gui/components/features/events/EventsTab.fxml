@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="events-tab">
+   <top>
+      <VBox>
+         <children>
+            <HBox spacing="10.0" styleClass="top-controls">
+               <children>
+                  <Button fx:id="btnCreateEvent" onAction="#handleCreateEvent" text="Create Event" styleClass="create-button" />
+                  <Button fx:id="btnRsvp" onAction="#handleRSVP" text="RSVP to Event" styleClass="rsvp-button" />
+                  <Button fx:id="btnCancelRsvp" onAction="#handleCancelRSVP" text="Cancel RSVP" styleClass="cancel-rsvp-button" />
+                  <Button fx:id="btnViewMyEvents" onAction="#handleViewMyEvents" text="My Events" styleClass="my-events-button" />
+                  <Button fx:id="btnViewAll" onAction="#handleViewAll" text="All Events" styleClass="view-all-button" />
+                  <Button fx:id="btnRefresh" onAction="#handleRefresh" text="Refresh" styleClass="refresh-button" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            <HBox spacing="10.0" styleClass="search-controls">
+               <children>
+                  <TextField fx:id="txtSearch" promptText="Search events..." styleClass="search-field" />
+                  <Button fx:id="btnSearch" onAction="#handleSearch" text="Search" styleClass="search-button" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ListView fx:id="lstEvents" styleClass="events-list" />
+   </center>
+</BorderPane>
