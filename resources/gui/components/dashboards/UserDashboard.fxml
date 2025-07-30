@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="bpUserDashboard" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <stylesheets>
+      <String fx:value="@UserDashboard.css" />
+   </stylesheets>
+   <center>
+      <ScrollPane fx:id="spUserDashboard" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="user-dashboard-scroll">
+         <content>
+            <VBox fx:id="vboxUserDashboardContent" spacing="20.0" styleClass="user-dashboard-content">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               
+               <!-- Dashboard Title -->
+               <Label fx:id="lblDashboardTitle" text="🏠 User Dashboard" styleClass="dashboard-title" />
+               
+               <!-- Personal Stats Section -->
+               <HBox fx:id="hboxPersonalStats" spacing="20.0" styleClass="personal-stats-section">
+                  <VBox fx:id="vboxPostsShared" styleClass="user-stat-card stat-card-green">
+                     <Label fx:id="lblPostsSharedValue" text="23" styleClass="stat-card-value" />
+                     <Label fx:id="lblPostsSharedTitle" text="📦 Posts Shared" styleClass="stat-card-title" />
+                  </VBox>
+                  <VBox fx:id="vboxFamiliesHelped" styleClass="user-stat-card stat-card-blue">
+                     <Label fx:id="lblFamiliesHelpedValue" text="8" styleClass="stat-card-value" />
+                     <Label fx:id="lblFamiliesHelpedTitle" text="👨‍👩‍👧‍👦 Families Helped" styleClass="stat-card-title" />
+                  </VBox>
+                  <VBox fx:id="vboxEventsJoined" styleClass="user-stat-card stat-card-orange">
+                     <Label fx:id="lblEventsJoinedValue" text="5" styleClass="stat-card-value" />
+                     <Label fx:id="lblEventsJoinedTitle" text="📅 Events Joined" styleClass="stat-card-title" />
+                  </VBox>
+                  <VBox fx:id="vboxCommunityPoints" styleClass="user-stat-card stat-card-purple">
+                     <Label fx:id="lblCommunityPointsValue" text="245" styleClass="stat-card-value" />
+                     <Label fx:id="lblCommunityPointsTitle" text="⭐ Community Points" styleClass="stat-card-title" />
+                  </VBox>
+               </HBox>
+               
+               <!-- Community Highlights and Personal Activity -->
+               <HBox fx:id="hboxHighlightsActivity" spacing="20.0">
+                  <!-- Community Highlights Section -->
+                  <VBox fx:id="vboxCommunityHighlights" spacing="15.0" styleClass="highlights-section">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <Label fx:id="lblCommunityHighlightsTitle" text="🌟 Community Highlights" styleClass="section-title" />
+                     <ListView fx:id="lstCommunityHighlights" styleClass="highlights-list" prefHeight="140.0" />
+                  </VBox>
+                  
+                  <!-- Personal Activity Section -->
+                  <VBox fx:id="vboxPersonalActivity" spacing="15.0" styleClass="activity-section">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <Label fx:id="lblPersonalActivityTitle" text="📈 My Recent Activity" styleClass="section-title" />
+                     <ListView fx:id="lstPersonalActivity" styleClass="activity-list" prefHeight="140.0" />
+                  </VBox>
+               </HBox>
+               
+               <!-- Community Chat Section -->
+               <VBox fx:id="vboxCommunityChat" spacing="15.0" styleClass="chat-section">
+                  <padding>
+                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  <Label fx:id="lblCommunityChatTitle" text="💬 Community Chat" styleClass="section-title" />
+                  
+                  <!-- Chat Area -->
+                  <ScrollPane fx:id="spChatArea" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="chat-area" prefHeight="150.0">
+                     <content>
+                        <VBox fx:id="vboxChatMessages" spacing="10.0" styleClass="chat-messages">
+                           <padding>
+                              <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                           </padding>
+                           
+                           <!-- Chat Message 1 -->
+                           <HBox fx:id="hboxMessage1" alignment="CENTER_LEFT" styleClass="chat-message-container">
+                              <VBox fx:id="vboxMessage1" maxWidth="300.0" styleClass="chat-message chat-message-other">
+                                 <Label fx:id="lblMessage1User" text="Alice Johnson" styleClass="chat-username chat-username-other" />
+                                 <Label fx:id="lblMessage1Text" text="Thanks everyone for the amazing vegetables yesterday!" styleClass="chat-text" wrapText="true" />
+                                 <Label fx:id="lblMessage1Time" text="2 min ago" styleClass="chat-time" />
+                              </VBox>
+                           </HBox>
+                           
+                           <!-- Chat Message 2 (Current User) -->
+                           <HBox fx:id="hboxMessage2" alignment="CENTER_RIGHT" styleClass="chat-message-container">
+                              <VBox fx:id="vboxMessage2" maxWidth="300.0" styleClass="chat-message chat-message-current">
+                                 <Label fx:id="lblMessage2User" text="You" styleClass="chat-username chat-username-current" />
+                                 <Label fx:id="lblMessage2Text" text="Glad to help! More tomatoes coming this weekend 🍅" styleClass="chat-text" wrapText="true" />
+                                 <Label fx:id="lblMessage2Time" text="1 min ago" styleClass="chat-time" />
+                              </VBox>
+                           </HBox>
+                           
+                           <!-- Chat Message 3 -->
+                           <HBox fx:id="hboxMessage3" alignment="CENTER_LEFT" styleClass="chat-message-container">
+                              <VBox fx:id="vboxMessage3" maxWidth="300.0" styleClass="chat-message chat-message-other">
+                                 <Label fx:id="lblMessage3User" text="Bob Smith" styleClass="chat-username chat-username-other" />
+                                 <Label fx:id="lblMessage3Text" text="Looking forward to the nutrition workshop!" styleClass="chat-text" wrapText="true" />
+                                 <Label fx:id="lblMessage3Time" text="30 sec ago" styleClass="chat-time" />
+                              </VBox>
+                           </HBox>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  
+                  <!-- Chat Input -->
+                  <HBox fx:id="hboxChatInput" spacing="10.0" alignment="CENTER_LEFT" styleClass="chat-input-container">
+                     <TextField fx:id="txtChatMessage" promptText="Type your message here..." styleClass="chat-input-field" prefWidth="400.0" />
+                     <Button fx:id="btnSendMessage" text="Send" styleClass="chat-send-button" onAction="#handleSendMessage" />
+                  </HBox>
+               </VBox>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

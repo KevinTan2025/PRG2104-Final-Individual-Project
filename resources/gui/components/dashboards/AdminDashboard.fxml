@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="bpAdminDashboard" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <stylesheets>
+      <String fx:value="@AdminDashboard.css" />
+   </stylesheets>
+   <center>
+      <ScrollPane fx:id="spAdminDashboard" fitToWidth="true" styleClass="admin-dashboard-scroll">
+         <content>
+            <VBox fx:id="vboxAdminDashboardContent" spacing="25.0" styleClass="admin-dashboard-content">
+               <padding>
+                  <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+               </padding>
+               
+               <!-- Welcome Section -->
+               <VBox fx:id="vboxWelcomeSection" spacing="10.0" styleClass="welcome-section">
+                  <padding>
+                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  <HBox fx:id="hboxWelcomeHeader" spacing="15.0" alignment="CENTER_LEFT">
+                     <Label fx:id="lblWelcomeIcon" text="🔧" styleClass="welcome-icon" />
+                     <VBox fx:id="vboxWelcomeText" spacing="5.0">
+                        <Label fx:id="lblWelcomeTitle" text="System Administrator Dashboard" styleClass="welcome-title" />
+                        <Label fx:id="lblWelcomeUser" text="Welcome back, Administrator!" styleClass="welcome-user" />
+                     </VBox>
+                  </HBox>
+                  <Label fx:id="lblWelcomeDescription" text="Manage users, monitor system health, and oversee community operations" styleClass="welcome-description" />
+               </VBox>
+               
+               <!-- System Overview Section -->
+               <VBox fx:id="vboxSystemOverview" spacing="15.0" styleClass="system-overview-section">
+                  <padding>
+                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  <Label fx:id="lblSystemOverviewTitle" text="📊 System Overview" styleClass="section-title" />
+                  <GridPane fx:id="grdSystemStats" hgap="15.0" vgap="15.0">
+                     <VBox fx:id="vboxTotalUsers" styleClass="admin-stat-card" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label fx:id="lblTotalUsersTitle" text="👥 Total Users" styleClass="stat-card-title" />
+                        <Label fx:id="lblTotalUsersValue" text="156" styleClass="stat-card-value stat-blue" />
+                     </VBox>
+                     <VBox fx:id="vboxCommunityMembers" styleClass="admin-stat-card" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label fx:id="lblCommunityMembersTitle" text="👤 Community Members" styleClass="stat-card-title" />
+                        <Label fx:id="lblCommunityMembersValue" text="142" styleClass="stat-card-value stat-green" />
+                     </VBox>
+                     <VBox fx:id="vboxAdminUsers" styleClass="admin-stat-card" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label fx:id="lblAdminUsersTitle" text="🔧 Admin Users" styleClass="stat-card-title" />
+                        <Label fx:id="lblAdminUsersValue" text="14" styleClass="stat-card-value stat-red" />
+                     </VBox>
+                     <VBox fx:id="vboxActiveAnnouncements" styleClass="admin-stat-card" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label fx:id="lblActiveAnnouncementsTitle" text="📢 Active Announcements" styleClass="stat-card-title" />
+                        <Label fx:id="lblActiveAnnouncementsValue" text="8" styleClass="stat-card-value stat-orange" />
+                     </VBox>
+                     <VBox fx:id="vboxActiveFoodPosts" styleClass="admin-stat-card" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="lblActiveFoodPostsTitle" text="🍽️ Active Food Posts" styleClass="stat-card-title" />
+                        <Label fx:id="lblActiveFoodPostsValue" text="23" styleClass="stat-card-value stat-purple" />
+                     </VBox>
+                     <VBox fx:id="vboxUpcomingEvents" styleClass="admin-stat-card" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label fx:id="lblUpcomingEventsTitle" text="📅 Upcoming Events" styleClass="stat-card-title" />
+                        <Label fx:id="lblUpcomingEventsValue" text="5" styleClass="stat-card-value stat-teal" />
+                     </VBox>
+                  </GridPane>
+               </VBox>
+               
+               <!-- User Management and Content Moderation -->
+               <HBox fx:id="hboxManagementSections" spacing="20.0">
+                  <!-- User Management Section -->
+                  <VBox fx:id="vboxUserManagement" spacing="15.0" styleClass="management-section">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <Label fx:id="lblUserManagementTitle" text="👥 User Management" styleClass="section-title" />
+                     <VBox fx:id="vboxUserManagementButtons" spacing="10.0">
+                        <Button fx:id="btnViewAllUsers" text="🔍 View All Users" styleClass="admin-button admin-button-blue" onAction="#handleViewAllUsers" />
+                        <Button fx:id="btnCreateAdminUser" text="➕ Create Admin User" styleClass="admin-button admin-button-red" onAction="#handleCreateAdminUser" />
+                        <Button fx:id="btnManagePermissions" text="🚫 Manage User Permissions" styleClass="admin-button admin-button-orange" onAction="#handleManagePermissions" />
+                        <Button fx:id="btnUserActivityReport" text="📊 User Activity Report" styleClass="admin-button admin-button-purple" onAction="#handleUserActivityReport" />
+                     </VBox>
+                  </VBox>
+                  
+                  <!-- Content Moderation Section -->
+                  <VBox fx:id="vboxContentModeration" spacing="15.0" styleClass="management-section">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <Label fx:id="lblContentModerationTitle" text="🛡️ Content Moderation" styleClass="section-title" />
+                     <VBox fx:id="vboxContentModerationButtons" spacing="10.0">
+                        <Button fx:id="btnReviewAnnouncements" text="📝 Review Announcements" styleClass="admin-button admin-button-green" onAction="#handleReviewAnnouncements" />
+                        <Button fx:id="btnMonitorFoodPosts" text="🍽️ Monitor Food Posts" styleClass="admin-button admin-button-teal" onAction="#handleMonitorFoodPosts" />
+                        <Button fx:id="btnDiscussionModeration" text="💬 Discussion Moderation" styleClass="admin-button admin-button-orange-alt" onAction="#handleDiscussionModeration" />
+                        <Button fx:id="btnReportedContent" text="⚠️ Reported Content" styleClass="admin-button admin-button-red-alt" onAction="#handleReportedContent" />
+                     </VBox>
+                  </VBox>
+               </HBox>
+               
+               <!-- System Controls Section -->
+               <VBox fx:id="vboxSystemControls" spacing="15.0" styleClass="system-controls-section">
+                  <padding>
+                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  <Label fx:id="lblSystemControlsTitle" text="⚙️ System Controls" styleClass="section-title" />
+                  <HBox fx:id="hboxSystemControlsButtons" spacing="15.0">
+                     <Button fx:id="btnSystemStatistics" text="📊 System Statistics" styleClass="admin-button admin-button-dark" onAction="#handleSystemStatistics" />
+                     <Button fx:id="btnRefreshDashboard" text="🔄 Refresh Dashboard" styleClass="admin-button admin-button-teal-alt" onAction="#handleRefreshDashboard" />
+                     <Button fx:id="btnBackupSystem" text="💾 Backup System" styleClass="admin-button admin-button-purple-alt" onAction="#handleBackupSystem" />
+                     <Button fx:id="btnExportReports" text="📋 Export Reports" styleClass="admin-button admin-button-orange-dark" onAction="#handleExportReports" />
+                  </HBox>
+               </VBox>
+               
+               <!-- Recent Activity Section -->
+               <VBox fx:id="vboxRecentActivity" spacing="15.0" styleClass="recent-activity-section">
+                  <padding>
+                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                  </padding>
+                  <Label fx:id="lblRecentActivityTitle" text="📈 Recent System Activity" styleClass="section-title" />
+                  <ListView fx:id="lstRecentActivity" styleClass="activity-list" prefHeight="150.0" />
+               </VBox>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>
