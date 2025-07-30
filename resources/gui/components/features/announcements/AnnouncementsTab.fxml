@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="announcements-tab">
+   <content>
+      <HBox spacing="20.0" styleClass="main-content">
+         <children>
+            <!-- Activity Feed Area -->
+            <VBox fx:id="vboxActivityFeed" styleClass="activity-feed-container" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Activity Feed will be loaded here" styleClass="activity-feed-placeholder" />
+               </children>
+            </VBox>
+            
+            <!-- Side Panel -->
+            <VBox prefWidth="300.0" spacing="20.0" styleClass="side-panel">
+               <children>
+                  <!-- Quick Actions Card -->
+                  <VBox spacing="10.0" styleClass="quick-actions-card">
+                     <children>
+                        <Label text="📢 Quick Actions" styleClass="card-title" />
+                        <Button fx:id="btnCreateAnnouncement" onAction="#handleCreateAnnouncement" prefWidth="250.0" text="📝 Create Announcement" styleClass="create-announcement-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Announcement Stats Card -->
+                  <VBox spacing="10.0" styleClass="stats-card">
+                     <children>
+                        <Label text="📊 Announcement Stats" styleClass="card-title" />
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Total Announcements" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblTotalAnnouncements" text="0" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="This Week" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblThisWeek" text="0" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="This Month" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblThisMonth" text="0" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Categories Card -->
+                  <VBox spacing="10.0" styleClass="categories-card">
+                     <children>
+                        <Label text="📋 Categories" styleClass="card-title" />
+                        <VBox spacing="2.0" styleClass="category-item">
+                           <children>
+                              <Label text="🚨 Emergency" styleClass="category-name" />
+                              <Label text="Urgent notifications" styleClass="category-description" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="2.0" styleClass="category-item">
+                           <children>
+                              <Label text="📅 Events" styleClass="category-name" />
+                              <Label text="Event announcements" styleClass="category-description" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="2.0" styleClass="category-item">
+                           <children>
+                              <Label text="🍕 Food Distribution" styleClass="category-name" />
+                              <Label text="Food sharing info" styleClass="category-description" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="2.0" styleClass="category-item">
+                           <children>
+                              <Label text="💡 Tips" styleClass="category-name" />
+                              <Label text="Helpful community tips" styleClass="category-description" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="2.0" styleClass="category-item">
+                           <children>
+                              <Label text="📢 General" styleClass="category-name" />
+                              <Label text="General announcements" styleClass="category-description" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+   </content>
+</ScrollPane>

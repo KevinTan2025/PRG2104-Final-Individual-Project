@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fitToWidth="true" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="anonymous-dashboard">
+   <content>
+      <HBox spacing="20.0" styleClass="main-content">
+         <children>
+            <!-- Activity Feed Area -->
+            <VBox fx:id="vboxActivityFeed" styleClass="activity-feed-container" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Activity Feed will be loaded here" styleClass="activity-feed-placeholder" />
+               </children>
+            </VBox>
+            
+            <!-- Side Panel -->
+            <VBox prefWidth="300.0" spacing="20.0" styleClass="side-panel">
+               <children>
+                  <!-- Join Prompt Card -->
+                  <VBox spacing="10.0" styleClass="join-prompt-card">
+                     <children>
+                        <Label text="👋 Welcome to our Community!" styleClass="card-title" />
+                        <Label text="You're browsing as a guest. Join us to participate fully!" styleClass="join-description" wrapText="true" />
+                        <Button fx:id="btnSignUp" onAction="#handleSignUp" prefWidth="200.0" text="Sign Up" styleClass="signup-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Community Stats Card -->
+                  <VBox spacing="10.0" styleClass="stats-card">
+                     <children>
+                        <Label text="📊 Community Stats" styleClass="card-title" />
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Active Members" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblActiveMembers" text="245" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Posts Today" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblPostsToday" text="18" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Food Shared" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblFoodShared" text="12" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="stat-row">
+                           <children>
+                              <Label text="Events This Week" styleClass="stat-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblEventsThisWeek" text="7" styleClass="stat-value" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Trending Topics Card -->
+                  <VBox spacing="10.0" styleClass="trending-card">
+                     <children>
+                        <Label text="🔥 Trending Topics" styleClass="card-title" />
+                        <HBox spacing="10.0" styleClass="trending-item">
+                           <children>
+                              <Label text="#StudyGroups" styleClass="hashtag-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label text="45 posts" styleClass="post-count-label" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="trending-item">
+                           <children>
+                              <Label text="#FreeFood" styleClass="hashtag-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label text="32 posts" styleClass="post-count-label" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="trending-item">
+                           <children>
+                              <Label text="#MovieNight" styleClass="hashtag-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label text="28 posts" styleClass="post-count-label" />
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="trending-item">
+                           <children>
+                              <Label text="#FinalExams" styleClass="hashtag-label" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label text="21 posts" styleClass="post-count-label" />
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+                  
+                  <!-- Upcoming Events Card -->
+                  <VBox spacing="10.0" styleClass="events-card">
+                     <children>
+                        <Label text="📅 Upcoming Events" styleClass="card-title" />
+                        <HBox spacing="10.0" styleClass="event-item">
+                           <children>
+                              <Label text="📅" styleClass="event-icon" />
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <Label text="Movie Night" styleClass="event-name" />
+                                    <Label text="Tomorrow 7:00 PM" styleClass="event-time" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="event-item">
+                           <children>
+                              <Label text="📅" styleClass="event-icon" />
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <Label text="Study Group" styleClass="event-name" />
+                                    <Label text="Friday 2:00 PM" styleClass="event-time" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox spacing="10.0" styleClass="event-item">
+                           <children>
+                              <Label text="📅" styleClass="event-icon" />
+                              <VBox spacing="2.0">
+                                 <children>
+                                    <Label text="Food Festival" styleClass="event-name" />
+                                    <Label text="Next Monday" styleClass="event-time" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <Button fx:id="btnViewAllEvents" onAction="#handleViewAllEvents" prefWidth="200.0" text="View All Events" styleClass="view-all-events-button" />
+                     </children>
+                     <padding>
+                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </HBox>
+   </content>
+</ScrollPane>
