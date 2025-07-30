@@ -128,7 +128,7 @@ object DatabaseConnection {
   }
   
   /**
-   * Set parameters for prepared statement
+   * 为预处理语句设置参数
    */
   private def setParameters(stmt: PreparedStatement, params: Any*): Unit = {
     params.zipWithIndex.foreach { case (param, index) =>
@@ -154,7 +154,7 @@ object DatabaseConnection {
   }
   
   /**
-   * Close database connection
+   * 关闭数据库连接
    */
   def close(): Unit = {
     connection.foreach { conn =>
@@ -166,7 +166,7 @@ object DatabaseConnection {
   }
   
   /**
-   * Execute SQL script from string
+   * 执行 SQL 脚本
    */
   def executeSqlScript(script: String): Unit = {
     val conn = getConnection
@@ -179,14 +179,30 @@ object DatabaseConnection {
         stmt.close()
       } catch {
         case e: SQLException =>
-          println(s"Error executing SQL: ${sql.trim}")
+          println(s"执行 SQL 错误: ${sql.trim}")
           throw e
       }
     }
   }
   
   /**
-   * Check if database exists and has tables
+   * 安全执行 SQL 脚本，返回 Try 类型
+   */
+  def executeSqlScriptSafe(script: String): Try[Unit] = {
+    Try {
+      val conn = getConnection
+      val statements = script.split(";").filter(_.trim.nonEmpty)
+      
+      statements.foreach { sql =>
+        Using.resource(conn.createStatement()) { stmt =>
+          stmt.execute(sql.trim)
+        }
+      }
+    }
+  }
+  
+  /**
+   * 检查数据库是否已初始化
    */
   def isDatabaseInitialized: Boolean = {
     try {
@@ -200,14 +216,32 @@ object DatabaseConnection {
   }
   
   /**
-   * Utility method to convert database timestamp to LocalDateTime
+   * 安全检查数据库是否已初始化
+   */
+  def isDatabaseInitializedSafe: Try[Boolean] = {
+    Try {
+      Using.resource(executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")) { rs =>
+        rs.next()
+      }
+    }
+  }
+  
+  /**
+   * 将数据库时间戳转换为 LocalDateTime
    */
   def parseDateTime(dateTimeStr: String): LocalDateTime = {
     LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
   }
   
   /**
-   * Utility method to convert LocalDateTime to database string
+   * 安全解析日期时间
+   */
+  def parseDateTimeSafe(dateTimeStr: String): Try[LocalDateTime] = {
+    Try(LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+  }
+  
+  /**
+   * 将 LocalDateTime 转换为数据库字符串
    */
   def formatDateTime(dateTime: LocalDateTime): String = {
     dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)

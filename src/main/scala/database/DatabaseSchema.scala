@@ -1,14 +1,15 @@
 package database
 
 import util.PasswordHasher
+import scala.util.{Try, Success, Failure}
 
 /**
- * Database schema initialization and management
+ * 数据库模式初始化和管理
  */
 object DatabaseSchema {
   
   /**
-   * Initialize all database tables
+   * 初始化所有数据库表
    */
   def initializeDatabase(): Unit = {
     if (!DatabaseConnection.isDatabaseInitialized) {
@@ -16,19 +17,55 @@ object DatabaseSchema {
       if (!isDatabaseMarkedInitialized()) {
         insertSampleData()
         markDatabaseInitialized()
-        println("Database initialized successfully!")
+        println("数据库初始化成功！")
       } else {
-        println("Database already initialized.")
+        println("数据库已经初始化。")
       }
     } else {
-      println("Database already initialized.")
+      println("数据库已经初始化。")
     }
   }
   
   /**
-   * Create all required tables
+   * 安全初始化数据库，返回 Try 类型
+   */
+  def initializeDatabaseSafe(): Try[Unit] = {
+    Try {
+      if (!DatabaseConnection.isDatabaseInitialized) {
+        createTablesSafe().get
+        if (!isDatabaseMarkedInitialized()) {
+          insertSampleDataSafe().get
+          markDatabaseInitializedSafe().get
+          println("数据库初始化成功！")
+        } else {
+          println("数据库已经初始化。")
+        }
+      } else {
+        println("数据库已经初始化。")
+      }
+    }
+  }
+  
+  /**
+   * 创建所有必需的表
    */
   private def createTables(): Unit = {
+    val createTablesScript = getCreateTablesScript()
+    DatabaseConnection.executeSqlScript(createTablesScript)
+  }
+  
+  /**
+   * 安全创建所有必需的表
+   */
+  private def createTablesSafe(): Try[Unit] = {
+    val createTablesScript = getCreateTablesScript()
+    DatabaseConnection.executeSqlScriptSafe(createTablesScript)
+  }
+  
+  /**
+   * 获取创建表的 SQL 脚本
+   */
+  private def getCreateTablesScript(): String = {
     val createTablesScript = """
       -- Users table
       CREATE TABLE IF NOT EXISTS users (
@@ -228,14 +265,23 @@ object DatabaseSchema {
         updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     """
-    
-    DatabaseConnection.executeSqlScript(createTablesScript)
+    createTablesScript
   }
   
   /**
-   * Insert sample data for testing
+   * 插入测试样本数据
    */
   private def insertSampleData(): Unit = {
+    insertSampleDataSafe().recover {
+      case ex => println(s"插入样本数据时出错: ${ex.getMessage}")
+    }
+  }
+  
+  /**
+   * 安全插入测试样本数据
+   */
+  private def insertSampleDataSafe(): Try[Unit] = {
+    Try {
     import java.time.LocalDateTime
     import java.util.UUID
     
@@ -832,19 +878,20 @@ object DatabaseSchema {
       )
     }
     
-    println("Sample data inserted successfully!")
-    println("Sample users created with passwords:")
-    println("  - Admin users (admin, community_manager): 'Admin123*'")
-    println("  - Regular users: 'Password123!'")
-    println("Available users: admin/community_manager/john/jane/mike/sarah/david_/emily/alex/lisa/ryan/maria")
-    println("Sample community data includes:")
-    println("  - 5 announcements from admins and community members")
-    println("  - 8 food posts (offers and requests)")
-    println("  - 6 discussion topics on various community subjects")
-    println("  - 6 upcoming community events")
-    println("  - Discussion replies and event RSVPs")
-    println("  - Sample notifications for users")
-    println("Sample food stock items created for testing inventory management.")
+      println("样本数据插入成功！")
+      println("样本用户创建，密码如下：")
+      println("  - 管理员用户 (admin, community_manager): 'Admin123*'")
+      println("  - 普通用户: 'Password123!'")
+      println("可用用户: admin/community_manager/john/jane/mike/sarah/david_/emily/alex/lisa/ryan/maria")
+      println("样本社区数据包括：")
+      println("  - 5个来自管理员和社区成员的公告")
+      println("  - 8个食物帖子（提供和请求）")
+      println("  - 6个关于各种社区主题的讨论话题")
+      println("  - 6个即将举行的社区活动")
+      println("  - 讨论回复和活动回复")
+      println("  - 用户的样本通知")
+      println("为测试库存管理创建的样本食物库存项目。")
+    }
   }
   
   /**
@@ -898,21 +945,28 @@ object DatabaseSchema {
   }
   
   /**
-   * Mark database as initialized
+   * 标记数据库为已初始化
    */
   private def markDatabaseInitialized(): Unit = {
-    try {
-      import java.time.LocalDateTime
-      val now = DatabaseConnection.formatDateTime(LocalDateTime.now())
-      DatabaseConnection.executeUpdate(
-        """INSERT OR REPLACE INTO system_metadata 
-           (key, value, created_at, updated_at) 
-           VALUES ('database_initialized', 'true', ?, ?)""",
-        now, now
-      )
-    } catch {
-      case e: Exception =>
-        println(s"Warning: Could not mark database as initialized: ${e.getMessage}")
+    markDatabaseInitializedSafe().recover {
+      case ex => println(s"标记数据库初始化时出错: ${ex.getMessage}")
     }
   }
+  
+  /**
+    * 安全标记数据库为已初始化
+    */
+   private def markDatabaseInitializedSafe(): Try[Unit] = {
+     Try {
+       import java.time.LocalDateTime
+       val now = DatabaseConnection.formatDateTime(LocalDateTime.now())
+       DatabaseConnection.executeUpdate(
+         """INSERT OR REPLACE INTO system_metadata 
+            (key, value, created_at, updated_at) 
+            VALUES ('database_initialized', 'true', ?, ?)""",
+         now, now
+       )
+       () // 返回 Unit
+     }
+   }
 }
