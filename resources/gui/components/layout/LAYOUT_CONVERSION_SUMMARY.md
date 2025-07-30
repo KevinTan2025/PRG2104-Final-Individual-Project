@@ -78,8 +78,40 @@ All menu items and interactive elements have placeholder event handlers:
 ✅ **5.3**: Directory structure preserved under resources/gui
 ✅ **6.1**: Complex UI elements (BorderPane, TabPane, MenuBar) properly converted
 
+## Scene Builder Compatibility Fix
+
+### Issue Identified
+- Original FXML files used `fx:include` references to non-existent component files
+- Scene Builder could not resolve these references, preventing the files from opening
+
+### Solution Applied
+- Replaced `fx:include` references with placeholder VBox containers
+- Added meaningful fx:id tags for all placeholder elements
+- Created appropriate CSS classes for placeholder content styling
+- Maintained the same tab structure and functionality expectations
+
+### Updated fx:id Tags
+**MainTabPane.fxml additional tags:**
+- `vbox[TabName]Content` - Container for each tab's content
+- `lbl[TabName]Title` - Title label for each tab
+- `lbl[TabName]Placeholder` - Placeholder text for each tab
+
+**AnonymousMainTabPane.fxml additional tags:**
+- `vboxAnonymous[TabName]Content` - Container for each anonymous tab's content
+- `lblAnonymous[TabName]Title` - Title label for each anonymous tab
+- `lblAnonymous[TabName]Placeholder` - Placeholder text for each anonymous tab
+
+### New CSS Classes
+- `.tab-content` - Standard tab content container styling
+- `.tab-title` - Tab title label styling
+- `.placeholder-text` - Placeholder text styling
+- `.anonymous-tab-content` - Anonymous tab content container styling
+- `.anonymous-tab-title` - Anonymous tab title label styling
+- `.anonymous-placeholder-text` - Anonymous placeholder text styling
+
 ## Validation Results
 - All FXML files are valid XML
 - All CSS files contain proper JavaFX CSS properties
 - fx:id tags are unique within each file
 - Stylesheet references are properly linked
+- **Scene Builder Compatibility**: All FXML files can now be opened in Scene Builder
