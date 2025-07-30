@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="vboxMainContainer" alignment="CENTER" spacing="20.0" styleClass="main-container" 
+      stylesheets="@OTPVerificationDialog.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+   </padding>
+   <children>
+      <HBox fx:id="hboxHeader" alignment="CENTER" spacing="10.0">
+         <children>
+            <Label fx:id="lblEmailIcon" styleClass="email-icon" text="📧" />
+            <Label fx:id="lblTitle" styleClass="title-label" text="Email Verification" />
+         </children>
+      </HBox>
+      
+      <VBox fx:id="vboxEmailInfo" alignment="CENTER" spacing="5.0">
+         <children>
+            <Label fx:id="lblEmailPrompt" styleClass="email-prompt" text="Check your email for verification code" />
+            <Label fx:id="lblUserEmail" styleClass="user-email" text="user@example.com" />
+         </children>
+      </VBox>
+      
+      <VBox fx:id="vboxOtpInput" alignment="CENTER" spacing="10.0">
+         <children>
+            <Label fx:id="lblOtpPrompt" styleClass="otp-prompt" text="Enter 6-digit verification code:" />
+            <TextField fx:id="txtOtpField" maxWidth="180.0" promptText="Enter 6-digit code" styleClass="otp-input-field" />
+            <Label fx:id="lblOtpInputStatus" styleClass="status-label" text="" />
+         </children>
+      </VBox>
+      
+      <HBox fx:id="hboxActionButtons" alignment="CENTER" spacing="10.0">
+         <children>
+            <Button fx:id="btnVerify" onAction="#handleVerification" prefWidth="120.0" styleClass="verify-button" text="🔐 Verify Code" />
+            <Button fx:id="btnResend" onAction="#handleResendEmail" prefWidth="120.0" styleClass="resend-button" text="📧 Resend Email" />
+         </children>
+      </HBox>
+      
+      <!-- Verification Status -->
+      <Label fx:id="lblVerificationStatus" styleClass="status-label" text="" />
+      
+      <Separator fx:id="sepDivider" />
+      
+      <Button fx:id="btnCancel" onAction="#handleCancel" prefWidth="120.0" styleClass="cancel-button" text="Cancel" />
+   </children>
+</VBox>

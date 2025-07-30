@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:id="spMainContainer" fitToWidth="true" hbarPolicy="NEVER" styleClass="register-scroll-pane" vbarPolicy="AS_NEEDED" 
+            stylesheets="@RegisterAuthDialog.css"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <VBox fx:id="vboxRegisterContent" alignment="CENTER" spacing="12.0" styleClass="register-content">
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="20.0" />
+         </padding>
+         <children>
+            <HBox fx:id="hboxRegisterBack" alignment="CENTER_LEFT">
+               <children>
+                  <Button fx:id="btnRegisterBack" onAction="#handleRegisterBack" styleClass="back-button" text="← Back" />
+               </children>
+            </HBox>
+            <Label fx:id="lblRegisterTitle" styleClass="form-title" text="Create a new account" />
+            
+            <!-- Username Section -->
+            <VBox fx:id="vboxUsernameSection" spacing="3.0">
+               <children>
+                  <TextField fx:id="txtRegUsername" prefHeight="40.0" prefWidth="300.0" promptText="Username" styleClass="auth-input-field" />
+                  <Label fx:id="lblUsernameStatus" styleClass="status-label" text="" />
+               </children>
+            </VBox>
+            
+            <!-- Full Name Section -->
+            <VBox fx:id="vboxNameSection" spacing="3.0">
+               <children>
+                  <TextField fx:id="txtRegName" prefHeight="40.0" prefWidth="300.0" promptText="Full Name" styleClass="auth-input-field" />
+                  <Label fx:id="lblNameStatus" styleClass="status-label" text="" />
+               </children>
+            </VBox>
+            
+            <!-- Contact Info Section -->
+            <VBox fx:id="vboxContactSection" spacing="3.0">
+               <children>
+                  <TextField fx:id="txtRegContact" prefHeight="40.0" prefWidth="300.0" promptText="Contact Info" styleClass="auth-input-field" />
+                  <Label fx:id="lblContactStatus" styleClass="status-label" text="" />
+               </children>
+            </VBox>
+            
+            <!-- Email Section -->
+            <VBox fx:id="vboxEmailSection" spacing="5.0">
+               <children>
+                  <TextField fx:id="txtRegEmail" prefHeight="40.0" prefWidth="300.0" promptText="Email" styleClass="auth-input-field" />
+                  <Label fx:id="lblEmailStatus" styleClass="status-label" text="" />
+                  <HBox fx:id="hboxOtpSection" alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Button fx:id="btnSendOtp" disable="true" onAction="#handleSendOtp" prefWidth="200.0" styleClass="otp-button" text="📧 Send Verification Email" />
+                     </children>
+                  </HBox>
+                  <Label fx:id="lblOtpStatus" styleClass="status-label" text="" />
+               </children>
+            </VBox>
+            
+            <!-- Password Section -->
+            <VBox fx:id="vboxPasswordSection" spacing="3.0">
+               <children>
+                  <PasswordField fx:id="txtRegPassword" prefHeight="40.0" prefWidth="300.0" promptText="Password (8+ chars, letter, digit, special char)" styleClass="auth-input-field" />
+                  <Label fx:id="lblPasswordStatus" styleClass="status-label" />
+               </children>
+            </VBox>
+            
+            <!-- Confirm Password Section -->
+            <VBox fx:id="vboxConfirmPasswordSection" spacing="3.0">
+               <children>
+                  <PasswordField fx:id="txtRegConfirmPassword" prefHeight="40.0" prefWidth="300.0" promptText="Confirm Password" styleClass="auth-input-field" />
+                  <Label fx:id="lblConfirmPasswordStatus" styleClass="status-label" />
+               </children>
+            </VBox>
+            
+            <Button fx:id="btnRegister" onAction="#handleRegister" prefHeight="45.0" prefWidth="280.0" styleClass="register-button" text="Create Account" />
+            <Button fx:id="btnRegisterToLogin" onAction="#handleRegisterToLogin" styleClass="link-button" text="Already have an account? Log in" />
+         </children>
+      </VBox>
+   </content>
+</ScrollPane>

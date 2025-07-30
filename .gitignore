@@ -2,6 +2,7 @@
 pathway/
 sample-gui/
 .kiro/
+*.py
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
