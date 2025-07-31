@@ -4,6 +4,7 @@ import database.service.DatabaseService
 import model._
 import java.time.LocalDateTime
 import java.util.UUID
+import scala.util.{Try, Success, Failure}
 
 /**
  * Main service class that coordinates all operations and provides high-level business logic
@@ -79,15 +80,14 @@ class CommunityEngagementService {
     val userId = UUID.randomUUID().toString
     // Store username with original case but validation is case-insensitive
     val user = if (isAdmin) {
-      new AdminUser(userId, username, email, name, contactInfo)
+      AdminUser(userId, username, email, name, contactInfo)
     } else {
-      new CommunityMember(userId, username, email, name, contactInfo)
+      CommunityMember(userId, username, email, name, contactInfo)
     }
 
-    if (user.setPassword(password)) {
-      dbService.saveUser(user)
-    } else {
-      false
+    user.setPassword(password) match {
+      case Success(userWithPassword) => dbService.saveUser(userWithPassword)
+      case Failure(_) => false
     }
   }  /**
    * Announcement Operations

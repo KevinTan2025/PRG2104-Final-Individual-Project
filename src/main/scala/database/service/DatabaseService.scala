@@ -6,6 +6,7 @@ import manager.{FoodStockManager, StockMovementManager}
 import model._
 import java.time.LocalDateTime
 import java.util.UUID
+import scala.util.{Try, Success, Failure}
 
 /**
  * Database service layer that provides high-level database operations
@@ -66,10 +67,10 @@ class DatabaseService {
   def resetUserPassword(userId: String, currentPassword: String, newPassword: String): Boolean = {
     findUserById(userId) match {
       case Some(user) =>
-        if (user.resetPassword(currentPassword, newPassword)) {
-          userDAO.updatePassword(userId, user.getPasswordHash)
-        } else {
-          false
+        user.resetPassword(currentPassword, newPassword) match {
+          case Success(updatedUser) => 
+            userDAO.updatePassword(userId, updatedUser.passwordHash)
+          case Failure(_) => false
         }
       case None => false
     }

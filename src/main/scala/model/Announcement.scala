@@ -6,20 +6,12 @@ import java.time.LocalDateTime
  * Trait for content that can be liked and commented on
  */
 trait Likeable {
-  var likes: Int = 0
-  var comments: List[Comment] = List.empty
+  val likes: Int
+  val comments: List[Comment]
   
-  def addLike(): Unit = {
-    likes += 1
-  }
-  
-  def removeLike(): Unit = {
-    if (likes > 0) likes -= 1
-  }
-  
-  def addComment(comment: Comment): Unit = {
-    comments = comment :: comments
-  }
+  def addLike(): Likeable
+  def removeLike(): Likeable
+  def addComment(comment: Comment): Likeable
 }
 
 /**
