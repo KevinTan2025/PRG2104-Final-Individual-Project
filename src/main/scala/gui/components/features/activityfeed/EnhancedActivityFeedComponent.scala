@@ -24,7 +24,10 @@ class EnhancedActivityFeedComponent(
 ) {
   
   private val activityFeedService = new ActivityFeedService()
-  private var feedContainer: VBox = _
+  private lazy val feedContainer: VBox = new VBox {
+    spacing = 15
+    padding = Insets(10)
+  }
   
   def build(): VBox = {
     val mainContainer = new VBox {
@@ -34,10 +37,7 @@ class EnhancedActivityFeedComponent(
     }
     
     val header = createHeader()
-    feedContainer = new VBox {
-      spacing = 15
-      id = "feed-container"
-    }
+    feedContainer.id = "feed-container"
     
     // Initial load
     refreshFeed(feedContainer)

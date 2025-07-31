@@ -6,6 +6,7 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.stage.{Modality, Stage}
 import scalafx.event.ActionEvent
+import scalafx.beans.property.ObjectProperty
 import scalafx.Includes._
 import model.{DiscussionTopic, Reply}
 import service.CommunityEngagementService
@@ -19,7 +20,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   
   private val service = CommunityEngagementService.getInstance
   private val dialog = new Stage()
-  private var currentTopic = topic
+  private val currentTopicProperty = ObjectProperty[DiscussionTopic](topic)
   
   def showAndWait(): Unit = {
     initializeDialog()
@@ -27,7 +28,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   }
   
   private def initializeDialog(): Unit = {
-    dialog.title = s"Discussion: ${currentTopic.title}"
+    dialog.title = s"Discussion: ${currentTopicProperty.value.title}"
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = true
     dialog.minWidth = 600
@@ -40,16 +41,16 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       style = "-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 1 0;"
       
       children = Seq(
-        new Label(currentTopic.title) {
+        new Label(currentTopicProperty.value.title) {
           style = "-fx-font-size: 18px; -fx-font-weight: bold;"
         },
-        new Label(s"Category: ${currentTopic.category}") {
+        new Label(s"Category: ${currentTopicProperty.value.category}") {
           style = "-fx-text-fill: #6c757d; -fx-font-size: 12px;"
         },
-        new Label(s"Posted by: ${currentTopic.authorId} on ${currentTopic.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}") {
+        new Label(s"Posted by: ${currentTopicProperty.value.authorId} on ${currentTopicProperty.value.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}") {
           style = "-fx-text-fill: #6c757d; -fx-font-size: 12px;"
         },
-        new Label(s"👍 ${currentTopic.likes} likes • 💬 ${currentTopic.getReplyCount} replies") {
+        new Label(s"👍 ${currentTopicProperty.value.likes} likes • 💬 ${currentTopicProperty.value.getReplyCount} replies") {
           style = "-fx-text-fill: #495057; -fx-font-weight: bold;"
         }
       )
@@ -63,7 +64,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
         new Label("Description:") {
           style = "-fx-font-weight: bold; -fx-font-size: 14px;"
         },
-        new Label(currentTopic.description) {
+        new Label(currentTopicProperty.value.description) {
           wrapText = true
           style = "-fx-font-size: 13px; -fx-text-fill: #212529;"
         }
@@ -76,18 +77,18 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       padding = Insets(20)
     }
     
-    repliesBox.children.add(new Label(s"Replies (${currentTopic.getReplyCount}):") {
+    repliesBox.children.add(new Label(s"Replies (${currentTopicProperty.value.getReplyCount}):") {
       style = "-fx-font-weight: bold; -fx-font-size: 14px;"
     })
     
-    if (currentTopic.replies.nonEmpty) {
+    if (currentTopicProperty.value.replies.nonEmpty) {
       val repliesScrollPane = new ScrollPane {
         prefHeight = 200
         fitToWidth = true
         
         content = new VBox {
           spacing = 10
-          children = currentTopic.replies.reverse.map(createReplyItem)
+          children = currentTopicProperty.value.replies.reverse.map(createReplyItem)
         }
       }
       repliesBox.children.add(repliesScrollPane)
@@ -116,9 +117,9 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   
   private def refreshDialog(): Unit = {
     // Update current topic data
-    service.getDiscussionTopics.find(_.topicId == currentTopic.topicId) match {
+    service.getDiscussionTopics.find(_.topicId == currentTopicProperty.value.topicId) match {
       case Some(updatedTopic) =>
-        currentTopic = updatedTopic
+        currentTopicProperty.value = updatedTopic
         initializeDialog() // Reinitialize the dialog with updated data
       case None =>
         GuiUtils.showError("Error", "Topic not found.")
@@ -160,7 +161,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       onAction = _ => {
         service.getCurrentUser match {
           case Some(_) =>
-            if (service.likeTopic(currentTopic.topicId)) {
+            if (service.likeTopic(currentTopicProperty.value.topicId)) {
               GuiUtils.showInfo("Success", "Topic liked!")
               onUpdate()
               refreshDialog()
@@ -210,7 +211,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   private def showReplyDialog(): Unit = {
     val replyDialog = new Dialog[String]()
     replyDialog.title = "Add Reply"
-    replyDialog.headerText = s"Reply to: ${currentTopic.title}"
+    replyDialog.headerText = s"Reply to: ${currentTopicProperty.value.title}"
     
     val contentArea = new TextArea {
       promptText = "Your reply..."
@@ -241,7 +242,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
     
     replyDialog.showAndWait() match {
       case Some(replyContent: String) =>
-        if (service.addReplyToTopic(currentTopic.topicId, replyContent)) {
+        if (service.addReplyToTopic(currentTopicProperty.value.topicId, replyContent)) {
           GuiUtils.showInfo("Success", "Reply added successfully!")
           onUpdate()
           refreshDialog()

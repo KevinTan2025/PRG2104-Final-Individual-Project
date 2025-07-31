@@ -20,15 +20,15 @@ class AnnouncementsTab(
   onLoginPrompt: () => Unit = () => {}
 ) extends BaseTabComponent {
   
-  private var activityFeedComponent: EnhancedActivityFeedComponent = _
-  
-  override def build(): Tab = {
-    // Create activity feed component filtered for announcements only
-    activityFeedComponent = new EnhancedActivityFeedComponent(
+  private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
+    new EnhancedActivityFeedComponent(
       service, 
       () => refresh(), 
       Some(ActivityFeedType.ANNOUNCEMENT)
     )
+  
+  override def build(): Tab = {
+    // Create activity feed component filtered for announcements only
     val activityFeed = activityFeedComponent.build()
     
     val sidePanel = createAnnouncementsSidePanel()

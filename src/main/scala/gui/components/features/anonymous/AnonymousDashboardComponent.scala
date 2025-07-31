@@ -13,11 +13,11 @@ import gui.components.features.activityfeed.EnhancedActivityFeedComponent
  */
 class AnonymousDashboardComponent(onLoginPrompt: () => Unit) extends BaseTabComponent {
   
-  private var activityFeedComponent: EnhancedActivityFeedComponent = _
+  private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
+    new EnhancedActivityFeedComponent(service, () => refresh(), None)
   
   override def build(): Tab = {
     // Anonymous home tab shows all activity types
-    activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh(), None)
     val activityFeed = activityFeedComponent.build()
     
     val mainContent = new HBox {
