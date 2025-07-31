@@ -20,47 +20,41 @@ class ActivityFeedService {
    * @return List of activity feed items sorted by timestamp (newest first)
    */
   def getActivityFeed(limit: Int = 50, userId: Option[String] = None): List[ActivityFeedItem] = {
-    val feedItems = scala.collection.mutable.ListBuffer[ActivityFeedItem]()
-    
     try {
       // Get announcements
-      val announcements = dbService.getAllAnnouncements.filter(_.isActive)
-      announcements.foreach { announcement =>
+      val announcementItems = dbService.getAllAnnouncements.filter(_.isActive).map { announcement =>
         val authorName = dbService.findUserById(announcement.authorId)
           .map(_.name)
           .getOrElse("Unknown User")
-        feedItems += ActivityFeedItem.fromAnnouncement(announcement, authorName)
+        ActivityFeedItem.fromAnnouncement(announcement, authorName)
       }
       
       // Get food posts
-      val foodPosts = dbService.getAllFoodPosts.filter(_.status == FoodPostStatus.PENDING)
-      foodPosts.foreach { foodPost =>
+      val foodPostItems = dbService.getAllFoodPosts.filter(_.status == FoodPostStatus.PENDING).map { foodPost =>
         val authorName = dbService.findUserById(foodPost.authorId)
           .map(_.name)
           .getOrElse("Unknown User")
-        feedItems += ActivityFeedItem.fromFoodPost(foodPost, authorName)
+        ActivityFeedItem.fromFoodPost(foodPost, authorName)
       }
       
       // Get events (upcoming events only)
-      val events = getUpcomingEvents()
-      events.foreach { event =>
+      val eventItems = getUpcomingEvents().map { event =>
         val organizerName = dbService.findUserById(event.organizerId)
           .map(_.name)
           .getOrElse("Unknown User")
-        feedItems += ActivityFeedItem.fromEvent(event, organizerName)
+        ActivityFeedItem.fromEvent(event, organizerName)
       }
       
       // Get discussion topics
-      val discussions = getActiveDiscussionTopics()
-      discussions.foreach { topic =>
+      val discussionItems = getActiveDiscussionTopics().map { topic =>
         val authorName = dbService.findUserById(topic.authorId)
           .map(_.name)
           .getOrElse("Unknown User")
-        feedItems += ActivityFeedItem.fromDiscussionTopic(topic, authorName)
+        ActivityFeedItem.fromDiscussionTopic(topic, authorName)
       }
       
-      // Sort by timestamp (newest first) and take limit
-      feedItems.toList
+      // Combine all items and sort by timestamp (newest first) and take limit
+      (announcementItems ++ foodPostItems ++ eventItems ++ discussionItems)
         .sortBy(_.timestamp)
         .reverse
         .take(limit)

@@ -20,62 +20,68 @@ case class ActivityFeedItem(
   authorId: String,
   authorName: String,
   timestamp: LocalDateTime,
-  var likes: Int = 0,
-  var comments: List[Comment] = List.empty,
+  likes: Int = 0,
+  comments: List[Comment] = List.empty,
   // Optional fields for specific content types
   category: Option[String] = None,
   location: Option[String] = None,
   eventDateTime: Option[LocalDateTime] = None,
   expiryDate: Option[LocalDateTime] = None,
   // Interaction tracking
-  var likedByUsers: Set[String] = Set.empty,
-  var isActive: Boolean = true
+  likedByUsers: Set[String] = Set.empty,
+  isActive: Boolean = true
 ) {
   
   /**
-   * Add a like from a specific user
+   * Add a like from a specific user - returns Either with new ActivityFeedItem or error
    */
-  def addLike(userId: String): Boolean = {
+  def addLike(userId: String): Either[String, ActivityFeedItem] = {
     if (!likedByUsers.contains(userId)) {
-      likes += 1
-      likedByUsers += userId
-      true
+      Right(copy(
+        likes = likes + 1,
+        likedByUsers = likedByUsers + userId
+      ))
     } else {
-      false
+      Left(s"User $userId has already liked this item")
     }
   }
   
   /**
-   * Remove a like from a specific user
+   * Remove a like from a specific user - returns Either with new ActivityFeedItem or error
    */
-  def removeLike(userId: String): Boolean = {
+  def removeLike(userId: String): Either[String, ActivityFeedItem] = {
     if (likedByUsers.contains(userId)) {
-      likes -= 1
-      likedByUsers -= userId
-      true
+      Right(copy(
+        likes = likes - 1,
+        likedByUsers = likedByUsers - userId
+      ))
     } else {
-      false
+      Left(s"User $userId has not liked this item")
     }
   }
   
   /**
-   * Toggle like for a user
+   * Toggle like for a user - returns new ActivityFeedItem with like status
    */
-  def toggleLike(userId: String): Boolean = {
+  def toggleLike(userId: String): (ActivityFeedItem, Boolean) = {
     if (likedByUsers.contains(userId)) {
-      removeLike(userId)
-      false // unliked
+      removeLike(userId) match {
+        case Right(updated) => (updated, false) // unliked
+        case Left(_) => (this, false) // error, return unchanged
+      }
     } else {
-      addLike(userId)
-      true // liked
+      addLike(userId) match {
+        case Right(updated) => (updated, true) // liked
+        case Left(_) => (this, true) // error, return unchanged
+      }
     }
   }
   
   /**
-   * Add a comment
+   * Add a comment - returns new ActivityFeedItem instance
    */
-  def addComment(comment: Comment): Unit = {
-    comments = comment :: comments
+  def addComment(comment: Comment): ActivityFeedItem = {
+    copy(comments = comment :: comments)
   }
   
   /**

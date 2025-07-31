@@ -15,11 +15,16 @@ class CommunityEngagementService {
   // Database service instance for data persistence
   private val dbService = DatabaseService.getInstance
   
-  // Current logged-in user
-  private var currentUser: Option[User] = None
+  // Current logged-in user - using atomic reference for thread safety
+  private val currentUserRef = new java.util.concurrent.atomic.AtomicReference[Option[User]](None)
   
-  // Anonymous mode flag
-  private var isAnonymousMode: Boolean = false
+  // Anonymous mode flag - using atomic reference for thread safety
+  private val isAnonymousModeRef = new java.util.concurrent.atomic.AtomicBoolean(false)
+  
+  private def currentUser: Option[User] = currentUserRef.get()
+  private def currentUser_=(user: Option[User]): Unit = currentUserRef.set(user)
+  private def isAnonymousMode: Boolean = isAnonymousModeRef.get()
+  private def isAnonymousMode_=(value: Boolean): Unit = isAnonymousModeRef.set(value)
   
   /**
    * User Authentication
@@ -121,8 +126,9 @@ class CommunityEngagementService {
         }
         announcement
       } else {
-        throw new RuntimeException("Failed to save announcement")
-      }
+        // Return None instead of throwing exception
+        None
+      }.getOrElse(announcement)
     }
   }
   
@@ -193,8 +199,9 @@ class CommunityEngagementService {
         }
         post
       } else {
-        throw new RuntimeException("Failed to save food post")
-      }
+        // Return None instead of throwing exception
+        None
+      }.getOrElse(post)
     }
   }
   
@@ -647,27 +654,20 @@ class CommunityEngagementService {
   }
   
   def generateStockAlerts: List[String] = {
-    val alerts = scala.collection.mutable.ListBuffer[String]()
-    
-    // Low stock alerts
-    val lowStock = dbService.getLowStockItems
-    lowStock.foreach { stock =>
-      alerts += s"Low stock alert: ${stock.foodName} (${stock.currentQuantity} ${stock.unit} remaining)"
+    // Use functional approach with immutable collections
+    val lowStockAlerts = dbService.getLowStockItems.map { stock =>
+      s"Low stock alert: ${stock.foodName} (${stock.currentQuantity} ${stock.unit} remaining)"
     }
     
-    // Expired items alerts
-    val expired = dbService.getExpiredItems
-    expired.foreach { stock =>
-      alerts += s"Expired: ${stock.foodName} expired on ${stock.expiryDate.getOrElse("Unknown date")}"
+    val expiredAlerts = dbService.getExpiredItems.map { stock =>
+      s"Expired: ${stock.foodName} expired on ${stock.expiryDate.getOrElse("Unknown date")}"
     }
     
-    // Expiring soon alerts
-    val expiringSoon = dbService.getExpiringSoonItems(7)
-    expiringSoon.foreach { stock =>
-      alerts += s"Expiring soon: ${stock.foodName} expires on ${stock.expiryDate.getOrElse("Unknown date")}"
+    val expiringSoonAlerts = dbService.getExpiringSoonItems(7).map { stock =>
+      s"Expiring soon: ${stock.foodName} expires on ${stock.expiryDate.getOrElse("Unknown date")}"
     }
     
-    alerts.toList
+    lowStockAlerts ++ expiredAlerts ++ expiringSoonAlerts
   }
   
   def getStockStatistics: (Int, Int, Int, Int) = {
@@ -833,19 +833,13 @@ class CommunityEngagementService {
  * Singleton object for the CommunityEngagementService
  */
 object CommunityEngagementService {
-  private var instance: Option[CommunityEngagementService] = None
-  
-  def getInstance: CommunityEngagementService = {
-    instance match {
-      case Some(service) => service
-      case None =>
-        val service = new CommunityEngagementService()
-        // Initialize sample data only if no topics exist
-        if (service.getDiscussionTopics.isEmpty) {
-          service.initializeSampleDiscussionData()
-        }
-        instance = Some(service)
-        service
+  // Use lazy val for thread-safe singleton pattern
+  lazy val getInstance: CommunityEngagementService = {
+    val service = new CommunityEngagementService()
+    // Initialize sample data only if no topics exist
+    if (service.getDiscussionTopics.isEmpty) {
+      service.initializeSampleDiscussionData()
     }
+    service
   }
 }

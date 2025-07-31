@@ -27,26 +27,23 @@ case class Notification(
   message: String,
   notificationType: NotificationType,
   relatedItemId: Option[String] = None,
-  timestamp: LocalDateTime = LocalDateTime.now()
+  timestamp: LocalDateTime = LocalDateTime.now(),
+  isRead: Boolean = false,
+  readAt: Option[LocalDateTime] = None
 ) {
   
-  var isRead: Boolean = false
-  var readAt: Option[LocalDateTime] = None
-  
   /**
-   * Mark the notification as read
+   * Mark the notification as read - returns new Notification instance
    */
-  def markAsRead(): Unit = {
-    isRead = true
-    readAt = Some(LocalDateTime.now())
+  def markAsRead(): Notification = {
+    copy(isRead = true, readAt = Some(LocalDateTime.now()))
   }
   
   /**
-   * Mark the notification as unread
+   * Mark the notification as unread - returns new Notification instance
    */
-  def markAsUnread(): Unit = {
-    isRead = false
-    readAt = None
+  def markAsUnread(): Notification = {
+    copy(isRead = false, readAt = None)
   }
   
   /**

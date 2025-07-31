@@ -38,19 +38,17 @@ case class FoodStock(
   stockId: String,
   foodName: String,
   category: FoodCategory,
-  var currentQuantity: Double,
+  currentQuantity: Double,
   unit: String,
   minimumThreshold: Double,
   expiryDate: Option[LocalDateTime] = None,
   isPackaged: Boolean = false,
   location: String = "Main Storage",
-  var lastModifiedBy: Option[String] = None,
-  var lastModifiedDate: LocalDateTime = LocalDateTime.now(),
-  createdAt: LocalDateTime = LocalDateTime.now()
+  lastModifiedBy: Option[String] = None,
+  lastModifiedDate: LocalDateTime = LocalDateTime.now(),
+  createdAt: LocalDateTime = LocalDateTime.now(),
+  stockHistory: List[StockMovement] = List.empty
 ) {
-  
-  // Track stock movement history
-  var stockHistory: List[StockMovement] = List.empty
   
   /**
    * Get current stock status
@@ -77,13 +75,12 @@ case class FoodStock(
   }
   
   /**
-   * Add stock quantity
+   * Add stock quantity - returns new FoodStock instance
    */
-  def addStock(quantity: Double, userId: String, notes: String = ""): Unit = {
+  def addStock(quantity: Double, userId: String, notes: String = ""): FoodStock = {
     val oldQuantity = currentQuantity
-    currentQuantity += quantity
-    lastModifiedBy = Some(userId)
-    lastModifiedDate = LocalDateTime.now()
+    val newQuantity = currentQuantity + quantity
+    val now = LocalDateTime.now()
     
     // Record the movement
     val movement = StockMovement(
@@ -92,22 +89,27 @@ case class FoodStock(
       actionType = StockActionType.STOCK_IN,
       quantity = quantity,
       previousQuantity = oldQuantity,
-      newQuantity = currentQuantity,
+      newQuantity = newQuantity,
       userId = userId,
       notes = notes
     )
-    stockHistory = movement :: stockHistory
+    
+    copy(
+      currentQuantity = newQuantity,
+      lastModifiedBy = Some(userId),
+      lastModifiedDate = now,
+      stockHistory = movement :: stockHistory
+    )
   }
   
   /**
-   * Remove stock quantity
+   * Remove stock quantity - returns Either with new FoodStock or error message
    */
-  def removeStock(quantity: Double, userId: String, notes: String = ""): Boolean = {
+  def removeStock(quantity: Double, userId: String, notes: String = ""): Either[String, FoodStock] = {
     if (currentQuantity >= quantity) {
       val oldQuantity = currentQuantity
-      currentQuantity -= quantity
-      lastModifiedBy = Some(userId)
-      lastModifiedDate = LocalDateTime.now()
+      val newQuantity = currentQuantity - quantity
+      val now = LocalDateTime.now()
       
       // Record the movement
       val movement = StockMovement(
@@ -116,38 +118,48 @@ case class FoodStock(
         actionType = StockActionType.STOCK_OUT,
         quantity = quantity,
         previousQuantity = oldQuantity,
-        newQuantity = currentQuantity,
+        newQuantity = newQuantity,
         userId = userId,
         notes = notes
       )
-      stockHistory = movement :: stockHistory
-      true
+      
+      Right(copy(
+        currentQuantity = newQuantity,
+        lastModifiedBy = Some(userId),
+        lastModifiedDate = now,
+        stockHistory = movement :: stockHistory
+      ))
     } else {
-      false // Insufficient stock
+      Left(s"Insufficient stock: requested $quantity, available $currentQuantity")
     }
   }
   
   /**
-   * Adjust stock quantity (can be positive or negative)
+   * Adjust stock quantity (can be positive or negative) - returns new FoodStock instance
    */
-  def adjustStock(newQuantity: Double, userId: String, notes: String = ""): Unit = {
+  def adjustStock(newQuantity: Double, userId: String, notes: String = ""): FoodStock = {
     val oldQuantity = currentQuantity
-    currentQuantity = math.max(0, newQuantity)
-    lastModifiedBy = Some(userId)
-    lastModifiedDate = LocalDateTime.now()
+    val adjustedQuantity = math.max(0, newQuantity)
+    val now = LocalDateTime.now()
     
     // Record the movement
     val movement = StockMovement(
       movementId = java.util.UUID.randomUUID().toString,
       stockId = stockId,
       actionType = StockActionType.ADJUSTMENT,
-      quantity = currentQuantity - oldQuantity,
+      quantity = adjustedQuantity - oldQuantity,
       previousQuantity = oldQuantity,
-      newQuantity = currentQuantity,
+      newQuantity = adjustedQuantity,
       userId = userId,
       notes = notes
     )
-    stockHistory = movement :: stockHistory
+    
+    copy(
+      currentQuantity = adjustedQuantity,
+      lastModifiedBy = Some(userId),
+      lastModifiedDate = now,
+      stockHistory = movement :: stockHistory
+    )
   }
   
   /**

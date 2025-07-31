@@ -2,6 +2,7 @@ package manager
 
 import model._
 import java.time.LocalDateTime
+import scala.jdk.CollectionConverters._
 
 /**
  * Manager class for handling stock movement operations

@@ -1,36 +1,37 @@
 package manager
 
 import model._
-import scala.collection.mutable
+import scala.jdk.CollectionConverters._
+// Removed mutable import - using ConcurrentHashMap instead
 
 /**
  * Generic trait for managing collections of items
  * @tparam T the type of items being managed
  */
 trait Manager[T] {
-  protected val items: mutable.Map[String, T] = mutable.Map.empty
+  protected val items: java.util.concurrent.ConcurrentHashMap[String, T] = new java.util.concurrent.ConcurrentHashMap[String, T]()
   
   def add(id: String, item: T): Unit = {
-    items(id) = item
+    items.put(id, item)
   }
   
   def remove(id: String): Option[T] = {
-    items.remove(id)
+    Option(items.remove(id))
   }
   
   def get(id: String): Option[T] = {
-    items.get(id)
+    Option(items.get(id))
   }
   
   def getAll: List[T] = {
-    items.values.toList
+    items.values().asScala.toList
   }
   
   def exists(id: String): Boolean = {
-    items.contains(id)
+    items.containsKey(id)
   }
   
-  def size: Int = items.size
+  def size: Int = items.size()
   
   def clear(): Unit = {
     items.clear()
@@ -42,8 +43,8 @@ trait Manager[T] {
  */
 class UserManager extends Manager[User] {
   
-  private val usernames: mutable.Set[String] = mutable.Set.empty
-  private val emails: mutable.Set[String] = mutable.Set.empty
+  private val usernames: java.util.concurrent.ConcurrentHashMap[String, Boolean] = new java.util.concurrent.ConcurrentHashMap[String, Boolean]()
+  private val emails: java.util.concurrent.ConcurrentHashMap[String, Boolean] = new java.util.concurrent.ConcurrentHashMap[String, Boolean]()
   
   /**
    * Register a new user
@@ -51,12 +52,12 @@ class UserManager extends Manager[User] {
    * @return true if successful, false if username or email already exists
    */
   def registerUser(user: User): Boolean = {
-    if (usernames.contains(user.username) || emails.contains(user.email)) {
+    if (usernames.containsKey(user.username) || emails.containsKey(user.email)) {
       false
     } else {
       add(user.userId, user)
-      usernames.add(user.username)
-      emails.add(user.email)
+      usernames.put(user.username, true)
+      emails.put(user.email, true)
       true
     }
   }
@@ -69,7 +70,7 @@ class UserManager extends Manager[User] {
    */
   def authenticate(username: String, password: String): Option[User] = {
     // Simplified authentication - in real app, password would be hashed
-    items.values.find(_.username == username)
+    items.values().asScala.find(_.username == username)
   }
   
   /**
@@ -78,7 +79,7 @@ class UserManager extends Manager[User] {
    * @return the user if found, None otherwise
    */
   def getUserByUsername(username: String): Option[User] = {
-    items.values.find(_.username == username)
+    items.values().asScala.find(_.username == username)
   }
   
   /**
@@ -87,7 +88,7 @@ class UserManager extends Manager[User] {
    * @return the user if found, None otherwise
    */
   def getUserByEmail(email: String): Option[User] = {
-    items.values.find(_.email == email)
+    items.values().asScala.find(_.email == email)
   }
   
   /**
@@ -95,7 +96,7 @@ class UserManager extends Manager[User] {
    * @return list of admin users
    */
   def getAdminUsers: List[AdminUser] = {
-    items.values.collect {
+    items.values().asScala.collect {
       case admin: AdminUser => admin
     }.toList
   }
@@ -105,7 +106,7 @@ class UserManager extends Manager[User] {
    * @return list of community members
    */
   def getCommunityMembers: List[CommunityMember] = {
-    items.values.collect {
+    items.values().asScala.collect {
       case member: CommunityMember => member
     }.toList
   }

@@ -39,14 +39,14 @@ object PasswordHasher {
     md.update(saltBytes)
     val passwordBytes = password.getBytes("UTF-8")
     
-    // Apply multiple iterations for security
-    var hash = md.digest(passwordBytes)
-    for (_ <- 1 until ITERATIONS) {
+    // Apply multiple iterations for security using functional approach
+    val initialHash = md.digest(passwordBytes)
+    val finalHash = (1 until ITERATIONS).foldLeft(initialHash) { (currentHash, _) =>
       md.reset()
-      hash = md.digest(hash)
+      md.digest(currentHash)
     }
     
-    Base64.getEncoder.encodeToString(hash)
+    Base64.getEncoder.encodeToString(finalHash)
   }
   
   /**
