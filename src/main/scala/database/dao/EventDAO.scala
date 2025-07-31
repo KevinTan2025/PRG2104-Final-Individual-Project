@@ -304,8 +304,11 @@ class EventDAO {
     val maxParticipants = Option(rs.getObject("max_participants")).map(_.asInstanceOf[Int])
     val likes = rs.getInt("likes")
     
-    // Create event
-    val event = Event(
+    // Get RSVPs for this event
+    val participants = getEventRsvps(eventId)
+    
+    // Create event with all properties from database
+    Event(
       eventId = eventId,
       organizerId = organizerId,
       title = title,
@@ -313,16 +316,9 @@ class EventDAO {
       location = location,
       startDateTime = startDateTime,
       endDateTime = endDateTime,
-      maxParticipants = maxParticipants
+      maxParticipants = maxParticipants,
+      participants = participants,
+      likes = likes
     )
-    
-    // Get RSVPs for this event and set them directly
-    val participants = getEventRsvps(eventId)
-    event.participants = participants
-    
-    // Set likes count
-    (0 until likes).foreach(_ => event.addLike())
-    
-    event
   }
 }

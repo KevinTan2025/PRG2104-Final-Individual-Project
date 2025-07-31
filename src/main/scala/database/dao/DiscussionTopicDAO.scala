@@ -210,22 +210,21 @@ class DiscussionTopicDAO {
         DiscussionCategory.GENERAL
     }
     
-    val topic = DiscussionTopic(
+    // Load replies for this topic
+    val replies = loadRepliesForTopic(rs.getString("topic_id"))
+    val likes = rs.getInt("likes")
+    
+    // Create topic with all properties from database
+    DiscussionTopic(
       topicId = rs.getString("topic_id"),
       authorId = rs.getString("author_id"),
       title = rs.getString("title"),
       description = rs.getString("description"),
       category = category,
-      timestamp = DatabaseConnection.parseDateTime(rs.getString("created_at"))
+      timestamp = DatabaseConnection.parseDateTime(rs.getString("created_at")),
+      replies = replies,
+      likes = likes
     )
-    
-    // Set likes
-    topic.likes = rs.getInt("likes")
-    
-    // Load replies for this topic
-    topic.replies = loadRepliesForTopic(topic.topicId)
-    
-    topic
   }
   
   private def loadRepliesForTopic(topicId: String): List[Reply] = {

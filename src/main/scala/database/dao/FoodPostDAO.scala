@@ -234,17 +234,22 @@ class FoodPostDAO {
     val likes = rs.getInt("likes")
     val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
     
-    val foodPost = FoodPost(postId, authorId, title, description, postType, quantity, location, expiryDate, createdAt)
-    
-    // Set additional properties from database
-    foodPost.status = status
-    foodPost.acceptedBy = acceptedBy
-    foodPost.likes = likes
-    foodPost.isModerated = isModerated
-    if (moderatorIdStr != null) {
-      foodPost.moderatedBy = Some(moderatorIdStr)
-    }
-    
-    foodPost
+    // Create FoodPost with all properties from database
+    FoodPost(
+      postId = postId,
+      authorId = authorId,
+      title = title,
+      description = description,
+      postType = postType,
+      quantity = quantity,
+      location = location,
+      expiryDate = expiryDate,
+      timestamp = createdAt,
+      status = status,
+      acceptedBy = acceptedBy,
+      likes = likes,
+      isModerated = isModerated,
+      moderatedBy = if (moderatorIdStr != null) Some(moderatorIdStr) else None
+    )
   }
 }
