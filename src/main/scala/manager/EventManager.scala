@@ -2,6 +2,7 @@ package manager
 
 import model._
 import java.time.LocalDateTime
+import scala.jdk.CollectionConverters._
 
 /**
  * Manager class for handling event operations
@@ -22,7 +23,7 @@ class EventManager extends Manager[Event] {
    */
   def getUpcomingEvents: List[Event] = {
     val now = LocalDateTime.now()
-    items.values.filter { event =>
+    items.values().asScala.filter { event =>
       event.status == EventStatus.UPCOMING && event.startDateTime.isAfter(now)
     }.toList.sortBy(_.startDateTime)
   }
@@ -32,7 +33,7 @@ class EventManager extends Manager[Event] {
    * @return list of ongoing events
    */
   def getOngoingEvents: List[Event] = {
-    items.values.filter(_.status == EventStatus.ONGOING).toList.sortBy(_.startDateTime)
+    items.values().asScala.filter(_.status == EventStatus.ONGOING).toList.sortBy(_.startDateTime)
   }
   
   /**
@@ -41,7 +42,7 @@ class EventManager extends Manager[Event] {
    * @return list of events organized by the specified user
    */
   def getEventsByOrganizer(organizerId: String): List[Event] = {
-    items.values.filter(_.organizerId == organizerId).toList.sortBy(_.startDateTime).reverse
+    items.values().asScala.filter(_.organizerId == organizerId).toList.sortBy(_.startDateTime).reverse
   }
   
   /**
@@ -50,7 +51,7 @@ class EventManager extends Manager[Event] {
    * @return list of events the user is attending
    */
   def getEventsByParticipant(userId: String): List[Event] = {
-    items.values.filter(_.participants.contains(userId)).toList.sortBy(_.startDateTime)
+    items.values().asScala.filter(_.participants.contains(userId)).toList.sortBy(_.startDateTime)
   }
   
   /**
@@ -60,7 +61,7 @@ class EventManager extends Manager[Event] {
    */
   def searchEvents(searchTerm: String): List[Event] = {
     val term = searchTerm.toLowerCase
-    items.values.filter { event =>
+    items.values().asScala.filter { event =>
       event.title.toLowerCase.contains(term) || 
       event.description.toLowerCase.contains(term) ||
       event.location.toLowerCase.contains(term)
@@ -73,7 +74,7 @@ class EventManager extends Manager[Event] {
    * @return list of events in the specified location
    */
   def getEventsByLocation(location: String): List[Event] = {
-    items.values.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.startDateTime)
+    items.values().asScala.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.startDateTime)
   }
   
   /**
@@ -83,7 +84,7 @@ class EventManager extends Manager[Event] {
    * @return list of events within the date range
    */
   def getEventsInDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[Event] = {
-    items.values.filter { event =>
+    items.values().asScala.filter { event =>
       !event.startDateTime.isBefore(startDate) && !event.startDateTime.isAfter(endDate)
     }.toList.sortBy(_.startDateTime)
   }
@@ -201,7 +202,7 @@ class EventManager extends Manager[Event] {
    * @return tuple of (total events, upcoming events, completed events, total participants)
    */
   def getStatistics: (Int, Int, Int, Int) = {
-    val allEvents = items.values.toList
+    val allEvents = items.values().asScala.toList
     val upcomingEvents = allEvents.count(_.status == EventStatus.UPCOMING)
     val completedEvents = allEvents.count(_.status == EventStatus.COMPLETED)
     val totalParticipants = allEvents.map(_.participants.size).sum
@@ -215,7 +216,7 @@ class EventManager extends Manager[Event] {
    */
   def updateEventStatuses(): Unit = {
     val now = LocalDateTime.now()
-    items.values.foreach { event =>
+    items.values().asScala.foreach { event =>
       event.status match {
         case EventStatus.UPCOMING if event.isOngoing =>
           val updatedEvent = event.start()

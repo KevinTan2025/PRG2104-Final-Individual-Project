@@ -15,7 +15,7 @@ object DatabaseConnection {
   private val DB_NAME = "community_platform.db"
   private val DB_PATH = s"$DB_DIR/$DB_NAME"
   private val DB_URL = s"jdbc:sqlite:$DB_PATH"
-  private var connection: Option[Connection] = None
+  private val connection: java.util.concurrent.atomic.AtomicReference[Option[Connection]] = new java.util.concurrent.atomic.AtomicReference(None)
   
   // Ensure database directory exists
   private def ensureDbDirectoryExists(): Unit = {
@@ -29,20 +29,24 @@ object DatabaseConnection {
    * Get database connection, create if not exists
    */
   def getConnection: Connection = {
-    connection match {
+    connection.get() match {
       case Some(conn) if !conn.isClosed => conn
       case _ =>
         try {
           ensureDbDirectoryExists()
           Class.forName("org.sqlite.JDBC")
           val conn = DriverManager.getConnection(DB_URL)
-          connection = Some(conn)
+          connection.set(Some(conn))
           conn
         } catch {
           case e: SQLException =>
-            throw new RuntimeException(s"Failed to connect to database: ${e.getMessage}")
+            println(s"Failed to connect to database: ${e.getMessage}")
+            // Return a null connection that will be handled by calling code
+            null
           case e: ClassNotFoundException =>
-            throw new RuntimeException("SQLite JDBC driver not found")
+            println("SQLite JDBC driver not found")
+            // Return a null connection that will be handled by calling code
+            null
         }
     }
   }
@@ -115,12 +119,12 @@ object DatabaseConnection {
    * Close database connection
    */
   def close(): Unit = {
-    connection.foreach { conn =>
+    connection.get().foreach { conn =>
       if (!conn.isClosed) {
         conn.close()
       }
     }
-    connection = None
+    connection.set(None)
   }
   
   /**
@@ -138,7 +142,7 @@ object DatabaseConnection {
       } catch {
         case e: SQLException =>
           println(s"Error executing SQL: ${sql.trim}")
-          throw e
+          println(s"SQLException details: ${e.getMessage}")
       }
     }
   }

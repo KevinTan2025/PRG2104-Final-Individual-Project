@@ -2,6 +2,7 @@ package manager
 
 import model._
 import java.time.LocalDateTime
+import scala.jdk.CollectionConverters._
 
 /**
  * Manager class for handling food sharing operations
@@ -22,7 +23,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @return list of food posts of the specified type
    */
   def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
-    items.values.filter(_.postType == postType).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(_.postType == postType).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -30,7 +31,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @return list of active food posts
    */
   def getActiveFoodPosts: List[FoodPost] = {
-    items.values.filter(_.isActive).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(_.isActive).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -39,7 +40,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @return list of food posts with the specified status
    */
   def getFoodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
-    items.values.filter(_.status == status).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(_.status == status).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -48,7 +49,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @return list of food posts by the specified author
    */
   def getFoodPostsByAuthor(authorId: String): List[FoodPost] = {
-    items.values.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -58,7 +59,7 @@ class FoodPostManager extends Manager[FoodPost] {
    */
   def searchFoodPosts(searchTerm: String): List[FoodPost] = {
     val term = searchTerm.toLowerCase
-    items.values.filter { post =>
+    items.values().asScala.filter { post =>
       post.title.toLowerCase.contains(term) || 
       post.description.toLowerCase.contains(term) ||
       post.location.toLowerCase.contains(term)
@@ -71,7 +72,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @return list of food posts in the specified location
    */
   def getFoodPostsByLocation(location: String): List[FoodPost] = {
-    items.values.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -81,7 +82,7 @@ class FoodPostManager extends Manager[FoodPost] {
    */
   def getExpiringSoon(hours: Int = 24): List[FoodPost] = {
     val cutoffTime = LocalDateTime.now().plusHours(hours)
-    items.values.filter { post =>
+    items.values().asScala.filter { post =>
       post.expiryDate.exists(_.isBefore(cutoffTime)) && post.isActive
     }.toList.sortBy(_.expiryDate)
   }
@@ -165,7 +166,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @return tuple of (total posts, active posts, completed posts, total helped)
    */
   def getStatistics: (Int, Int, Int, Int) = {
-    val allPosts = items.values.toList
+    val allPosts = items.values().asScala.toList
     val activePosts = allPosts.count(_.isActive)
     val completedPosts = allPosts.count(_.status == FoodPostStatus.COMPLETED)
     val totalHelped = allPosts.count(_.status == FoodPostStatus.COMPLETED)
