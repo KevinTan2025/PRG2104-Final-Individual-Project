@@ -2,8 +2,12 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" prefHeight="700.0" prefWidth="1000.0" styleClass="scene-root" stylesheets="@SceneManager.css">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" prefHeight="700.0" prefWidth="1000.0" styleClass="scene-root">
+   <stylesheets>
+      <String fx:value="@SceneManager.css" />
+   </stylesheets>
    <top>
       <fx:include fx:id="menuBarContainer" source="../components/layout/MenuBarComponent.fxml" />
    </top>

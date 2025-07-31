@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.*?>
 
 <TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="tabPaneMain" styleClass="main-tab-pane" tabClosingPolicy="UNAVAILABLE">
    <tabs>
@@ -87,6 +88,6 @@
       </Tab>
    </tabs>
    <stylesheets>
-      @MainTabPane.css
+      <String fx:value="@MainTabPane.css" />
    </stylesheets>
 </TabPane>

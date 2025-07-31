@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.lang.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" styleClass="anonymous-menu-container">
    <left>
@@ -38,6 +39,6 @@
       </HBox>
    </right>
    <stylesheets>
-      @AnonymousMenuBarComponent.css
+      <String fx:value="@AnonymousMenuBarComponent.css" />
    </stylesheets>
 </BorderPane>
