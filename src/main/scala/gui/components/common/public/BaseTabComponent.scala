@@ -1,7 +1,7 @@
 package gui.components.common.public
 
-import scalafx.scene.control.Tab
 import service.CommunityEngagementService
+import scalafx.scene.control.{Tab => ScalaFXTab}
 
 /**
  * Base trait for tab components
@@ -14,7 +14,7 @@ trait BaseTabComponent {
   /**
    * Build and return the tab component's UI
    */
-  def build(): Tab
+  def build(): ScalaFXTab
   
   /**
    * Refresh component data

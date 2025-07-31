@@ -38,6 +38,6 @@
       </HBox>
    </right>
    <stylesheets>
-      <URL value="@AnonymousMenuBarComponent.css" />
+      @AnonymousMenuBarComponent.css
    </stylesheets>
 </BorderPane>

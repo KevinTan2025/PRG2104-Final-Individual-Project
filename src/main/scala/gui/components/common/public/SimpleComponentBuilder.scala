@@ -1,6 +1,6 @@
 package gui.components.common.public
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.Insets
 
@@ -85,8 +85,8 @@ object SimpleComponentBuilder {
     listView: ListView[_],
     panelWidth: Double = 700,
     panelHeight: Double = 500
-  ): Tab = {
-    new Tab {
+  ): ScalaFXTab = {
+    new ScalaFXTab {
       text = title
       content = new BorderPane {
         top = new VBox {

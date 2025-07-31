@@ -3,7 +3,7 @@ package gui
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, TextField, PasswordField, CheckBox, ComboBox, ListView, TableView, TableColumn, Alert, ButtonType, Dialog, DialogPane, TextArea, Hyperlink, ProgressIndicator, Separator, MenuBar, Menu, MenuItem, SeparatorMenuItem, ContextMenu, Tooltip, ScrollPane}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -220,7 +220,7 @@ object CommunityEngagementApp extends JFXApp3 {
    * Create the main application scene
    */
   private def createMainScene(): Scene = {
-    val tabPane = new TabPane {
+    val tabPane = new ScalaFXTabPane {
       tabs = Seq(
         createDashboardTab(),
         createAnnouncementsTab(),
@@ -291,7 +291,7 @@ object CommunityEngagementApp extends JFXApp3 {
   /**
    * Create the dashboard tab based on user role
    */
-  private def createDashboardTab(): Tab = {
+  private def createDashboardTab(): ScalaFXTab = {
     service.getCurrentUser match {
       case Some(user) if user.getUserRole == "AdminUser" =>
         new gui.components.dashboards.AdminDashboard(service).build()
@@ -303,7 +303,7 @@ object CommunityEngagementApp extends JFXApp3 {
   /**
    * Create the announcements tab
    */
-  private def createAnnouncementsTab(): Tab = {
+  private def createAnnouncementsTab(): ScalaFXTab = {
     val announcementsList = new ListView[String]()
     
     val refreshAnnouncements = () => {
@@ -391,7 +391,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = announcementsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Announcements"
       content = tabContent
       closable = false
@@ -494,7 +494,7 @@ object CommunityEngagementApp extends JFXApp3 {
   /**
    * Create the food sharing tab
    */
-  private def createFoodSharingTab(): Tab = {
+  private def createFoodSharingTab(): ScalaFXTab = {
     val foodPostsList = new ListView[String]()
     
     val refreshFoodPosts = () => {
@@ -597,7 +597,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = foodPostsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Food Sharing"
       content = mainContent
       closable = false
@@ -688,7 +688,7 @@ object CommunityEngagementApp extends JFXApp3 {
     dialog
   }
   
-  private def createDiscussionTab(): Tab = {
+  private def createDiscussionTab(): ScalaFXTab = {
     val topicsList = new ListView[String]()
     
     val refreshTopics = () => {
@@ -864,7 +864,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = topicsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Discussion Forum"
       content = mainContent
       closable = false
@@ -968,7 +968,7 @@ object CommunityEngagementApp extends JFXApp3 {
     dialog
   }
   
-  private def createEventsTab(): Tab = {
+  private def createEventsTab(): ScalaFXTab = {
     val eventsList = new ListView[String]()
     
     val refreshEvents = () => {
@@ -1084,7 +1084,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = eventsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Events"
       content = mainContent
       closable = false
@@ -1178,7 +1178,7 @@ object CommunityEngagementApp extends JFXApp3 {
     dialog
   }
   
-  private def createNotificationsTab(): Tab = {
+  private def createNotificationsTab(): ScalaFXTab = {
     val notificationsList = new ListView[String]()
     
     val refreshNotifications = () => {
@@ -1296,7 +1296,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = notificationsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = s"Notifications ($unreadCount)"
       content = mainContent
       closable = false

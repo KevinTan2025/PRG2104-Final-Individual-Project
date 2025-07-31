@@ -87,6 +87,6 @@
       </Tab>
    </tabs>
    <stylesheets>
-      <URL value="@MainTabPane.css" />
+      @MainTabPane.css
    </stylesheets>
 </TabPane>

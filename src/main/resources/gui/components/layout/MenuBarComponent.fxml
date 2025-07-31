@@ -20,6 +20,6 @@
       </Menu>
    </menus>
    <stylesheets>
-      <URL value="@MenuBarComponent.css" />
+      @MenuBarComponent.css
    </stylesheets>
 </MenuBar>

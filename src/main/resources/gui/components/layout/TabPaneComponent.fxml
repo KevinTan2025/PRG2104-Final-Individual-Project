@@ -6,6 +6,6 @@
 <TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="tabPaneGeneric" styleClass="generic-tab-pane" tabClosingPolicy="UNAVAILABLE">
    <!-- Tabs will be added dynamically by the controller -->
    <stylesheets>
-      <URL value="@TabPaneComponent.css" />
+      @TabPaneComponent.css
    </stylesheets>
 </TabPane>

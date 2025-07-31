@@ -1,6 +1,6 @@
 package gui.components.features.discussion
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, _}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -34,7 +34,7 @@ class DiscussionTab(
     promptText = "Search topics..."
   }
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     refreshTopics()
     
     val createTopicButton = new Button("Create Topic") {
@@ -117,7 +117,7 @@ class DiscussionTab(
       }
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = if (readOnlyMode) "💬 Discussion Forum" else "Discussion Forum"
       content = mainContent
       closable = false
