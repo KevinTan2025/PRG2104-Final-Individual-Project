@@ -6,7 +6,7 @@ import java.time.LocalDateTime
  * Enumeration for food category
  */
 enum FoodCategory:
-  case VEGETABLES, FRUITS, GRAINS, PROTEIN, DAIRY, BEVERAGES, SNACKS, PACKAGED_FOOD, FROZEN_FOOD, CANNED_FOOD, OTHER
+  case ETABLES, FRUITS, GRAINS, PROTEIN, DAIRY, BEVERAGES, SNACKS, PACKAGED_FOOD, FROZEN_FOOD, CANNED_FOOD, OTHER
 
 /**
  * Enumeration for stock status
@@ -21,7 +21,7 @@ enum StockActionType:
   case STOCK_IN, STOCK_OUT, EXPIRED_REMOVAL, ADJUSTMENT
 
 /**
- * Immutable case class representing a food stock item
+ * Case class representing a food stock item
  * @param stockId unique identifier for the stock item
  * @param foodName name of the food item
  * @param category food category
@@ -33,29 +33,29 @@ enum StockActionType:
  * @param location storage location
  * @param lastModifiedBy ID of user who last modified this stock
  * @param lastModifiedDate when the stock was last modified
- * @param createdAt creation timestamp
- * @param stockHistory list of stock movements
  */
 case class FoodStock(
   stockId: String,
   foodName: String,
   category: FoodCategory,
-  currentQuantity: Double,
+  var currentQuantity: Double,
   unit: String,
   minimumThreshold: Double,
   expiryDate: Option[LocalDateTime] = None,
   isPackaged: Boolean = false,
   location: String = "Main Storage",
-  lastModifiedBy: Option[String] = None,
-  lastModifiedDate: LocalDateTime = LocalDateTime.now(),
-  createdAt: LocalDateTime = LocalDateTime.now(),
-  stockHistory: List[StockMovement] = List.empty
+  var lastModifiedBy: Option[String] = None,
+  var lastModifiedDate: LocalDateTime = LocalDateTime.now(),
+  createdAt: LocalDateTime = LocalDateTime.now()
 ) {
+  
+  // Track stock movement history
+  var stockHistory: List[StockMovement] = List.empty
   
   /**
    * Get current stock status
    */
-  def stockStatus: StockStatus = {
+  def getStockStatus: StockStatus = {
     if (isExpired) StockStatus.EXPIRED
     else if (currentQuantity <= 0) StockStatus.OUT_OF_STOCK
     else if (currentQuantity <= minimumThreshold) StockStatus.LOW_STOCK
@@ -78,12 +78,12 @@ case class FoodStock(
   
   /**
    * Add stock quantity
-   * @return updated FoodStock with increased quantity and movement record
    */
-  def addStock(quantity: Double, userId: String, notes: String = ""): FoodStock = {
+  def addStock(quantity: Double, userId: String, notes: String = ""): Unit = {
     val oldQuantity = currentQuantity
-    val newQuantity = currentQuantity + quantity
-    val now = LocalDateTime.now()
+    currentQuantity += quantity
+    lastModifiedBy = Some(userId)
+    lastModifiedDate = LocalDateTime.now()
     
     // Record the movement
     val movement = StockMovement(
@@ -92,28 +92,22 @@ case class FoodStock(
       actionType = StockActionType.STOCK_IN,
       quantity = quantity,
       previousQuantity = oldQuantity,
-      newQuantity = newQuantity,
+      newQuantity = currentQuantity,
       userId = userId,
       notes = notes
     )
-    
-    copy(
-      currentQuantity = newQuantity,
-      lastModifiedBy = Some(userId),
-      lastModifiedDate = now,
-      stockHistory = movement :: stockHistory
-    )
+    stockHistory = movement :: stockHistory
   }
   
   /**
    * Remove stock quantity
-   * @return (updated FoodStock, success flag) - None if insufficient stock
    */
-  def removeStock(quantity: Double, userId: String, notes: String = ""): Option[FoodStock] = {
+  def removeStock(quantity: Double, userId: String, notes: String = ""): Boolean = {
     if (currentQuantity >= quantity) {
       val oldQuantity = currentQuantity
-      val newQuantity = currentQuantity - quantity
-      val now = LocalDateTime.now()
+      currentQuantity -= quantity
+      lastModifiedBy = Some(userId)
+      lastModifiedDate = LocalDateTime.now()
       
       // Record the movement
       val movement = StockMovement(
@@ -122,55 +116,44 @@ case class FoodStock(
         actionType = StockActionType.STOCK_OUT,
         quantity = quantity,
         previousQuantity = oldQuantity,
-        newQuantity = newQuantity,
+        newQuantity = currentQuantity,
         userId = userId,
         notes = notes
       )
-      
-      Some(copy(
-        currentQuantity = newQuantity,
-        lastModifiedBy = Some(userId),
-        lastModifiedDate = now,
-        stockHistory = movement :: stockHistory
-      ))
+      stockHistory = movement :: stockHistory
+      true
     } else {
-      None // Insufficient stock
+      false // Insufficient stock
     }
   }
   
   /**
    * Adjust stock quantity (can be positive or negative)
-   * @return updated FoodStock with adjusted quantity and movement record
    */
-  def adjustStock(newQuantity: Double, userId: String, notes: String = ""): FoodStock = {
+  def adjustStock(newQuantity: Double, userId: String, notes: String = ""): Unit = {
     val oldQuantity = currentQuantity
-    val adjustedQuantity = math.max(0, newQuantity)
-    val now = LocalDateTime.now()
+    currentQuantity = math.max(0, newQuantity)
+    lastModifiedBy = Some(userId)
+    lastModifiedDate = LocalDateTime.now()
     
     // Record the movement
     val movement = StockMovement(
       movementId = java.util.UUID.randomUUID().toString,
       stockId = stockId,
       actionType = StockActionType.ADJUSTMENT,
-      quantity = adjustedQuantity - oldQuantity,
+      quantity = currentQuantity - oldQuantity,
       previousQuantity = oldQuantity,
-      newQuantity = adjustedQuantity,
+      newQuantity = currentQuantity,
       userId = userId,
       notes = notes
     )
-    
-    copy(
-      currentQuantity = adjustedQuantity,
-      lastModifiedBy = Some(userId),
-      lastModifiedDate = now,
-      stockHistory = movement :: stockHistory
-    )
+    stockHistory = movement :: stockHistory
   }
   
   /**
    * Get days until expiry
    */
-  def daysUntilExpiry: Option[Int] = {
+  def getDaysUntilExpiry: Option[Int] = {
     expiryDate.map { expiry =>
       val days = java.time.temporal.ChronoUnit.DAYS.between(LocalDateTime.now(), expiry)
       days.toInt
@@ -205,7 +188,7 @@ case class StockMovement(
   /**
    * Get formatted movement description
    */
-  def description: String = {
+  def getDescription: String = {
     val action = actionType match {
       case StockActionType.STOCK_IN => "Added"
       case StockActionType.STOCK_OUT => "Removed"

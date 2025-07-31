@@ -3,77 +3,61 @@ package model
 import java.time.LocalDateTime
 
 /**
- * Immutable data structure for content that can be liked and commented on
+ * Trait for content that can be liked and commented on
  */
 trait Likeable {
-  def likes: Int
-  def comments: List[Comment]
+  var likes: Int = 0
+  var comments: List[Comment] = List.empty
   
-  def withLike: Likeable
-  def withoutLike: Likeable
-  def withComment(comment: Comment): Likeable
+  def addLike(): Unit = {
+    likes += 1
+  }
+  
+  def removeLike(): Unit = {
+    if (likes > 0) likes -= 1
+  }
+  
+  def addComment(comment: Comment): Unit = {
+    comments = comment :: comments
+  }
 }
 
 /**
- * Immutable data structure for content that can be moderated
+ * Trait for content that can be moderated
  */
 trait Moderatable {
-  def isModerated: Boolean
-  def moderatedBy: Option[String]
-  def moderationDate: Option[LocalDateTime]
+  var isModerated: Boolean = false
+  var moderatedBy: Option[String] = None
+  var moderationDate: Option[LocalDateTime] = None
   
-  def withModeration(adminId: String): Moderatable
+  def moderate(adminId: String): Unit = {
+    isModerated = true
+    moderatedBy = Some(adminId)
+    moderationDate = Some(LocalDateTime.now())
+  }
 }
 
 /**
- * Immutable case class representing a comment
+ * Case class representing a comment
  * @param commentId unique identifier for the comment
  * @param authorId ID of the comment author
  * @param content comment content
  * @param timestamp when the comment was created
- * @param likes number of likes
- * @param comments nested comments
- * @param isModerated moderation status
- * @param moderatedBy moderator ID
- * @param moderationDate moderation timestamp
  */
 case class Comment(
   commentId: String,
   authorId: String,
   content: String,
-  timestamp: LocalDateTime = LocalDateTime.now(),
-  likes: Int = 0,
-  comments: List[Comment] = List.empty,
-  isModerated: Boolean = false,
-  moderatedBy: Option[String] = None,
-  moderationDate: Option[LocalDateTime] = None
-) extends Likeable with Moderatable {
-  
-  def withLike: Comment = copy(likes = likes + 1)
-  def withoutLike: Comment = copy(likes = if (likes > 0) likes - 1 else 0)
-  def withComment(comment: Comment): Comment = copy(comments = comment :: comments)
-  def withModeration(adminId: String): Comment = copy(
-    isModerated = true,
-    moderatedBy = Some(adminId),
-    moderationDate = Some(LocalDateTime.now())
-  )
-}
+  timestamp: LocalDateTime = LocalDateTime.now()
+) extends Likeable with Moderatable
 
 /**
- * Immutable Announcement case class for community announcements
+ * Announcement class for community announcements
  * @param announcementId unique identifier
  * @param authorId ID of the announcement author
  * @param title announcement title
  * @param content announcement content
- * @param announcementType type of announcement
- * @param timestamp creation timestamp
- * @param isActive whether the announcement is active
- * @param priority announcement priority
- * @param likes number of likes
- * @param comments list of comments
- * @param isModerated moderation status
- * @param moderatedBy moderator ID
- * @param moderationDate moderation timestamp
+ * @param announcementType type of announcement (food_distribution, events, tips)
  */
 case class Announcement(
   announcementId: String,
@@ -81,28 +65,19 @@ case class Announcement(
   title: String,
   content: String,
   announcementType: AnnouncementType,
-  timestamp: LocalDateTime = LocalDateTime.now(),
-  isActive: Boolean = true,
-  priority: Priority = Priority.NORMAL,
-  likes: Int = 0,
-  comments: List[Comment] = List.empty,
-  isModerated: Boolean = false,
-  moderatedBy: Option[String] = None,
-  moderationDate: Option[LocalDateTime] = None
+  timestamp: LocalDateTime = LocalDateTime.now()
 ) extends Likeable with Moderatable {
   
-  def withLike: Announcement = copy(likes = likes + 1)
-  def withoutLike: Announcement = copy(likes = if (likes > 0) likes - 1 else 0)
-  def withComment(comment: Comment): Announcement = copy(comments = comment :: comments)
-  def withModeration(adminId: String): Announcement = copy(
-    isModerated = true,
-    moderatedBy = Some(adminId),
-    moderationDate = Some(LocalDateTime.now())
-  )
+  var isActive: Boolean = true
+  var priority: Priority = Priority.NORMAL
   
-  def deactivate: Announcement = copy(isActive = false)
-  def activate: Announcement = copy(isActive = true)
-  def withPriority(newPriority: Priority): Announcement = copy(priority = newPriority)
+  def deactivate(): Unit = {
+    isActive = false
+  }
+  
+  def setPriority(newPriority: Priority): Unit = {
+    priority = newPriority
+  }
 }
 
 /**

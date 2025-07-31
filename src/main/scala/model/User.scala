@@ -2,141 +2,159 @@ package model
 
 import java.time.LocalDateTime
 import util.PasswordHasher
-import scala.util.{Try, Success, Failure}
 
 /**
- * Sealed trait representing a user in the community engagement platform
- * 使用 sealed trait 代替 abstract class，更符合 Scala 函数式编程风格
+ * Abstract base class representing a user in the community engagement platform
+ * @param userId unique identifier for the user
+ * @param username user's username
+ * @param email user's email address
+ * @param name user's display name
+ * @param contactInfo user's contact information
+ * @param passwordHash hashed password for authentication
  */
-sealed trait User {
-  def userId: String
-  def username: String
-  def email: String
-  def name: String
-  def contactInfo: String
-  def passwordHash: String
-  def registrationDate: LocalDateTime
-  def isActive: Boolean
-  def getUserRole: String
-  def hasAdminPrivileges: Boolean = false
+abstract class User(
+  val userId: String,
+  var username: String,
+  var email: String,
+  var name: String,
+  var contactInfo: String,
+  private var passwordHash: String = ""
+) {
+  
+  val registrationDate: LocalDateTime = LocalDateTime.now()
+  var isActive: Boolean = true
   
   /**
-   * 验证密码
-   * @param password 明文密码
-   * @return 验证结果
+   * Abstract method to get user role
+   * @return string representation of user role
+   */
+  def getUserRole: String
+  
+  /**
+   * Update user profile information
+   * @param newName new display name
+   * @param newContactInfo new contact information
+   */
+  def updateProfile(newName: String, newContactInfo: String): Unit = {
+    this.name = newName
+    this.contactInfo = newContactInfo
+  }
+  
+  /**
+   * Set a new password (hashes the password before storing)
+   * @param newPassword the new plain text password
+   * @return true if password was set successfully, false if invalid
+   */
+  def setPassword(newPassword: String): Boolean = {
+    if (PasswordHasher.isPasswordValid(newPassword)) {
+      this.passwordHash = PasswordHasher.hashPassword(newPassword)
+      true
+    } else {
+      false
+    }
+  }
+  
+  /**
+   * Verify a password against the stored hash
+   * @param password the plain text password to verify
+   * @return true if password matches, false otherwise
    */
   def verifyPassword(password: String): Boolean = {
     if (passwordHash.isEmpty) false
     else PasswordHasher.verifyPassword(password, passwordHash)
   }
   
-  override def toString: String = s"User($userId, $username, $name, $getUserRole)"
+  /**
+   * Get the stored password hash (for database storage)
+   * @return the hashed password
+   */
+  def getPasswordHash: String = passwordHash
+  
+  /**
+   * Set the password hash directly (for loading from database)
+   * @param hash the hashed password from database
+   */
+  def setPasswordHash(hash: String): Unit = {
+    this.passwordHash = hash
+  }
+  
+  /**
+   * Reset password with validation
+   * @param currentPassword the current password for verification
+   * @param newPassword the new password to set
+   * @return true if password was reset successfully, false otherwise
+   */
+  def resetPassword(currentPassword: String, newPassword: String): Boolean = {
+    if (verifyPassword(currentPassword) && PasswordHasher.isPasswordValid(newPassword)) {
+      setPassword(newPassword)
+    } else {
+      false
+    }
+  }
+  
+  /**
+   * Check if user has admin privileges
+   * @return true if user is admin, false otherwise
+   */
+  def hasAdminPrivileges: Boolean = false
+  
+  override def toString: String = s"User($userId, $username, $name, ${getUserRole})"
 }
 
 /**
- * 社区成员用户 - 使用 case class 实现 immutable 数据结构
+ * Community Member user class
  */
-case class CommunityMember(
+class CommunityMember(
   userId: String,
   username: String,
   email: String,
   name: String,
   contactInfo: String,
-  passwordHash: String = "",
-  registrationDate: LocalDateTime = LocalDateTime.now(),
-  isActive: Boolean = true
-) extends User {
+  passwordHash: String = ""
+) extends User(userId, username, email, name, contactInfo, passwordHash) {
   
   override def getUserRole: String = "Community Member"
+  
+  /**
+   * Member-specific functionality can be added here
+   */
+  def requestFood(): Unit = {
+    // Implementation for food requests
+  }
+  
+  def offerFood(): Unit = {
+    // Implementation for food offers
+  }
 }
 
 /**
- * 管理员用户 - 使用 case class 实现 immutable 数据结构
+ * Administrator user class with additional privileges
  */
-case class AdminUser(
+class AdminUser(
   userId: String,
   username: String,
   email: String,
   name: String,
   contactInfo: String,
-  passwordHash: String = "",
-  registrationDate: LocalDateTime = LocalDateTime.now(),
-  isActive: Boolean = true
-) extends User {
+  passwordHash: String = ""
+) extends User(userId, username, email, name, contactInfo, passwordHash) {
   
   override def getUserRole: String = "Administrator"
+  
   override def hasAdminPrivileges: Boolean = true
-}
-
-/**
- * User 伴生对象 - 提供工厂方法和实用函数
- */
-object User {
   
   /**
-   * 更新用户资料
-   * @param user 原用户对象
-   * @param newName 新姓名
-   * @param newContactInfo 新联系信息
-   * @return 更新后的用户对象
+   * Admin-specific functionality
    */
-  def updateProfile(user: User, newName: String, newContactInfo: String): User = user match {
-    case member: CommunityMember => member.copy(name = newName, contactInfo = newContactInfo)
-    case admin: AdminUser => admin.copy(name = newName, contactInfo = newContactInfo)
+  def moderateContent(contentId: String): Unit = {
+    // Implementation for content moderation
   }
   
-  /**
-   * 设置新密码
-   * @param user 用户对象
-   * @param newPassword 新密码
-   * @return Try[User] 成功返回更新后的用户，失败返回异常
-   */
-  def setPassword(user: User, newPassword: String): Try[User] = {
-    if (PasswordHasher.isPasswordValid(newPassword)) {
-      val hashedPassword = PasswordHasher.hashPassword(newPassword)
-      Success(user match {
-        case member: CommunityMember => member.copy(passwordHash = hashedPassword)
-        case admin: AdminUser => admin.copy(passwordHash = hashedPassword)
-      })
-    } else {
-      Failure(new IllegalArgumentException(PasswordHasher.getPasswordRequirements))
-    }
+  def deleteInappropriateContent(contentId: String): Unit = {
+    // Implementation for content deletion
   }
   
-  /**
-   * 重置密码
-   * @param user 用户对象
-   * @param currentPassword 当前密码
-   * @param newPassword 新密码
-   * @return Try[User] 成功返回更新后的用户，失败返回异常
-   */
-  def resetPassword(user: User, currentPassword: String, newPassword: String): Try[User] = {
-    if (user.verifyPassword(currentPassword)) {
-      setPassword(user, newPassword)
-    } else {
-      Failure(new IllegalArgumentException("当前密码验证失败"))
-    }
-  }
-  
-  /**
-   * 设置密码哈希（用于从数据库加载）
-   * @param user 用户对象
-   * @param hash 密码哈希
-   * @return 更新后的用户对象
-   */
-  def setPasswordHash(user: User, hash: String): User = user match {
-    case member: CommunityMember => member.copy(passwordHash = hash)
-    case admin: AdminUser => admin.copy(passwordHash = hash)
-  }
-  
-  /**
-   * 激活/停用用户
-   * @param user 用户对象
-   * @param active 是否激活
-   * @return 更新后的用户对象
-   */
-  def setActive(user: User, active: Boolean): User = user match {
-    case member: CommunityMember => member.copy(isActive = active)
-    case admin: AdminUser => admin.copy(isActive = active)
+  def manageUsers(): Unit = {
+    // Implementation for user management
   }
 }

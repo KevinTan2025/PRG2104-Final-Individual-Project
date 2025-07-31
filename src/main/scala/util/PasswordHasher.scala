@@ -3,7 +3,6 @@ package util
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.Base64
-import scala.util.{Try, Success, Failure}
 
 /**
  * Utility class for password hashing and verification
@@ -51,9 +50,9 @@ object PasswordHasher {
   }
   
   /**
-   * 哈希密码用于存储
-   * @param password 明文密码
-   * @return Try[String] 成功返回包含盐值和哈希的字符串，失败返回异常
+   * Hash a password for storage
+   * @param password the plain text password
+   * @return a string containing salt and hash separated by ':'
    */
   def hashPassword(password: String): String = {
     val salt = generateSalt()
@@ -62,52 +61,33 @@ object PasswordHasher {
   }
   
   /**
-   * 安全的密码哈希方法，返回 Try 类型
-   * @param password 明文密码
-   * @return Try[String] 哈希结果
-   */
-  def hashPasswordSafe(password: String): Try[String] = {
-    Try {
-      val salt = generateSalt()
-      val hash = hashPasswordWithSalt(password, salt)
-      s"$salt:$hash"
-    }
-  }
-  
-  /**
-   * 验证密码
-   * @param password 明文密码
-   * @param storedHash 存储的哈希值（盐值:哈希 格式）
-   * @return 验证结果
+   * Verify a password against a stored hash
+   * @param password the plain text password to verify
+   * @param storedHash the stored hash (salt:hash format)
+   * @return true if password matches, false otherwise
    */
   def verifyPassword(password: String, storedHash: String): Boolean = {
-    verifyPasswordSafe(password, storedHash).getOrElse(false)
-  }
-  
-  /**
-   * 安全的密码验证方法，返回 Try 类型
-   * @param password 明文密码
-   * @param storedHash 存储的哈希值
-   * @return Try[Boolean] 验证结果
-   */
-  def verifyPasswordSafe(password: String, storedHash: String): Try[Boolean] = {
-    Try {
+    try {
       val parts = storedHash.split(":")
-      require(parts.length == 2, "Invalid hash format")
+      if (parts.length != 2) {
+        return false
+      }
       
       val salt = parts(0)
       val hash = parts(1)
       val computedHash = hashPasswordWithSalt(password, salt)
       
-      // 使用常量时间比较防止时序攻击
+      // Use constant-time comparison to prevent timing attacks
       MessageDigest.isEqual(hash.getBytes("UTF-8"), computedHash.getBytes("UTF-8"))
+    } catch {
+      case _: Exception => false
     }
   }
   
   /**
-   * 检查密码是否符合安全要求
-   * @param password 待验证的密码
-   * @return 密码是否有效
+   * Check if a password meets basic security requirements
+   * @param password the password to validate
+   * @return true if password is valid, false otherwise
    */
   def isPasswordValid(password: String): Boolean = {
     password.length >= 8 && 
@@ -117,29 +97,10 @@ object PasswordHasher {
   }
   
   /**
-   * 获取密码要求描述
-   * @return 密码要求说明
+   * Get password requirements description
+   * @return string describing password requirements
    */
   def getPasswordRequirements: String = {
-    "密码必须至少8个字符，包含至少一个字母、一个数字和一个特殊字符。"
-  }
-  
-  /**
-   * 验证密码强度并返回详细结果
-   * @param password 待验证的密码
-   * @return Try[Unit] 成功表示密码有效，失败包含具体错误信息
-   */
-  def validatePasswordStrength(password: String): Try[Unit] = {
-    if (password.length < 8) {
-      Failure(new IllegalArgumentException("密码长度至少需要8个字符"))
-    } else if (!password.exists(_.isDigit)) {
-      Failure(new IllegalArgumentException("密码必须包含至少一个数字"))
-    } else if (!password.exists(_.isLetter)) {
-      Failure(new IllegalArgumentException("密码必须包含至少一个字母"))
-    } else if (!password.exists(c => !c.isLetterOrDigit)) {
-      Failure(new IllegalArgumentException("密码必须包含至少一个特殊字符"))
-    } else {
-      Success(())
-    }
+    "Password must be at least 8 characters long and contain at least one letter, one digit, and one special character."
   }
 }

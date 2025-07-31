@@ -4,8 +4,6 @@ import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet, SQLExc
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.io.File
-import scala.util.{Try, Success, Failure}
-import scala.util.Using
 
 /**
  * Database connection manager for SQLite
@@ -50,7 +48,7 @@ object DatabaseConnection {
   }
   
   /**
-   * 执行 SQL 查询并返回 ResultSet
+   * Execute SQL query and return ResultSet
    */
   def executeQuery(sql: String, params: Any*): ResultSet = {
     val conn = getConnection
@@ -60,19 +58,7 @@ object DatabaseConnection {
   }
   
   /**
-   * 安全执行 SQL 查询，返回 Try 类型
-   */
-  def executeQuerySafe(sql: String, params: Any*): Try[ResultSet] = {
-    Try {
-      val conn = getConnection
-      val stmt = conn.prepareStatement(sql)
-      setParameters(stmt, params: _*)
-      stmt.executeQuery()
-    }
-  }
-  
-  /**
-   * 执行 SQL 更新/插入/删除并返回受影响的行数
+   * Execute SQL update/insert/delete and return affected rows count
    */
   def executeUpdate(sql: String, params: Any*): Int = {
     val conn = getConnection
@@ -84,19 +70,7 @@ object DatabaseConnection {
   }
   
   /**
-   * 安全执行 SQL 更新，返回 Try 类型
-   */
-  def executeUpdateSafe(sql: String, params: Any*): Try[Int] = {
-    Try {
-      Using.resource(getConnection.prepareStatement(sql)) { stmt =>
-        setParameters(stmt, params: _*)
-        stmt.executeUpdate()
-      }
-    }
-  }
-  
-  /**
-   * 执行 SQL 更新/插入并返回生成的 ID
+   * Execute SQL update/insert and return generated ID
    */
   def executeUpdateWithGeneratedKey(sql: String, params: Any*): Option[String] = {
     val conn = getConnection
@@ -112,23 +86,7 @@ object DatabaseConnection {
   }
   
   /**
-   * 安全执行 SQL 更新并返回生成的 ID，返回 Try 类型
-   */
-  def executeUpdateWithGeneratedKeySafe(sql: String, params: Any*): Try[Option[String]] = {
-    Try {
-      Using.resource(getConnection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) { stmt =>
-        setParameters(stmt, params: _*)
-        stmt.executeUpdate()
-        
-        Using.resource(stmt.getGeneratedKeys) { keys =>
-          if (keys.next()) Some(keys.getString(1)) else None
-        }
-      }
-    }
-  }
-  
-  /**
-   * 为预处理语句设置参数
+   * Set parameters for prepared statement
    */
   private def setParameters(stmt: PreparedStatement, params: Any*): Unit = {
     params.zipWithIndex.foreach { case (param, index) =>
@@ -154,7 +112,7 @@ object DatabaseConnection {
   }
   
   /**
-   * 关闭数据库连接
+   * Close database connection
    */
   def close(): Unit = {
     connection.foreach { conn =>
@@ -166,7 +124,7 @@ object DatabaseConnection {
   }
   
   /**
-   * 执行 SQL 脚本
+   * Execute SQL script from string
    */
   def executeSqlScript(script: String): Unit = {
     val conn = getConnection
@@ -179,30 +137,14 @@ object DatabaseConnection {
         stmt.close()
       } catch {
         case e: SQLException =>
-          println(s"执行 SQL 错误: ${sql.trim}")
+          println(s"Error executing SQL: ${sql.trim}")
           throw e
       }
     }
   }
   
   /**
-   * 安全执行 SQL 脚本，返回 Try 类型
-   */
-  def executeSqlScriptSafe(script: String): Try[Unit] = {
-    Try {
-      val conn = getConnection
-      val statements = script.split(";").filter(_.trim.nonEmpty)
-      
-      statements.foreach { sql =>
-        Using.resource(conn.createStatement()) { stmt =>
-          stmt.execute(sql.trim)
-        }
-      }
-    }
-  }
-  
-  /**
-   * 检查数据库是否已初始化
+   * Check if database exists and has tables
    */
   def isDatabaseInitialized: Boolean = {
     try {
@@ -216,32 +158,14 @@ object DatabaseConnection {
   }
   
   /**
-   * 安全检查数据库是否已初始化
-   */
-  def isDatabaseInitializedSafe: Try[Boolean] = {
-    Try {
-      Using.resource(executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")) { rs =>
-        rs.next()
-      }
-    }
-  }
-  
-  /**
-   * 将数据库时间戳转换为 LocalDateTime
+   * Utility method to convert database timestamp to LocalDateTime
    */
   def parseDateTime(dateTimeStr: String): LocalDateTime = {
     LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
   }
   
   /**
-   * 安全解析日期时间
-   */
-  def parseDateTimeSafe(dateTimeStr: String): Try[LocalDateTime] = {
-    Try(LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-  }
-  
-  /**
-   * 将 LocalDateTime 转换为数据库字符串
+   * Utility method to convert LocalDateTime to database string
    */
   def formatDateTime(dateTime: LocalDateTime): String = {
     dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)

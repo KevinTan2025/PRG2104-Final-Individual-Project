@@ -5,8 +5,6 @@ import model._
 import java.time.LocalDateTime
 import java.sql.ResultSet
 import java.util.UUID
-import scala.util.{Try, Success, Failure}
-import scala.util.Using
 
 /**
  * Data Access Object for User operations
@@ -20,7 +18,7 @@ class UserDAO {
            (user_id, username, email, name, contact_info, is_admin, password_hash, created_at, updated_at) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         user.userId, user.username, user.email, user.name, user.contactInfo, 
-        user.hasAdminPrivileges, user.passwordHash,
+        user.hasAdminPrivileges, user.getPasswordHash,
         DatabaseConnection.formatDateTime(user.registrationDate),
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
@@ -119,7 +117,7 @@ class UserDAO {
         """UPDATE users 
            SET name = ?, contact_info = ?, password_hash = ?, updated_at = ? 
            WHERE user_id = ?""",
-        user.name, user.contactInfo, user.passwordHash,
+        user.name, user.contactInfo, user.getPasswordHash,
         DatabaseConnection.formatDateTime(LocalDateTime.now()),
         user.userId
       )
@@ -184,156 +182,6 @@ class UserDAO {
     }
   }
   
-  // 安全方法版本 - 使用 Try 类型进行错误处理
-  
-  /**
-   * 安全插入用户
-   */
-  def insertSafe(user: User): Try[Boolean] = {
-    Try {
-      val rowsAffected = DatabaseConnection.executeUpdate(
-        """INSERT INTO users 
-           (user_id, username, email, name, contact_info, is_admin, password_hash, created_at, updated_at) 
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        user.userId, user.username, user.email, user.name, user.contactInfo, 
-        user.hasAdminPrivileges, user.passwordHash,
-        DatabaseConnection.formatDateTime(user.registrationDate),
-        DatabaseConnection.formatDateTime(LocalDateTime.now())
-      )
-      rowsAffected > 0
-    }
-  }
-  
-  /**
-   * 安全根据用户名查找用户
-   */
-  def findByUsernameSafe(username: String): Try[Option[User]] = {
-    Try {
-      Using.resource(DatabaseConnection.executeQuery(
-        "SELECT * FROM users WHERE LOWER(username) = LOWER(?)", username
-      )) { rs =>
-        if (rs.next()) {
-          Some(resultSetToUser(rs))
-        } else {
-          None
-        }
-      }
-    }
-  }
-  
-  /**
-   * 安全根据邮箱查找用户
-   */
-  def findByEmailSafe(email: String): Try[Option[User]] = {
-    Try {
-      Using.resource(DatabaseConnection.executeQuery(
-        "SELECT * FROM users WHERE email = ?", email
-      )) { rs =>
-        if (rs.next()) {
-          Some(resultSetToUser(rs))
-        } else {
-          None
-        }
-      }
-    }
-  }
-  
-  /**
-   * 安全根据ID查找用户
-   */
-  def findByIdSafe(userId: String): Try[Option[User]] = {
-    Try {
-      Using.resource(DatabaseConnection.executeQuery(
-        "SELECT * FROM users WHERE user_id = ?", userId
-      )) { rs =>
-        if (rs.next()) {
-          Some(resultSetToUser(rs))
-        } else {
-          None
-        }
-      }
-    }
-  }
-  
-  /**
-   * 安全查找所有用户
-   */
-  def findAllSafe(): Try[List[User]] = {
-    Try {
-      Using.resource(DatabaseConnection.executeQuery("SELECT * FROM users ORDER BY created_at")) { rs =>
-        val users = scala.collection.mutable.ListBuffer[User]()
-        while (rs.next()) {
-          users += resultSetToUser(rs)
-        }
-        users.toList
-      }
-    }
-  }
-  
-  /**
-   * 安全更新用户
-   */
-  def updateSafe(user: User): Try[Boolean] = {
-    Try {
-      val rowsAffected = DatabaseConnection.executeUpdate(
-        """UPDATE users 
-           SET name = ?, contact_info = ?, password_hash = ?, updated_at = ? 
-           WHERE user_id = ?""",
-        user.name, user.contactInfo, user.passwordHash,
-        DatabaseConnection.formatDateTime(LocalDateTime.now()),
-        user.userId
-      )
-      rowsAffected > 0
-    }
-  }
-  
-  /**
-   * 安全更新密码
-   */
-  def updatePasswordSafe(userId: String, newPasswordHash: String): Try[Boolean] = {
-    Try {
-      val rowsAffected = DatabaseConnection.executeUpdate(
-        """UPDATE users SET password_hash = ?, updated_at = ? WHERE user_id = ?""",
-        newPasswordHash, DatabaseConnection.formatDateTime(LocalDateTime.now()), userId
-      )
-      rowsAffected > 0
-    }
-  }
-  
-  /**
-   * 安全删除用户
-   */
-  def deleteSafe(userId: String): Try[Boolean] = {
-    Try {
-      val rowsAffected = DatabaseConnection.executeUpdate(
-        "DELETE FROM users WHERE user_id = ?", userId
-      )
-      rowsAffected > 0
-    }
-  }
-  
-  /**
-   * 安全统计用户数量
-   */
-  def countSafe(): Try[Int] = {
-    Try {
-      Using.resource(DatabaseConnection.executeQuery("SELECT COUNT(*) FROM users")) { rs =>
-        if (rs.next()) rs.getInt(1) else 0
-      }
-    }
-  }
-  
-  /**
-   * 安全统计管理员数量
-   */
-  def countAdminsSafe(): Try[Int] = {
-    Try {
-      Using.resource(DatabaseConnection.executeQuery("SELECT COUNT(*) FROM users WHERE is_admin = 1")) { rs =>
-        if (rs.next()) rs.getInt(1) else 0
-      }
-    }
-  }
-
   private def resultSetToUser(rs: ResultSet): User = {
     val userId = rs.getString("user_id")
     val username = rs.getString("username")

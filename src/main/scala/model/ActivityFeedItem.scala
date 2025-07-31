@@ -9,7 +9,7 @@ enum ActivityFeedType:
   case ANNOUNCEMENT, FOOD_SHARING, DISCUSSION, EVENT, USER_ACTIVITY
 
 /**
- * Immutable case class representing a unified activity feed item
+ * Case class representing a unified activity feed item
  * This provides a common interface for all content types in the activity feed
  */
 case class ActivityFeedItem(
@@ -20,82 +20,62 @@ case class ActivityFeedItem(
   authorId: String,
   authorName: String,
   timestamp: LocalDateTime,
-  likes: Int = 0,
-  comments: List[Comment] = List.empty,
+  var likes: Int = 0,
+  var comments: List[Comment] = List.empty,
   // Optional fields for specific content types
   category: Option[String] = None,
   location: Option[String] = None,
   eventDateTime: Option[LocalDateTime] = None,
   expiryDate: Option[LocalDateTime] = None,
   // Interaction tracking
-  likedByUsers: Set[String] = Set.empty,
-  isActive: Boolean = true
+  var likedByUsers: Set[String] = Set.empty,
+  var isActive: Boolean = true
 ) {
   
   /**
    * Add a like from a specific user
    */
-  def withLike(userId: String): Option[ActivityFeedItem] = {
+  def addLike(userId: String): Boolean = {
     if (!likedByUsers.contains(userId)) {
-      Some(this.copy(
-        likes = likes + 1,
-        likedByUsers = likedByUsers + userId
-      ))
+      likes += 1
+      likedByUsers += userId
+      true
     } else {
-      None
+      false
     }
   }
   
   /**
    * Remove a like from a specific user
    */
-  def withoutLike(userId: String): Option[ActivityFeedItem] = {
+  def removeLike(userId: String): Boolean = {
     if (likedByUsers.contains(userId)) {
-      Some(this.copy(
-        likes = likes - 1,
-        likedByUsers = likedByUsers - userId
-      ))
+      likes -= 1
+      likedByUsers -= userId
+      true
     } else {
-      None
+      false
     }
   }
   
   /**
    * Toggle like for a user
    */
-  def toggleLike(userId: String): (ActivityFeedItem, Boolean) = {
+  def toggleLike(userId: String): Boolean = {
     if (likedByUsers.contains(userId)) {
-      (this.copy(
-        likes = likes - 1,
-        likedByUsers = likedByUsers - userId
-      ), false) // unliked
+      removeLike(userId)
+      false // unliked
     } else {
-      (this.copy(
-        likes = likes + 1,
-        likedByUsers = likedByUsers + userId
-      ), true) // liked
+      addLike(userId)
+      true // liked
     }
   }
   
   /**
    * Add a comment
    */
-  def withComment(comment: Comment): ActivityFeedItem = {
-    this.copy(comments = comment :: comments)
-  }
-  
-  /**
-   * Deactivate this feed item
-   */
-  def deactivate: ActivityFeedItem = {
-    this.copy(isActive = false)
-  }
-  
-  /**
-   * Activate this feed item
-   */
-  def activate: ActivityFeedItem = {
-    this.copy(isActive = true)
+  def addComment(comment: Comment): Unit = {
+    comments = comment :: comments
   }
   
   /**
@@ -108,7 +88,7 @@ case class ActivityFeedItem(
   /**
    * Get formatted time string
    */
-  def timeAgo: String = {
+  def getTimeAgo: String = {
     val now = LocalDateTime.now()
     val duration = java.time.Duration.between(timestamp, now)
     
@@ -126,7 +106,7 @@ case class ActivityFeedItem(
   /**
    * Get category icon based on feed type
    */
-  def categoryIcon: String = feedType match {
+  def getCategoryIcon: String = feedType match {
     case ActivityFeedType.ANNOUNCEMENT => "📢"
     case ActivityFeedType.FOOD_SHARING => "🍕"
     case ActivityFeedType.DISCUSSION => "💬"
@@ -137,7 +117,7 @@ case class ActivityFeedItem(
   /**
    * Get category display name
    */
-  def categoryName: String = feedType match {
+  def getCategoryName: String = feedType match {
     case ActivityFeedType.ANNOUNCEMENT => "Announcement"
     case ActivityFeedType.FOOD_SHARING => "Food Sharing"
     case ActivityFeedType.DISCUSSION => "Discussion"
@@ -148,7 +128,7 @@ case class ActivityFeedItem(
   /**
    * Get category color for UI
    */
-  def categoryColor: String = feedType match {
+  def getCategoryColor: String = feedType match {
     case ActivityFeedType.ANNOUNCEMENT => "#1877f2"
     case ActivityFeedType.FOOD_SHARING => "#42b883"
     case ActivityFeedType.DISCUSSION => "#9b59b6"
