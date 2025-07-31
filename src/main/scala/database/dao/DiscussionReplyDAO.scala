@@ -194,17 +194,13 @@ class DiscussionReplyDAO {
   }
   
   private def mapResultSetToReply(rs: ResultSet): Reply = {
-    val reply = Reply(
+    Reply(
       replyId = rs.getString("reply_id"),
       topicId = rs.getString("topic_id"),
       authorId = rs.getString("author_id"),
       content = rs.getString("content"),
-      timestamp = DatabaseConnection.parseDateTime(rs.getString("created_at"))
+      timestamp = DatabaseConnection.parseDateTime(rs.getString("created_at")),
+      likes = rs.getInt("likes")
     )
-    
-    // Set likes
-    reply.likes = rs.getInt("likes")
-    
-    reply
   }
 }

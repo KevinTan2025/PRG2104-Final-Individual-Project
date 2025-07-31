@@ -24,6 +24,16 @@ enum FoodPostType:
  * @param quantity quantity of food/resource
  * @param location pickup/delivery location
  * @param expiryDate expiry date for the food (if applicable)
+ * @param timestamp when the post was created
+ * @param status current status of the post
+ * @param acceptedBy ID of user who accepted the post
+ * @param acceptedDate when the post was accepted
+ * @param completedDate when the post was completed
+ * @param likes number of likes
+ * @param comments list of comments
+ * @param isModerated whether the post is moderated
+ * @param moderatedBy ID of the moderator
+ * @param moderationDate when the post was moderated
  */
 case class FoodPost(
   postId: String,
@@ -34,41 +44,79 @@ case class FoodPost(
   quantity: String,
   location: String,
   expiryDate: Option[LocalDateTime] = None,
-  timestamp: LocalDateTime = LocalDateTime.now()
+  timestamp: LocalDateTime = LocalDateTime.now(),
+  status: FoodPostStatus = FoodPostStatus.PENDING,
+  acceptedBy: Option[String] = None,
+  acceptedDate: Option[LocalDateTime] = None,
+  completedDate: Option[LocalDateTime] = None,
+  likes: Int = 0,
+  comments: List[Comment] = List.empty,
+  isModerated: Boolean = false,
+  moderatedBy: Option[String] = None,
+  moderationDate: Option[LocalDateTime] = None
 ) extends Likeable with Moderatable {
-  
-  var status: FoodPostStatus = FoodPostStatus.PENDING
-  var acceptedBy: Option[String] = None
-  var acceptedDate: Option[LocalDateTime] = None
-  var completedDate: Option[LocalDateTime] = None
   
   /**
    * Accept a food post (for requests) or respond to offer
    * @param userId ID of the user accepting/responding
    */
-  def accept(userId: String): Unit = {
+  def accept(userId: String): FoodPost = {
     if (status == FoodPostStatus.PENDING) {
-      status = FoodPostStatus.ACCEPTED
-      acceptedBy = Some(userId)
-      acceptedDate = Some(LocalDateTime.now())
+      this.copy(
+        status = FoodPostStatus.ACCEPTED,
+        acceptedBy = Some(userId),
+        acceptedDate = Some(LocalDateTime.now())
+      )
+    } else {
+      this
     }
   }
   
   /**
    * Mark the food post as completed
    */
-  def complete(): Unit = {
+  def complete(): FoodPost = {
     if (status == FoodPostStatus.ACCEPTED) {
-      status = FoodPostStatus.COMPLETED
-      completedDate = Some(LocalDateTime.now())
+      this.copy(
+        status = FoodPostStatus.COMPLETED,
+        completedDate = Some(LocalDateTime.now())
+      )
+    } else {
+      this
     }
   }
   
   /**
    * Cancel the food post
    */
-  def cancel(): Unit = {
-    status = FoodPostStatus.CANCELLED
+  def cancel(): FoodPost = {
+    this.copy(status = FoodPostStatus.CANCELLED)
+  }
+  
+  /**
+   * Implement Likeable trait methods
+   */
+  def addLike(): FoodPost = {
+    this.copy(likes = likes + 1)
+  }
+  
+  def removeLike(): FoodPost = {
+    this.copy(likes = if (likes > 0) likes - 1 else 0)
+  }
+  
+  def addComment(comment: Comment): FoodPost = {
+    this.copy(comments = comment :: comments)
+  }
+  
+  /**
+   * Implement Moderatable trait method
+   */
+  def moderate(adminId: String): FoodPost = {
+    this.copy(
+      isModerated = true,
+      moderatedBy = Some(adminId),
+      moderationDate = Some(LocalDateTime.now())
+    )
   }
   
   /**

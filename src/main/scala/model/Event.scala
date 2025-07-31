@@ -28,46 +28,68 @@ case class Event(
   startDateTime: LocalDateTime,
   endDateTime: LocalDateTime,
   maxParticipants: Option[Int] = None,
-  createdAt: LocalDateTime = LocalDateTime.now()
-) extends Likeable with Moderatable {
+  createdAt: LocalDateTime = LocalDateTime.now(),
   
-  var status: EventStatus = EventStatus.UPCOMING
-  var participants: List[String] = List.empty // List of user IDs
-  var waitingList: List[String] = List.empty // List of user IDs on waiting list
+  // Immutable fields for functional style
+  status: EventStatus = EventStatus.UPCOMING,
+  participants: List[String] = List.empty, // List of user IDs
+  waitingList: List[String] = List.empty, // List of user IDs on waiting list
+  
+  // Fields required by Likeable trait
+  /** Number of likes this event has received */
+  likes: Int = 0,
+  /** List of comments on this event */
+  comments: List[Comment] = List.empty,
+  
+  // Fields required by Moderatable trait
+  /** Whether this event has been moderated */
+  isModerated: Boolean = false,
+  /** ID of the admin who moderated this event */
+  moderatedBy: Option[String] = None,
+  /** Date and time when this event was moderated */
+  moderationDate: Option[LocalDateTime] = None
+) extends Likeable with Moderatable {
   
   /**
    * RSVP to the event
    * @param userId ID of the user RSVPing
-   * @return true if successfully added, false if event is full
+   * @return (updated Event, success flag)
    */
-  def rsvp(userId: String): Boolean = {
+  def rsvp(userId: String): (Event, Boolean) = {
     if (participants.contains(userId)) {
-      false // Already registered
+      (this, false) // Already registered
     } else if (maxParticipants.isEmpty || participants.length < maxParticipants.get) {
-      participants = userId :: participants
-      // Remove from waiting list if they were on it
-      waitingList = waitingList.filterNot(_ == userId)
-      true
+      val updatedEvent = this.copy(
+        participants = userId :: participants,
+        waitingList = waitingList.filterNot(_ == userId)
+      )
+      (updatedEvent, true)
     } else {
       // Add to waiting list
       if (!waitingList.contains(userId)) {
-        waitingList = userId :: waitingList
+        val updatedEvent = this.copy(waitingList = userId :: waitingList)
+        (updatedEvent, false)
+      } else {
+        (this, false)
       }
-      false
     }
   }
   
   /**
    * Cancel RSVP
    * @param userId ID of the user canceling
+   * @return updated Event
    */
-  def cancelRsvp(userId: String): Unit = {
-    participants = participants.filterNot(_ == userId)
+  def cancelRsvp(userId: String): Event = {
+    val updatedParticipants = participants.filterNot(_ == userId)
     // Move someone from waiting list if there's space
-    if (waitingList.nonEmpty && (maxParticipants.isEmpty || participants.length < maxParticipants.get)) {
+    if (waitingList.nonEmpty && (maxParticipants.isEmpty || updatedParticipants.length < maxParticipants.get)) {
       val nextParticipant = waitingList.head
-      waitingList = waitingList.tail
-      participants = nextParticipant :: participants
+      val updatedWaitingList = waitingList.tail
+      val finalParticipants = nextParticipant :: updatedParticipants
+      this.copy(participants = finalParticipants, waitingList = updatedWaitingList)
+    } else {
+      this.copy(participants = updatedParticipants)
     }
   }
   
@@ -89,27 +111,34 @@ case class Event(
   
   /**
    * Start the event
+   * @return updated Event with ONGOING status
    */
-  def start(): Unit = {
+  def start(): Event = {
     if (status == EventStatus.UPCOMING) {
-      status = EventStatus.ONGOING
+      this.copy(status = EventStatus.ONGOING)
+    } else {
+      this
     }
   }
   
   /**
    * Complete the event
+   * @return updated Event with COMPLETED status
    */
-  def complete(): Unit = {
+  def complete(): Event = {
     if (status == EventStatus.ONGOING) {
-      status = EventStatus.COMPLETED
+      this.copy(status = EventStatus.COMPLETED)
+    } else {
+      this
     }
   }
   
   /**
    * Cancel the event
+   * @return updated Event with CANCELLED status
    */
-  def cancel(): Unit = {
-    status = EventStatus.CANCELLED
+  def cancel(): Event = {
+    this.copy(status = EventStatus.CANCELLED)
   }
   
   /**
@@ -127,5 +156,47 @@ case class Event(
   def isOngoing: Boolean = {
     val now = LocalDateTime.now()
     now.isAfter(startDateTime) && now.isBefore(endDateTime)
+  }
+  
+  // Implementation of Likeable trait methods
+  
+  /**
+   * Add a like to this event
+   * @return updated Event with incremented likes
+   */
+  def addLike(): Event = {
+    this.copy(likes = likes + 1)
+  }
+  
+  /**
+   * Remove a like from this event
+   * @return updated Event with decremented likes
+   */
+  def removeLike(): Event = {
+    this.copy(likes = math.max(0, likes - 1))
+  }
+  
+  /**
+   * Add a comment to this event
+   * @param comment the comment to add
+   * @return updated Event with the new comment
+   */
+  def addComment(comment: Comment): Event = {
+    this.copy(comments = comment :: comments)
+  }
+  
+  // Implementation of Moderatable trait method
+  
+  /**
+   * Moderate this event
+   * @param adminId ID of the admin performing moderation
+   * @return updated Event marked as moderated
+   */
+  def moderate(adminId: String): Event = {
+    this.copy(
+      isModerated = true,
+      moderatedBy = Some(adminId),
+      moderationDate = Some(LocalDateTime.now())
+    )
   }
 }

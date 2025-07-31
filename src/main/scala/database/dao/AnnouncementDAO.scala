@@ -167,16 +167,19 @@ class AnnouncementDAO {
     val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
     
     // Create announcement with database values
-    val announcement = Announcement(announcementId, authorId, title, content, announcementType, createdAt)
-    
-    // Set additional properties from database
-    announcement.likes = rs.getInt("likes")
-    announcement.isModerated = rs.getBoolean("is_moderated")
     val moderatorIdStr = rs.getString("moderator_id")
-    if (moderatorIdStr != null) {
-      announcement.moderatedBy = Some(moderatorIdStr)
-    }
+    val moderatedBy = if (moderatorIdStr != null) Some(moderatorIdStr) else None
     
-    announcement
+    Announcement(
+      announcementId = announcementId,
+      authorId = authorId,
+      title = title,
+      content = content,
+      announcementType = announcementType,
+      timestamp = createdAt,
+      likes = rs.getInt("likes"),
+      isModerated = rs.getBoolean("is_moderated"),
+      moderatedBy = moderatedBy
+    )
   }
 }
