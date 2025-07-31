@@ -41,12 +41,10 @@ object DatabaseConnection {
         } catch {
           case e: SQLException =>
             println(s"Failed to connect to database: ${e.getMessage}")
-            // Return a null connection that will be handled by calling code
-            null
+            throw new RuntimeException(s"Database connection failed: ${e.getMessage}", e)
           case e: ClassNotFoundException =>
             println("SQLite JDBC driver not found")
-            // Return a null connection that will be handled by calling code
-            null
+            throw new RuntimeException("SQLite JDBC driver not found", e)
         }
     }
   }

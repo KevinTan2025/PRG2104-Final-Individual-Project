@@ -372,8 +372,8 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def getSelectedStock(): Option[FoodStock] = {
-    if (stocksList != null) {
-      val selectedIndex = stocksList.selectionModel().selectedIndex.value
+    Option(stocksList).flatMap { list =>
+      val selectedIndex = list.selectionModel().selectedIndex.value
       if (selectedIndex >= 0) {
         val allStocks = service.getAllFoodStocks
         // Apply current filters to get the displayed list
@@ -406,7 +406,7 @@ class FoodStockTab extends BaseTabComponent {
           Some(filteredStocks(selectedIndex))
         } else None
       } else None
-    } else None
+    }
   }
   
   private def createSidePanel(): VBox = {
