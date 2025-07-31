@@ -1,6 +1,6 @@
 package gui.components.dashboards
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, TextField, PasswordField, CheckBox, ComboBox, ListView, TableView, TableColumn, Alert, ButtonType, Dialog, DialogPane, TextArea, Hyperlink, ProgressIndicator, Separator, MenuBar, Menu, MenuItem, ContextMenu, Tooltip, ScrollPane}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -18,7 +18,7 @@ import service.CommunityEngagementService
  */
 class AdminDashboard(service: CommunityEngagementService) {
   
-  def build(): Tab = {
+  def build(): ScalaFXTab = {
     // Use placeholder stats for now
     val stats = Map(
       "totalUsers" -> 156,
@@ -49,7 +49,7 @@ class AdminDashboard(service: CommunityEngagementService) {
       )
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Admin Dashboard"
       content = new ScrollPane {
         content = dashboardContent

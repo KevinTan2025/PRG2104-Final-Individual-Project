@@ -1,6 +1,6 @@
 package gui.components.common.user
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -24,7 +24,7 @@ class DashboardComponent extends BaseTabComponent {
   private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
     new EnhancedActivityFeedComponent(service, () => refresh(), None)
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     val currentUser = service.getCurrentUser
     // Home tab shows all activity types
     val userFeed = activityFeedComponent.build()
@@ -44,7 +44,7 @@ class DashboardComponent extends BaseTabComponent {
       content = mainContent
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "🏠 Dashboard"
       content = scrollContent
       closable = false

@@ -1,6 +1,6 @@
 package gui.components.features.announcements
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -27,7 +27,7 @@ class AnnouncementsTab(
       Some(ActivityFeedType.ANNOUNCEMENT)
     )
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     // Create activity feed component filtered for announcements only
     val activityFeed = activityFeedComponent.build()
     
@@ -47,7 +47,7 @@ class AnnouncementsTab(
       content = mainContent
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "📢 Announcements"
       content = scrollContent
       closable = false

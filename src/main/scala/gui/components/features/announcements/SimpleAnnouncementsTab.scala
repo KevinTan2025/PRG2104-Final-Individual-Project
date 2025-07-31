@@ -1,6 +1,6 @@
 package gui.components.features.announcements
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
@@ -32,7 +32,7 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
   private val commentBtn = SimpleComponentBuilder.button("Comment", handleComment)
   private val likeBtn = SimpleComponentBuilder.button("Like", handleLike)
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     // Initial data loading
     handleRefresh()
 
@@ -52,7 +52,7 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
       padding = Insets(10)
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Announcements"
       content = layoutContent
       closable = false

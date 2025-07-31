@@ -1,9 +1,9 @@
 package gui.components.layout
 
-import scalafx.scene.control._
-import scalafx.scene.layout._
-import scalafx.geometry.Insets
-import scalafx.event.ActionEvent
+import javafx.fxml.{FXML, FXMLLoader}
+import javafx.scene.control.{Menu, MenuBar, MenuItem}
+import javafx.event.ActionEvent
+import scalafx.scene.layout.Region
 import scalafx.Includes._
 import gui.utils.GuiUtils
 import gui.components.common.public.BaseComponent
@@ -13,53 +13,64 @@ import service.CommunityEngagementService
 
 /**
  * Menu bar component with user info and logout functionality
- * 安全级别: USER - 注册用户的菜单栏
+ * Security Level: USER - Menu bar for registered users
  */
 class MenuBarComponent(
   onLogout: () => Unit
 ) extends BaseComponent {
   
+  // FXML injected controls
+  @FXML private var menuBar: MenuBar = _
+  @FXML private var menuFile: Menu = _
+  @FXML private var menuUser: Menu = _
+  @FXML private var menuItemLogout: MenuItem = _
+  @FXML private var menuItemExit: MenuItem = _
+  @FXML private var menuItemProfile: MenuItem = _
+  @FXML private var menuItemSettings: MenuItem = _
+  
   override def build(): Region = {
-    val fileMenu = new Menu("File") {
-      items = Seq(
-        new MenuItem("Logout") {
-          onAction = (_: ActionEvent) => {
-            service.logout()
-            GuiUtils.showInfo("Logged Out", "You have been logged out successfully.")
-            onLogout()
-          }
-        },
-        new SeparatorMenuItem(),
-        new MenuItem("Exit") {
-          onAction = (_: ActionEvent) => {
-            GuiUtils.getMainStage.foreach(_.close())
-          }
-        }
-      )
-    }
+    val loader = new FXMLLoader(getClass.getResource("/gui/components/layout/MenuBarComponent.fxml"))
+    loader.setController(this)
+    val root = loader.load[MenuBar]()
     
+    // Update user menu text with current user info
+    updateUserInfo()
+    
+    // Convert JavaFX MenuBar to ScalaFX Region
+    new Region(root)
+  }
+  
+  /**
+   * Updates the user menu text with current user information
+   */
+  private def updateUserInfo(): Unit = {
     val userInfo = service.getCurrentUser match {
       case Some(user) => s"${user.name} (${user.getUserRole})"
       case None => "Guest"
     }
-    
-    val userMenu = new Menu(userInfo) {
-      items = Seq(
-        new MenuItem("Profile") {
-          onAction = (_: ActionEvent) => {
-            new ProfileDialog().showAndWait()
-          }
-        },
-        new MenuItem("Settings") {
-          onAction = (_: ActionEvent) => {
-            GuiUtils.showInfo("Settings", "Settings coming soon!")
-          }
-        }
-      )
-    }
-    
-    new MenuBar {
-      menus = Seq(fileMenu, userMenu)
-    }
+    menuUser.setText(userInfo)
+  }
+  
+  // FXML Event Handlers
+  @FXML
+  private def handleLogout(event: ActionEvent): Unit = {
+    service.logout()
+    GuiUtils.showInfo("Logged Out", "You have been logged out successfully.")
+    onLogout()
+  }
+  
+  @FXML
+  private def handleExit(event: ActionEvent): Unit = {
+    GuiUtils.getMainStage.foreach(_.close())
+  }
+  
+  @FXML
+  private def handleProfile(event: ActionEvent): Unit = {
+    new ProfileDialog().showAndWait()
+  }
+  
+  @FXML
+  private def handleSettings(event: ActionEvent): Unit = {
+    GuiUtils.showInfo("Settings", "Settings coming soon!")
   }
 }
