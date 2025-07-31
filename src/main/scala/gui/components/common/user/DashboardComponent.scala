@@ -21,12 +21,12 @@ import model.User
  */
 class DashboardComponent extends BaseTabComponent {
   
-  private var activityFeedComponent: EnhancedActivityFeedComponent = _
+  private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
+    new EnhancedActivityFeedComponent(service, () => refresh(), None)
   
   override def build(): Tab = {
     val currentUser = service.getCurrentUser
     // Home tab shows all activity types
-    activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh(), None)
     val userFeed = activityFeedComponent.build()
     val sidePanel = createUserSidePanel(currentUser)
     

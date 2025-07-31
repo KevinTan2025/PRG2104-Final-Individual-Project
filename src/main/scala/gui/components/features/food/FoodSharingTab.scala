@@ -5,6 +5,7 @@ import scalafx.scene.layout._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
 import scalafx.Includes._
+import scalafx.beans.property.ObjectProperty
 import gui.utils.GuiUtils
 import gui.dialogs.features.food.FoodPostDialog
 import gui.dialogs.features.food.FoodPostDetailsDialog
@@ -22,7 +23,7 @@ class FoodSharingTab(
 ) extends BaseTabComponent {
   
   private val foodPostsList = new ListView[String]()
-  private var currentPosts: List[model.FoodPost] = List.empty[model.FoodPost] // Store current posts for reference
+  private val currentPostsProperty = ObjectProperty[List[model.FoodPost]](List.empty[model.FoodPost])
   private val filterCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer("All", "OFFER", "REQUEST")
     value = "All"
@@ -53,7 +54,7 @@ class FoodSharingTab(
         } else {
           import model.FoodPostType
           val postType = if (filterType == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-          currentPosts = service.getFoodPostsByType(postType)
+          currentPostsProperty.value = service.getFoodPostsByType(postType)
           updateListView()
         }
       }
@@ -106,8 +107,8 @@ class FoodSharingTab(
     foodPostsList.onMouseClicked = (event) => {
       if (event.clickCount == 2) {
         val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
-        if (selectedIndex >= 0 && selectedIndex < currentPosts.length) {
-          val selectedPost = currentPosts(selectedIndex)
+        if (selectedIndex >= 0 && selectedIndex < currentPostsProperty.value.length) {
+          val selectedPost = currentPostsProperty.value(selectedIndex)
           val detailsDialog = new FoodPostDetailsDialog(selectedPost, () => refreshFoodPosts())
           detailsDialog.showAndWait()
         }
@@ -130,19 +131,19 @@ class FoodSharingTab(
   }
   
   private def refreshFoodPosts(): Unit = {
-    currentPosts = service.getFoodPosts
+    currentPostsProperty.value = service.getFoodPosts
     updateListView()
   }
   
   private def updateListView(): Unit = {
-    val items = currentPosts.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
+    val items = currentPostsProperty.value.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
     foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
   
   private def handleAcceptFoodPost(): Unit = {
     val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0 && selectedIndex < currentPosts.length) {
-      val post = currentPosts(selectedIndex)
+    if (selectedIndex >= 0 && selectedIndex < currentPostsProperty.value.length) {
+      val post = currentPostsProperty.value(selectedIndex)
       // Check if post is still pending
       if (post.status == model.FoodPostStatus.PENDING) {
         if (service.acceptFoodPost(post.postId)) {
@@ -162,7 +163,7 @@ class FoodSharingTab(
   private def handleSearchFoodPosts(): Unit = {
     val searchTerm = searchField.text.value
     if (searchTerm.nonEmpty) {
-      currentPosts = service.searchFoodPosts(searchTerm)
+      currentPostsProperty.value = service.searchFoodPosts(searchTerm)
       updateListView()
     } else {
       refreshFoodPosts()
