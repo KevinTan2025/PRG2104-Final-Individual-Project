@@ -18,6 +18,17 @@ object CommunityEngagementApp extends JFXApp3 {
   // Service instance
   private val service = CommunityEngagementService.getInstance
   
+  // Pending registration data for OTP verification
+  private val pendingRegistration: java.util.concurrent.atomic.AtomicReference[Option[RegistrationData]] = new java.util.concurrent.atomic.AtomicReference(None)
+  
+  case class RegistrationData(
+    username: String,
+    email: String,
+    name: String,
+    contact: String,
+    password: String
+  )
+  
   // Main application stage
   override def start(): Unit = {
     stage = new PrimaryStage {
@@ -111,17 +122,6 @@ object CommunityEngagementApp extends JFXApp3 {
     val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
     val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
     
-    // Pending registration data for OTP verification
-    var pendingRegistration: Option[RegistrationData] = None
-    
-    case class RegistrationData(
-      username: String,
-      email: String,
-      name: String,
-      contact: String,
-      password: String
-    )
-    
     val registerButton = new Button("Register") {
       onAction = (_: ActionEvent) => {
         val username = usernameField.getUserInput
@@ -146,12 +146,12 @@ object CommunityEngagementApp extends JFXApp3 {
           showAlert(Alert.AlertType.Error, "Email Already Registered", s"The email '$email' is already registered. Please use a different email or try logging in.")
         } else {
           // Store registration data and start OTP verification
-          pendingRegistration = Some(RegistrationData(username, email, name, contact, password))
+          pendingRegistration.set(Some(RegistrationData(username, email, name, contact, password)))
           
           val otpDialog = new gui.dialogs.auth.OTPVerificationDialog(stage, email)
           otpDialog.show(
             onSuccess = () => {
-              pendingRegistration match {
+              pendingRegistration.get() match {
                 case Some(data) =>
                   if (service.registerUser(data.username, data.email, data.name, data.contact, data.password, isAdmin = false)) {
                     showAlert(Alert.AlertType.Information, "Registration Successful", "Account created successfully! You can now log in.")
@@ -166,13 +166,13 @@ object CommunityEngagementApp extends JFXApp3 {
                   } else {
                     showAlert(Alert.AlertType.Error, "Registration Failed", "An error occurred during registration. Please try again.")
                   }
-                  pendingRegistration = None
+                  pendingRegistration.set(None)
                 case None =>
                   showAlert(Alert.AlertType.Error, "Registration Error", "Registration data not found. Please try again.")
               }
             },
             onFailure = () => {
-              pendingRegistration = None
+              pendingRegistration.set(None)
               showAlert(Alert.AlertType.Warning, "Registration Cancelled", "Email verification was cancelled. Please try again.")
             }
           )

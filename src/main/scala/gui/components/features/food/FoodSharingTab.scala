@@ -22,7 +22,7 @@ class FoodSharingTab(
 ) extends BaseTabComponent {
   
   private val foodPostsList = new ListView[String]()
-  private var currentPosts: List[model.FoodPost] = List.empty // Store current posts for reference
+  private var currentPosts: List[model.FoodPost] = List.empty[model.FoodPost] // Store current posts for reference
   private val filterCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer("All", "OFFER", "REQUEST")
     value = "All"

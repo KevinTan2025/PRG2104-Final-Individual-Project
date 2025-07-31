@@ -54,14 +54,15 @@ class AnnouncementDAO {
   def findAll(): List[Announcement] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM announcements ORDER BY created_at DESC")
-      val announcements = scala.collection.mutable.ListBuffer[Announcement]()
       
-      while (rs.next()) {
-        announcements += resultSetToAnnouncement(rs)
-      }
+      // Use functional approach to build list
+      val announcements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToAnnouncement)
+        .toList
       
       rs.close()
-      announcements.toList
+      announcements
     } catch {
       case e: Exception =>
         println(s"Error finding all announcements: ${e.getMessage}")

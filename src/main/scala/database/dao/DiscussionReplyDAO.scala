@@ -5,7 +5,7 @@ import model.Reply
 import java.sql.{PreparedStatement, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import scala.collection.mutable.ListBuffer
+// Removed mutable ListBuffer import - using functional approach
 
 /**
  * Data Access Object for Reply operations
@@ -86,14 +86,14 @@ class DiscussionReplyDAO {
       val rs = DatabaseConnection.executeQuery(
         "SELECT * FROM discussion_replies ORDER BY created_at ASC"
       )
-      val replies = ListBuffer[Reply]()
-      
-      while (rs.next()) {
-        replies += mapResultSetToReply(rs)
-      }
+      // Use functional approach to build list
+      val replies = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToReply)
+        .toList
       
       rs.close()
-      replies.toList
+      replies
     } catch {
       case e: Exception =>
         println(s"Error finding all discussion replies: ${e.getMessage}")
@@ -107,14 +107,14 @@ class DiscussionReplyDAO {
         "SELECT * FROM discussion_replies WHERE topic_id = ? ORDER BY created_at ASC",
         topicId
       )
-      val replies = ListBuffer[Reply]()
-      
-      while (rs.next()) {
-        replies += mapResultSetToReply(rs)
-      }
+      // Use functional approach to build list
+      val replies = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToReply)
+        .toList
       
       rs.close()
-      replies.toList
+      replies
     } catch {
       case e: Exception =>
         println(s"Error finding discussion replies by topic: ${e.getMessage}")
@@ -128,14 +128,14 @@ class DiscussionReplyDAO {
         "SELECT * FROM discussion_replies WHERE author_id = ? ORDER BY created_at DESC",
         authorId
       )
-      val replies = ListBuffer[Reply]()
-      
-      while (rs.next()) {
-        replies += mapResultSetToReply(rs)
-      }
+      // Use functional approach to build list
+      val replies = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToReply)
+        .toList
       
       rs.close()
-      replies.toList
+      replies
     } catch {
       case e: Exception =>
         println(s"Error finding discussion replies by author: ${e.getMessage}")
