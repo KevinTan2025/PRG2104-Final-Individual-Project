@@ -109,7 +109,8 @@ class FoodPostManager extends Manager[FoodPost] {
   def completeFoodPost(postId: String): Boolean = {
     get(postId) match {
       case Some(post) if post.status == FoodPostStatus.ACCEPTED =>
-        post.complete()
+        val updatedPost = post.complete()
+        add(post.postId, updatedPost)
         true
       case _ => false
     }
@@ -123,7 +124,8 @@ class FoodPostManager extends Manager[FoodPost] {
   def cancelFoodPost(postId: String): Boolean = {
     get(postId) match {
       case Some(post) =>
-        post.cancel()
+        val updatedPost = post.cancel()
+        add(post.postId, updatedPost)
         true
       case None => false
     }

@@ -96,7 +96,12 @@ class EventManager extends Manager[Event] {
    */
   def rsvpToEvent(eventId: String, userId: String): Boolean = {
     get(eventId) match {
-      case Some(event) => event.rsvp(userId)
+      case Some(event) => 
+        val (updatedEvent, success) = event.rsvp(userId)
+        if (success) {
+          add(event.eventId, updatedEvent)
+        }
+        success
       case None => false
     }
   }
@@ -110,7 +115,8 @@ class EventManager extends Manager[Event] {
   def cancelRsvp(eventId: String, userId: String): Boolean = {
     get(eventId) match {
       case Some(event) if event.participants.contains(userId) =>
-        event.cancelRsvp(userId)
+        val updatedEvent = event.cancelRsvp(userId)
+        add(event.eventId, updatedEvent)
         true
       case _ => false
     }
@@ -124,7 +130,8 @@ class EventManager extends Manager[Event] {
   def startEvent(eventId: String): Boolean = {
     get(eventId) match {
       case Some(event) if event.status == EventStatus.UPCOMING =>
-        event.start()
+        val updatedEvent = event.start()
+        add(event.eventId, updatedEvent)
         true
       case _ => false
     }
@@ -138,7 +145,8 @@ class EventManager extends Manager[Event] {
   def completeEvent(eventId: String): Boolean = {
     get(eventId) match {
       case Some(event) if event.status == EventStatus.ONGOING =>
-        event.complete()
+        val updatedEvent = event.complete()
+        add(event.eventId, updatedEvent)
         true
       case _ => false
     }
@@ -152,7 +160,8 @@ class EventManager extends Manager[Event] {
   def cancelEvent(eventId: String): Boolean = {
     get(eventId) match {
       case Some(event) =>
-        event.cancel()
+        val updatedEvent = event.cancel()
+        add(event.eventId, updatedEvent)
         true
       case None => false
     }
@@ -209,9 +218,11 @@ class EventManager extends Manager[Event] {
     items.values.foreach { event =>
       event.status match {
         case EventStatus.UPCOMING if event.isOngoing =>
-          event.start()
+          val updatedEvent = event.start()
+          add(event.eventId, updatedEvent)
         case EventStatus.ONGOING if event.isPast =>
-          event.complete()
+          val updatedEvent = event.complete()
+          add(event.eventId, updatedEvent)
         case _ => // No change needed
       }
     }

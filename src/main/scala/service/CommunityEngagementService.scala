@@ -131,8 +131,7 @@ class CommunityEngagementService {
     // Load comments for each announcement
     announcements.map { announcement =>
       val comments = dbService.getComments("announcement", announcement.announcementId)
-      announcement.comments = comments
-      announcement
+      announcement.copy(comments = comments)
     }
   }
   
@@ -204,8 +203,7 @@ class CommunityEngagementService {
     // Load comments for each food post
     foodPosts.map { post =>
       val comments = dbService.getComments("foodpost", post.postId)
-      post.comments = comments
-      post
+      post.copy(comments = comments)
     }
   }
   
