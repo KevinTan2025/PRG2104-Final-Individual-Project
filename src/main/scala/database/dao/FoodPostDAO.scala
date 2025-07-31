@@ -225,7 +225,7 @@ class FoodPostDAO {
     val quantity = rs.getString("quantity")
     val location = rs.getString("location")
     val expiryDateStr = rs.getString("expiry_date")
-    val expiryDate = Option(expiryDateStr).filter(_ != null).map(DatabaseConnection.parseDateTime)
+    val expiryDate = Option(expiryDateStr).filter(_.nonEmpty).map(DatabaseConnection.parseDateTime)
     val status = FoodPostStatus.valueOf(rs.getString("status"))
     val acceptedBy = Option(rs.getString("accepted_by"))
     val isModerated = rs.getBoolean("is_moderated")

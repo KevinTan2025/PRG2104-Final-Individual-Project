@@ -4,6 +4,19 @@ import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet, SQLExc
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.io.File
+import scala.util.{Try, Success, Failure}
+
+/**
+ * Database error type definitions for functional error handling
+ */
+sealed trait DatabaseError extends Exception {
+  def message: String
+  def cause: Option[Throwable]
+}
+
+case class DatabaseConnectionError(message: String, cause: Option[Throwable] = None) extends DatabaseError
+case class DriverNotFoundError(message: String, cause: Option[Throwable] = None) extends DatabaseError
+case class QueryExecutionError(message: String, cause: Option[Throwable] = None) extends DatabaseError
 
 /**
  * Database connection manager for SQLite
@@ -27,25 +40,38 @@ object DatabaseConnection {
   
   /**
    * Get database connection, create if not exists
+   * Returns Try[Connection] for functional error handling
    */
-  def getConnection: Connection = {
+  def getConnectionSafe: Try[Connection] = {
     connection.get() match {
-      case Some(conn) if !conn.isClosed => conn
+      case Some(conn) if !conn.isClosed => Success(conn)
       case _ =>
-        try {
+        Try {
           ensureDbDirectoryExists()
           Class.forName("org.sqlite.JDBC")
           val conn = DriverManager.getConnection(DB_URL)
           connection.set(Some(conn))
           conn
-        } catch {
+        }.recoverWith {
           case e: SQLException =>
             println(s"Failed to connect to database: ${e.getMessage}")
-            throw new RuntimeException(s"Database connection failed: ${e.getMessage}", e)
+            Failure(DatabaseConnectionError(s"Database connection failed: ${e.getMessage}", Some(e)))
           case e: ClassNotFoundException =>
             println("SQLite JDBC driver not found")
-            throw new RuntimeException("SQLite JDBC driver not found", e)
+            Failure(DriverNotFoundError("SQLite JDBC driver not found", Some(e)))
         }
+    }
+  }
+
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use getConnectionSafe for better error handling
+   */
+  @deprecated("Use getConnectionSafe for functional error handling", "1.0")
+  def getConnection: Connection = {
+    getConnectionSafe match {
+      case Success(conn) => conn
+      case Failure(error) => throw error
     }
   }
   
@@ -107,7 +133,7 @@ object DatabaseConnection {
             }
           case None => stmt.setNull(index + 1, java.sql.Types.NULL)
         }
-        case null => stmt.setNull(index + 1, java.sql.Types.NULL)
+        case None => stmt.setNull(index + 1, java.sql.Types.NULL) // Handle None case for Option types
         case _ => stmt.setObject(index + 1, param)
       }
     }

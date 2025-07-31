@@ -478,11 +478,11 @@ class DatabaseService {
     eventDAO.findById(eventId)
   }
   
-  def getAllEvents(): List[Event] = {
+  def allEvents: List[Event] = {
     eventDAO.findAll()
   }
   
-  def getUpcomingEvents(): List[Event] = {
+  def upcomingEvents: List[Event] = {
     eventDAO.findUpcomingEvents()
   }
   

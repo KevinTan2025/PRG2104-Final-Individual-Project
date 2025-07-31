@@ -169,7 +169,7 @@ class AnnouncementDAO {
     
     // Create announcement with database values
     val moderatorIdStr = rs.getString("moderator_id")
-    val moderatedBy = if (moderatorIdStr != null) Some(moderatorIdStr) else None
+    val moderatedBy = Option(moderatorIdStr)
     
     Announcement(
       announcementId = announcementId,

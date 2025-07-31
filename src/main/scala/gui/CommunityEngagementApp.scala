@@ -264,7 +264,7 @@ object CommunityEngagementApp extends JFXApp3 {
     }
     
     val userInfo = service.getCurrentUser match {
-      case Some(user) => s"${user.name} (${user.getUserRole})"
+      case Some(user) => s"${user.name} (${user.userRole})"
       case None => "Guest"
     }
     
@@ -293,7 +293,7 @@ object CommunityEngagementApp extends JFXApp3 {
    */
   private def createDashboardTab(): ScalaFXTab = {
     service.getCurrentUser match {
-      case Some(user) if user.getUserRole == "AdminUser" =>
+      case Some(user) if user.userRole == "Administrator" =>
         new gui.components.dashboards.AdminDashboard(service).build()
       case _ =>
         new gui.components.dashboards.UserDashboard(service).build()
@@ -484,7 +484,7 @@ object CommunityEngagementApp extends JFXApp3 {
       if (dialogButton == ButtonType.OK) {
         contentArea.text()
       } else {
-        null
+        "" // Return empty string instead of null
       }
     }
     
@@ -681,7 +681,7 @@ object CommunityEngagementApp extends JFXApp3 {
         )
         "created"
       } else {
-        null
+        "" // Return empty string instead of null
       }
     }
     
@@ -924,7 +924,7 @@ object CommunityEngagementApp extends JFXApp3 {
         service.createDiscussionTopic(titleField.text.value, descriptionArea.text.value, category)
         "created"
       } else {
-        null
+        "" // Return empty string instead of null
       }
     }
     
@@ -1362,7 +1362,7 @@ ${notification.message}
           editable = false  // Email usually shouldn't be changed
         }
         
-        val roleLabel = new Label(user.getUserRole) {
+        val roleLabel = new Label(user.userRole) {
           style = "-fx-font-weight: bold;"
         }
         
@@ -1479,7 +1479,7 @@ ${notification.message}
     
     val usersList = new ListView[String]()
     val users = service.getAllUsers
-    val items = users.map(u => s"${u.username} (${u.name}) - ${u.getUserRole} - ${if (u.isActive) "Active" else "Inactive"}")
+    val items = users.map(u => s"${u.username} (${u.name}) - ${u.userRole} - ${if (u.isActive) "Active" else "Inactive"}")
     usersList.items = scalafx.collections.ObservableBuffer(items: _*)
     
     val vbox = new VBox {
