@@ -1,6 +1,6 @@
 package gui.components.features.events
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
@@ -23,7 +23,7 @@ class EventsTab(
     promptText = "Search events..."
   }
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     refreshEvents()
     
     val createEventButton = new Button("Create Event") {
@@ -106,7 +106,7 @@ class EventsTab(
       center = eventsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = if (readOnlyMode) "📅 Events" else "Events"
       content = mainContent
       closable = false

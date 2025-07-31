@@ -1,6 +1,6 @@
 package gui.components.features.food
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout.{VBox, HBox}
 import scalafx.geometry.Insets
 import scalafx.Includes._
@@ -25,7 +25,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
   private val acceptBtn = SimpleComponentBuilder.button("Accept", handleAccept)
   private val filterBtn = SimpleComponentBuilder.button("Filter", handleFilter)
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     // Load initial food posts
     handleRefresh()
 
@@ -45,7 +45,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
       padding = Insets(10)
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Food Sharing"
       content = layoutContent
       closable = false

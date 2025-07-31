@@ -1,6 +1,6 @@
 package gui.components.features.notifications
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator, Dialog, ButtonType}
 import scalafx.scene.layout._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
@@ -17,7 +17,7 @@ class NotificationsTab extends BaseTabComponent {
   
   private val notificationsList = new ListView[String]()
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     refreshNotifications()
     
     val markReadButton = new Button("Mark as Read") {
@@ -72,7 +72,7 @@ class NotificationsTab extends BaseTabComponent {
       center = notificationsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = s"Notifications ($unreadCount)"
       content = mainContent
       closable = false

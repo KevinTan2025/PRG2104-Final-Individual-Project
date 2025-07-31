@@ -1,6 +1,6 @@
 package gui.components.features.info
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator, Hyperlink}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.text.{Font, FontWeight, Text}
@@ -20,10 +20,10 @@ class AppInfoTab extends BaseTabComponent {
   private val appDescription = "A platform to facilitate communication and collaboration among community members for ending hunger, achieving food security, improving nutrition, and promoting sustainable agriculture (UN Goal 2)."
   private val buildDate = "2025-07-17"
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     val tabContent = createInfoContent()
     
-    new Tab {
+    new ScalaFXTab {
       text = "App Info"
       content = tabContent
       closable = false

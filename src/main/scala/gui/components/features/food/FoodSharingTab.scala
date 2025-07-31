@@ -1,6 +1,6 @@
 package gui.components.features.food
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, _}
 import scalafx.scene.layout._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
@@ -32,7 +32,7 @@ class FoodSharingTab(
     promptText = "Search food posts..."
   }
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     refreshFoodPosts()
     
     val createButton = new Button("Create Food Post") {
@@ -115,7 +115,7 @@ class FoodSharingTab(
       }
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = if (readOnlyMode) "🍕 Food Sharing" else "Food Sharing"
       content = mainContent
       closable = false

@@ -1,6 +1,6 @@
 package gui.components.features.foodstock
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -43,7 +43,7 @@ class FoodStockTab extends BaseTabComponent {
     prefHeight = 400
   }
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     // Enhanced stock list with better styling
     
     // Now we can safely refresh stocks
@@ -180,7 +180,7 @@ class FoodStockTab extends BaseTabComponent {
       )
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "📦 Food Inventory"
       content = new ScrollPane {
         content = mainContent
