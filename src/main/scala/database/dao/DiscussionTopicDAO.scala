@@ -5,7 +5,7 @@ import model.{DiscussionTopic, DiscussionCategory, Reply}
 import java.sql.{PreparedStatement, ResultSet}
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import scala.collection.mutable.ListBuffer
+// Using functional approach instead of mutable collections
 
 /**
  * Data Access Object for DiscussionTopic operations
@@ -89,14 +89,13 @@ class DiscussionTopicDAO {
       val rs = DatabaseConnection.executeQuery(
         "SELECT * FROM discussion_topics ORDER BY created_at DESC"
       )
-      val topics = ListBuffer[DiscussionTopic]()
-      
-      while (rs.next()) {
-        topics += mapResultSetToTopic(rs)
-      }
+      val topics = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToTopic)
+        .toList
       
       rs.close()
-      topics.toList
+      topics
     } catch {
       case e: Exception =>
         println(s"Error finding all discussion topics: ${e.getMessage}")
@@ -110,14 +109,13 @@ class DiscussionTopicDAO {
         "SELECT * FROM discussion_topics WHERE category = ? ORDER BY created_at DESC",
         category.toString
       )
-      val topics = ListBuffer[DiscussionTopic]()
-      
-      while (rs.next()) {
-        topics += mapResultSetToTopic(rs)
-      }
+      val topics = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToTopic)
+        .toList
       
       rs.close()
-      topics.toList
+      topics
     } catch {
       case e: Exception =>
         println(s"Error finding discussion topics by category: ${e.getMessage}")
@@ -131,14 +129,13 @@ class DiscussionTopicDAO {
         "SELECT * FROM discussion_topics WHERE author_id = ? ORDER BY created_at DESC",
         authorId
       )
-      val topics = ListBuffer[DiscussionTopic]()
-      
-      while (rs.next()) {
-        topics += mapResultSetToTopic(rs)
-      }
+      val topics = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToTopic)
+        .toList
       
       rs.close()
-      topics.toList
+      topics
     } catch {
       case e: Exception =>
         println(s"Error finding discussion topics by author: ${e.getMessage}")
@@ -155,14 +152,13 @@ class DiscussionTopicDAO {
            ORDER BY created_at DESC""",
         searchPattern, searchPattern
       )
-      val topics = ListBuffer[DiscussionTopic]()
-      
-      while (rs.next()) {
-        topics += mapResultSetToTopic(rs)
-      }
+      val topics = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToTopic)
+        .toList
       
       rs.close()
-      topics.toList
+      topics
     } catch {
       case e: Exception =>
         println(s"Error searching discussion topics: ${e.getMessage}")

@@ -79,13 +79,13 @@ class AnnouncementDAO {
         s"%$searchTerm%", s"%$searchTerm%"
       )
       
-      val announcements = scala.collection.mutable.ListBuffer[Announcement]()
-      while (rs.next()) {
-        announcements += resultSetToAnnouncement(rs)
-      }
+      val announcements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToAnnouncement)
+        .toList
       
       rs.close()
-      announcements.toList
+      announcements
     } catch {
       case e: Exception =>
         println(s"Error searching announcements: ${e.getMessage}")

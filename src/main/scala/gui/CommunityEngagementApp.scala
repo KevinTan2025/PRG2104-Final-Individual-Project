@@ -447,7 +447,7 @@ object CommunityEngagementApp extends JFXApp3 {
         service.createAnnouncement(titleField.text.value, contentArea.text.value, announcementType)
         "created"
       } else {
-        null
+        ""
       }
     }
     

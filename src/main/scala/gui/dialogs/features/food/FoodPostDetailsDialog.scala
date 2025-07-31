@@ -185,11 +185,9 @@ class FoodPostDetailsDialog(foodPost: FoodPost, onUpdate: () => Unit) {
       style = "-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 6;"
     }
     
-    val buttons = scala.collection.mutable.ListBuffer[Button](closeButton)
-    
-    // Add Accept button if post is pending and user is logged in
-    if (foodPost.status == FoodPostStatus.PENDING && service.getCurrentUser.isDefined) {
-      val acceptButton = new Button("Accept Post") {
+    // Create buttons list functionally
+    val acceptButton = if (foodPost.status == FoodPostStatus.PENDING && service.getCurrentUser.isDefined) {
+      Some(new Button("Accept Post") {
         onAction = _ => {
           if (service.acceptFoodPost(foodPost.postId)) {
             GuiUtils.showInfo("Success", "Food post accepted successfully!")
@@ -200,13 +198,11 @@ class FoodPostDetailsDialog(foodPost: FoodPost, onUpdate: () => Unit) {
           }
         }
         style = "-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6;"
-      }
-      buttons.prepend(acceptButton)
-    }
+      })
+    } else None
     
-    // Add Complete button if post is accepted
-    if (foodPost.status == FoodPostStatus.ACCEPTED && service.getCurrentUser.isDefined) {
-      val completeButton = new Button("Mark Complete") {
+    val completeButton = if (foodPost.status == FoodPostStatus.ACCEPTED && service.getCurrentUser.isDefined) {
+      Some(new Button("Mark Complete") {
         onAction = _ => {
           if (service.completeFoodPost(foodPost.postId)) {
             GuiUtils.showInfo("Success", "Food post marked as completed!")
@@ -217,10 +213,12 @@ class FoodPostDetailsDialog(foodPost: FoodPost, onUpdate: () => Unit) {
           }
         }
         style = "-fx-background-color: #007bff; -fx-text-fill: white; -fx-background-radius: 6;"
-      }
-      buttons.insert(buttons.length - 1, completeButton)
-    }
+      })
+    } else None
     
-    buttons.toSeq
+    // Combine buttons functionally
+    val buttons = List(acceptButton, completeButton).flatten :+ closeButton
+    
+    buttons
   }
 }
