@@ -434,11 +434,11 @@ class CommunityEngagementService {
   }
   
   def getUpcomingEvents: List[Event] = {
-    dbService.getUpcomingEvents()
+    dbService.upcomingEvents
   }
   
   def getAllEvents: List[Event] = {
-    dbService.getAllEvents()
+    dbService.allEvents
   }
   
   def rsvpToEvent(eventId: String): Boolean = {

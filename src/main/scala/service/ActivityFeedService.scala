@@ -234,9 +234,7 @@ class ActivityFeedService {
   // Helper methods for getting data not yet in DatabaseService
   
   private def getUpcomingEvents(): List[Event] = {
-    // TODO: This should be replaced with proper database call when EventDAO is implemented
-    // For now, return empty list or mock data
-    List.empty
+    dbService.upcomingEvents
   }
   
   private def getActiveDiscussionTopics(): List[DiscussionTopic] = {

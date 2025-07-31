@@ -17,7 +17,7 @@ sealed trait User {
   def passwordHash: String
   def registrationDate: LocalDateTime
   def isActive: Boolean
-  def getUserRole: String
+  def userRole: String // Scala-style property instead of Java-style getter
   
   /**
    * Update user profile information functionally
@@ -88,7 +88,7 @@ object User {
    * @return formatted string representation
    */
   def userToString(user: User): String = 
-    s"User(${user.userId}, ${user.username}, ${user.name}, ${user.getUserRole})"
+    s"User(${user.userId}, ${user.username}, ${user.name}, ${user.userRole})"
 }
 
 /**
@@ -113,7 +113,7 @@ case class CommunityMember(
   isActive: Boolean = true
 ) extends User {
   
-  override def getUserRole: String = "Community Member"
+  override def userRole: String = "Community Member"
   
   override def updateProfile(newName: String, newContactInfo: String): Try[User] = {
     Try(this.copy(name = newName, contactInfo = newContactInfo))
@@ -169,7 +169,7 @@ case class AdminUser(
   isActive: Boolean = true
 ) extends User {
   
-  override def getUserRole: String = "Administrator"
+  override def userRole: String = "Administrator"
   
   override def hasAdminPrivileges: Boolean = true
   
