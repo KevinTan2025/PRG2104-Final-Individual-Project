@@ -8,6 +8,7 @@ import scalafx.Includes._
 import scalafx.scene.Scene
 import scalafx.stage.{Stage, Modality}
 import scalafx.application.Platform
+import scalafx.beans.property.{BooleanProperty, ObjectProperty}
 import scala.util.Random
 import java.util.concurrent.{Executors, TimeUnit}
 
@@ -30,9 +31,9 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
     resizable = false
   }
   
-  private var isVerified = false
-  private var onVerificationSuccess: () => Unit = () => {}
-  private var onVerificationFailure: () => Unit = () => {}
+  private val isVerifiedProperty = BooleanProperty(false)
+  private val onVerificationSuccessProperty = ObjectProperty[() => Unit](() => {})
+  private val onVerificationFailureProperty = ObjectProperty[() => Unit](() => {})
   
   /**
    * Generate a random 6-digit OTP
@@ -204,8 +205,8 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
    * Show the OTP verification dialog
    */
   def show(onSuccess: () => Unit, onFailure: () => Unit): Unit = {
-    onVerificationSuccess = onSuccess
-    onVerificationFailure = onFailure
+    onVerificationSuccessProperty.value = onSuccess
+    onVerificationFailureProperty.value = onFailure
     
     // Simulate sending OTP
     simulateEmailNotification()
@@ -229,7 +230,7 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
       prefWidth = 120
       onAction = (_: ActionEvent) => {
         dialog.close()
-        onVerificationFailure()
+        onVerificationFailureProperty.value()
       }
     }
     
@@ -305,10 +306,10 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
     }
     
     if (enteredOTP == otpCode) {
-      isVerified = true
+      isVerifiedProperty.value = true
       dialog.close()
       showInfo("✅ Verification Successful", "🎉 Your email has been verified successfully!\nWelcome to Community Platform!")
-      onVerificationSuccess()
+      onVerificationSuccessProperty.value()
     } else {
       showError("❌ Invalid Code", "The verification code you entered is incorrect.\nPlease check your email and try again.")
       otpField.clear()
@@ -336,5 +337,5 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
     alert.showAndWait()
   }
   
-  def isOTPVerified: Boolean = isVerified
+  def isOTPVerified: Boolean = isVerifiedProperty.value
 }

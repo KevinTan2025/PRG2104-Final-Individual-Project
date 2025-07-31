@@ -39,13 +39,12 @@ class FoodStockTab extends BaseTabComponent {
     prefWidth = 250
   }
   
-  private var stocksList: ListView[String] = _
+  private lazy val stocksList: ListView[String] = new ListView[String]() {
+    prefHeight = 400
+  }
   
   override def build(): Tab = {
-    // Enhanced stock list with better styling - initialize first
-    stocksList = new ListView[String]() {
-      prefHeight = 400
-    }
+    // Enhanced stock list with better styling
     
     // Now we can safely refresh stocks
     refreshStocks()
@@ -319,18 +318,22 @@ class FoodStockTab extends BaseTabComponent {
     val category = categoryCombo.value.value
     val status = statusCombo.value.value
     
-    var filteredStocks = service.getAllFoodStocks
+    val allStocks = service.getAllFoodStocks
     
-    // Filter by category
-    if (category != "All") {
+    // Filter by category using functional approach
+    val categoryFiltered = if (category != "All") {
       val categoryEnum = FoodCategory.valueOf(category)
-      filteredStocks = filteredStocks.filter(_.category == categoryEnum)
+      allStocks.filter(_.category == categoryEnum)
+    } else {
+      allStocks
     }
     
     // Filter by status
-    if (status != "All") {
+    val filteredStocks = if (status != "All") {
       val statusEnum = StockStatus.valueOf(status)
-      filteredStocks = filteredStocks.filter(_.getStockStatus == statusEnum)
+      categoryFiltered.filter(_.getStockStatus == statusEnum)
+    } else {
+      categoryFiltered
     }
     
     updateStocksList(filteredStocks)
@@ -378,20 +381,25 @@ class FoodStockTab extends BaseTabComponent {
         val status = statusCombo.value.value
         val searchTerm = searchField.text.value.trim
         
-        var filteredStocks = allStocks
-        
-        if (category != "All") {
+        // Apply filters functionally
+        val categoryFiltered = if (category != "All") {
           val categoryEnum = FoodCategory.valueOf(category)
-          filteredStocks = filteredStocks.filter(_.category == categoryEnum)
+          allStocks.filter(_.category == categoryEnum)
+        } else {
+          allStocks
         }
         
-        if (status != "All") {
+        val statusFiltered = if (status != "All") {
           val statusEnum = StockStatus.valueOf(status)
-          filteredStocks = filteredStocks.filter(_.getStockStatus == statusEnum)
+          categoryFiltered.filter(_.getStockStatus == statusEnum)
+        } else {
+          categoryFiltered
         }
         
-        if (searchTerm.nonEmpty) {
-          filteredStocks = service.searchFoodStocks(searchTerm)
+        val filteredStocks = if (searchTerm.nonEmpty) {
+          service.searchFoodStocks(searchTerm)
+        } else {
+          statusFiltered
         }
         
         if (selectedIndex < filteredStocks.length) {

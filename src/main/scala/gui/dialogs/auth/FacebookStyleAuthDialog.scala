@@ -10,6 +10,7 @@ import scalafx.stage.{Stage, Modality, StageStyle}
 import scalafx.scene.paint.Color
 import scalafx.animation.{FadeTransition}
 import scalafx.util.Duration
+import scalafx.beans.property.ObjectProperty
 import javafx.stage.WindowEvent
 import gui.utils.GuiUtils
 import gui.components.common.public.EnhancedTextField
@@ -36,8 +37,8 @@ object AuthResult {
 
 class FacebookStyleAuthDialog(parentStage: Stage) {
   
-  private var currentMode: AuthMode = AuthMode.WelcomeMode
-  private var authResult: Option[AuthResult] = None
+  private val currentModeProperty = ObjectProperty[AuthMode](AuthMode.WelcomeMode)
+  private val authResultProperty = ObjectProperty[Option[AuthResult]](None)
   private val communityService = service.CommunityEngagementService.getInstance
   
   // Main dialog
@@ -49,7 +50,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     resizable = false
     
     onCloseRequest = (event: WindowEvent) => {
-      authResult = Some(AuthResult.ContinueAsGuest)
+      authResultProperty.value = Some(AuthResult.ContinueAsGuest)
     }
   }
   
@@ -130,8 +131,8 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
   }
   
   // OTP state
-  private var generatedOtp: Option[String] = None
-  private var isEmailVerified = false
+  private val generatedOtpProperty = ObjectProperty[Option[String]](None)
+  private val isEmailVerifiedProperty = ObjectProperty[Boolean](false)
   
   // Main container for switching between modes
   private val contentContainer = new StackPane()
@@ -150,7 +151,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     }
     dialog.centerOnScreen()
     dialog.showAndWait()
-    authResult.getOrElse(AuthResult.ContinueAsGuest)
+    authResultProperty.value.getOrElse(AuthResult.ContinueAsGuest)
   }
   
   private def createScene(): Scene = {
@@ -200,7 +201,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
       prefHeight = 35
       style = "-fx-background-color: transparent; -fx-text-fill: #1877f2; -fx-font-size: 14px; -fx-border-color: #1877f2; -fx-border-radius: 6; -fx-background-radius: 6;"
       onAction = _ => {
-        authResult = Some(AuthResult.ContinueAsGuest)
+        authResultProperty.value = Some(AuthResult.ContinueAsGuest)
         dialog.close()
       }
     }
@@ -347,19 +348,19 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
   }
   
   private def showWelcomeMode(): Unit = {
-    currentMode = AuthMode.WelcomeMode
+    currentModeProperty.value = AuthMode.WelcomeMode
     val content = createWelcomeContent()
     animateContentChange(content)
   }
   
   private def showLoginMode(): Unit = {
-    currentMode = AuthMode.LoginMode
+    currentModeProperty.value = AuthMode.LoginMode
     val content = createLoginContent()
     animateContentChange(content)
   }
   
   private def showRegisterMode(): Unit = {
-    currentMode = AuthMode.RegisterMode
+    currentModeProperty.value = AuthMode.RegisterMode
     val content = createRegisterContent()
     animateContentChange(content)
   }
@@ -526,7 +527,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     communityService.login(username, password) match {
       case Some(user) =>
         GuiUtils.showInfo("Login Successful", s"Welcome back, ${user.name}!")
-        authResult = Some(AuthResult.LoginSuccess)
+        authResultProperty.value = Some(AuthResult.LoginSuccess)
         dialog.close()
       case None =>
         GuiUtils.showError("Login Failed", "Invalid username or password.")
@@ -557,8 +558,8 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     otpDialog.show(
       onSuccess = () => {
         // OTP verification successful
-        isEmailVerified = true
-        generatedOtp = Some("verified") // Mark as verified
+        isEmailVerifiedProperty.value = true
+        generatedOtpProperty.value = Some("verified") // Mark as verified
         sendOtpButton.disable = true
         sendOtpButton.text = "✅ Verified"
         sendOtpButton.style = "-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-size: 12px;"
@@ -601,7 +602,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     }
     
     // Email verification check
-    if (!isEmailVerified) {
+    if (!isEmailVerifiedProperty.value) {
       GuiUtils.showWarning("Email Not Verified", "Please verify your email address first by clicking 'Send Verification Email' and entering the verification code.")
       return
     }
@@ -626,7 +627,7 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
     // Register user
     if (communityService.registerUser(username, email, name, contact, password, isAdmin = false)) {
       GuiUtils.showInfo("Registration Successful", "Account created successfully! You can now log in.")
-      authResult = Some(AuthResult.RegisterSuccess)
+      authResultProperty.value = Some(AuthResult.RegisterSuccess)
       dialog.close()
     } else {
       GuiUtils.showError("Registration Failed", "An error occurred during registration. Please try again.")
@@ -634,8 +635,8 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
   }
   
   private def resetOTPState(): Unit = {
-    generatedOtp = None
-    isEmailVerified = false
+    generatedOtpProperty.value = None
+    isEmailVerifiedProperty.value = false
     sendOtpButton.disable = true
     sendOtpButton.text = "📧 Send Verification Email"
     sendOtpButton.style = "-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-size: 12px;"
