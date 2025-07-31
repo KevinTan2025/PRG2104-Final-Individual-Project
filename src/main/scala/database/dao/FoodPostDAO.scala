@@ -55,14 +55,13 @@ class FoodPostDAO {
   def findAll(): List[FoodPost] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM food_posts ORDER BY created_at DESC")
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error finding all food posts: ${e.getMessage}")
@@ -77,13 +76,13 @@ class FoodPostDAO {
         postType.toString
       )
       
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error finding food posts by type: ${e.getMessage}")
@@ -98,13 +97,13 @@ class FoodPostDAO {
         status.toString
       )
       
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error finding food posts by status: ${e.getMessage}")
@@ -121,13 +120,13 @@ class FoodPostDAO {
         s"%$searchTerm%", s"%$searchTerm%", s"%$searchTerm%"
       )
       
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error searching food posts: ${e.getMessage}")

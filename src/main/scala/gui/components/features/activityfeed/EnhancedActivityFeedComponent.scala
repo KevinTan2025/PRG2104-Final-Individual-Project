@@ -265,8 +265,8 @@ class EnhancedActivityFeedComponent(
         }
         
         if (success) {
-          val liked = item.toggleLike(user.userId)
-          button.text = s"👍 ${item.likes}"
+          val (updatedItem, liked) = item.toggleLike(user.userId)
+          button.text = s"👍 ${updatedItem.likes}"
           button.style = if (liked) {
             "-fx-background-color: #e3f2fd; -fx-text-fill: #1877f2; -fx-border-color: #1877f2; -fx-background-radius: 6;"
           } else {

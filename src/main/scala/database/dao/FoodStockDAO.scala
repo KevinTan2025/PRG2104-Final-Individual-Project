@@ -58,14 +58,13 @@ class FoodStockDAO {
   def findAll(): List[FoodStock] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM food_stocks ORDER BY food_name ASC")
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error finding all food stocks: ${e.getMessage}")
@@ -80,13 +79,13 @@ class FoodStockDAO {
         category.toString
       )
       
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error finding food stocks by category: ${e.getMessage}")
@@ -101,13 +100,13 @@ class FoodStockDAO {
         s"%$location%"
       )
       
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error finding food stocks by location: ${e.getMessage}")
@@ -124,13 +123,13 @@ class FoodStockDAO {
         s"%$searchTerm%", s"%$searchTerm%", s"%$searchTerm%"
       )
       
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error searching food stocks: ${e.getMessage}")
@@ -181,13 +180,13 @@ class FoodStockDAO {
         "SELECT * FROM food_stocks WHERE current_quantity <= minimum_threshold ORDER BY food_name ASC"
       )
       
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error finding low stock items: ${e.getMessage}")
@@ -203,13 +202,13 @@ class FoodStockDAO {
         now
       )
       
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error finding expired items: ${e.getMessage}")
@@ -228,13 +227,13 @@ class FoodStockDAO {
         now, futureDate
       )
       
-      val foodStocks = scala.collection.mutable.ListBuffer[FoodStock]()
-      while (rs.next()) {
-        foodStocks += resultSetToFoodStock(rs)
-      }
+      val foodStocks = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodStock)
+        .toList
       
       rs.close()
-      foodStocks.toList
+      foodStocks
     } catch {
       case e: Exception =>
         println(s"Error finding expiring soon items: ${e.getMessage}")

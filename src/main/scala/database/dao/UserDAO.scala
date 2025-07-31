@@ -96,14 +96,15 @@ class UserDAO {
   def findAll(): List[User] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM users ORDER BY created_at")
-      val users = scala.collection.mutable.ListBuffer[User]()
       
-      while (rs.next()) {
-        users += resultSetToUser(rs)
-      }
+      // Use functional approach to build list
+      val users = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToUser)
+        .toList
       
       rs.close()
-      users.toList
+      users
     } catch {
       case e: Exception =>
         println(s"Error finding all users: ${e.getMessage}")

@@ -217,20 +217,22 @@ class DatabaseService {
         contentType, contentId
       )
       
-      val comments = scala.collection.mutable.ListBuffer[Comment]()
-      while (rs.next()) {
-        val commentId = rs.getString("comment_id")
-        val authorId = rs.getString("author_id")
-        val content = rs.getString("content")
-        val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
-        
-        comments += new Comment(commentId, authorId, content) {
-          override val timestamp: LocalDateTime = createdAt
+      val comments = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map { rs =>
+          val commentId = rs.getString("comment_id")
+          val authorId = rs.getString("author_id")
+          val content = rs.getString("content")
+          val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
+          
+          new Comment(commentId, authorId, content) {
+            override val timestamp: LocalDateTime = createdAt
+          }
         }
-      }
+        .toList
       
       rs.close()
-      comments.toList
+      comments
     } catch {
       case e: Exception =>
         println(s"Error getting comments: ${e.getMessage}")
@@ -269,26 +271,25 @@ class DatabaseService {
         userId
       )
       
-      val notifications = scala.collection.mutable.ListBuffer[Notification]()
-      while (rs.next()) {
-        val notificationId = rs.getString("notification_id")
-        val recipientId = rs.getString("recipient_id")
-        val senderId = Option(rs.getString("sender_id"))
-        val notificationType = NotificationType.valueOf(rs.getString("type"))
-        val title = rs.getString("title")
-        val message = rs.getString("message")
-        val relatedId = Option(rs.getString("related_id"))
-        val isRead = rs.getBoolean("is_read")
-        val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
-        
-        val notification = Notification(notificationId, recipientId, senderId, title, message, notificationType, relatedId, createdAt)
-        notification.isRead = isRead
-        
-        notifications += notification
-      }
+      val notifications = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map { rs =>
+          val notificationId = rs.getString("notification_id")
+          val recipientId = rs.getString("recipient_id")
+          val senderId = Option(rs.getString("sender_id"))
+          val notificationType = NotificationType.valueOf(rs.getString("type"))
+          val title = rs.getString("title")
+          val message = rs.getString("message")
+          val relatedId = Option(rs.getString("related_id"))
+          val isRead = rs.getBoolean("is_read")
+          val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
+          
+          Notification(notificationId, recipientId, senderId, title, message, notificationType, relatedId, createdAt, isRead)
+        }
+        .toList
       
       rs.close()
-      notifications.toList
+      notifications
     } catch {
       case e: Exception =>
         println(s"Error getting notifications for user: ${e.getMessage}")
@@ -598,15 +599,5 @@ class DatabaseService {
  * Singleton object for DatabaseService
  */
 object DatabaseService {
-  private var instance: Option[DatabaseService] = None
-  
-  def getInstance: DatabaseService = {
-    instance match {
-      case Some(service) => service
-      case None =>
-        val service = new DatabaseService()
-        instance = Some(service)
-        service
-    }
-  }
+  lazy val getInstance: DatabaseService = new DatabaseService()
 }
