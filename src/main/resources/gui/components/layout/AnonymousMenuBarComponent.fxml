@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import java.lang.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" styleClass="anonymous-menu-container">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpMainLayout" styleClass="anonymous-menu-container" stylesheets="@AnonymousMenuBarComponent.css">
    <left>
       <MenuBar fx:id="menuBar" styleClass="anonymous-menu-bar">
          <menus>
@@ -38,7 +38,5 @@
          </padding>
       </HBox>
    </right>
-   <stylesheets>
-      <String fx:value="@AnonymousMenuBarComponent.css" />
-   </stylesheets>
+
 </BorderPane>
