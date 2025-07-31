@@ -25,7 +25,7 @@ object AdminDialogs {
     
     val usersList = new ListView[String]()
     val users = service.getAllUsers
-    val items = users.map(u => s"${u.username} (${u.name}) - ${u.getUserRole} - ${if (u.isActive) "Active" else "Inactive"}")
+    val items = users.map(u => s"${u.username} (${u.name}) - ${u.userRole} - ${if (u.isActive) "Active" else "Inactive"}")
     usersList.items = scalafx.collections.ObservableBuffer(items: _*)
     
     val vbox = new VBox {

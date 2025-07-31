@@ -45,7 +45,7 @@ class MenuBarComponent(
    */
   private def updateUserInfo(): Unit = {
     val userInfo = service.getCurrentUser match {
-      case Some(user) => s"${user.name} (${user.getUserRole})"
+      case Some(user) => s"${user.name} (${user.userRole})"
       case None => "Guest"
     }
     menuUser.setText(userInfo)

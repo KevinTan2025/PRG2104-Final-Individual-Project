@@ -37,7 +37,7 @@ class ProfileDialog {
           editable = false  // Email usually shouldn't be changed
         }
         
-        val roleLabel = new Label(user.getUserRole) {
+        val roleLabel = new Label(user.userRole) {
           style = "-fx-font-weight: bold;"
         }
         

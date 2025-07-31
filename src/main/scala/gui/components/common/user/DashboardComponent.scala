@@ -123,7 +123,7 @@ class DashboardComponent extends BaseTabComponent {
             new Label(s"✉️ ${user.email}") {
               style = "-fx-text-fill: white; -fx-font-size: 12px;"
             },
-            new Label(s"🎯 Role: ${user.getUserRole}") {
+            new Label(s"🎯 Role: ${user.userRole}") {
               style = "-fx-text-fill: white; -fx-font-size: 12px;"
             },
             new Label(s"🗓️ Member since: ${user.registrationDate.toLocalDate}") {
