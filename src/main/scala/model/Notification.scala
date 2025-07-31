@@ -10,7 +10,7 @@ enum NotificationType:
        COMMENT, LIKE, RSVP_CONFIRMATION, SYSTEM
 
 /**
- * Case class representing a notification
+ * Immutable case class representing a notification
  * @param notificationId unique identifier for the notification
  * @param recipientId ID of the user receiving the notification
  * @param senderId ID of the user sending the notification (optional for system notifications)
@@ -18,6 +18,9 @@ enum NotificationType:
  * @param message notification message
  * @param notificationType type of notification
  * @param relatedItemId ID of the related item (post, event, etc.)
+ * @param timestamp when the notification was created
+ * @param isRead whether the notification has been read
+ * @param readAt when the notification was read
  */
 case class Notification(
   notificationId: String,
@@ -27,26 +30,29 @@ case class Notification(
   message: String,
   notificationType: NotificationType,
   relatedItemId: Option[String] = None,
-  timestamp: LocalDateTime = LocalDateTime.now()
+  timestamp: LocalDateTime = LocalDateTime.now(),
+  isRead: Boolean = false,
+  readAt: Option[LocalDateTime] = None
 ) {
-  
-  var isRead: Boolean = false
-  var readAt: Option[LocalDateTime] = None
   
   /**
    * Mark the notification as read
    */
-  def markAsRead(): Unit = {
-    isRead = true
-    readAt = Some(LocalDateTime.now())
+  def markAsRead: Notification = {
+    this.copy(
+      isRead = true,
+      readAt = Some(LocalDateTime.now())
+    )
   }
   
   /**
    * Mark the notification as unread
    */
-  def markAsUnread(): Unit = {
-    isRead = false
-    readAt = None
+  def markAsUnread: Notification = {
+    this.copy(
+      isRead = false,
+      readAt = None
+    )
   }
   
   /**

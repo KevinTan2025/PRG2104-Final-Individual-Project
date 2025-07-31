@@ -9,7 +9,7 @@ enum EventStatus:
   case UPCOMING, ONGOING, COMPLETED, CANCELLED
 
 /**
- * Case class representing a community event
+ * Immutable case class representing a community event
  * @param eventId unique identifier for the event
  * @param organizerId ID of the event organizer
  * @param title event title
@@ -18,6 +18,15 @@ enum EventStatus:
  * @param startDateTime event start date and time
  * @param endDateTime event end date and time
  * @param maxParticipants maximum number of participants (None for unlimited)
+ * @param createdAt creation timestamp
+ * @param status current event status
+ * @param participants list of participant user IDs
+ * @param waitingList list of user IDs on waiting list
+ * @param likes number of likes
+ * @param comments list of comments
+ * @param isModerated moderation status
+ * @param moderatedBy moderator ID
+ * @param moderationDate moderation timestamp
  */
 case class Event(
   eventId: String,
@@ -28,46 +37,70 @@ case class Event(
   startDateTime: LocalDateTime,
   endDateTime: LocalDateTime,
   maxParticipants: Option[Int] = None,
-  createdAt: LocalDateTime = LocalDateTime.now()
+  createdAt: LocalDateTime = LocalDateTime.now(),
+  status: EventStatus = EventStatus.UPCOMING,
+  participants: List[String] = List.empty,
+  waitingList: List[String] = List.empty,
+  likes: Int = 0,
+  comments: List[Comment] = List.empty,
+  isModerated: Boolean = false,
+  moderatedBy: Option[String] = None,
+  moderationDate: Option[LocalDateTime] = None
 ) extends Likeable with Moderatable {
   
-  var status: EventStatus = EventStatus.UPCOMING
-  var participants: List[String] = List.empty // List of user IDs
-  var waitingList: List[String] = List.empty // List of user IDs on waiting list
+  // Likeable trait implementation
+  def withLike: Event = copy(likes = likes + 1)
+  def withoutLike: Event = copy(likes = if (likes > 0) likes - 1 else 0)
+  def withComment(comment: Comment): Event = copy(comments = comment :: comments)
+  
+  // Moderatable trait implementation
+  def withModeration(adminId: String): Event = copy(
+    isModerated = true,
+    moderatedBy = Some(adminId),
+    moderationDate = Some(LocalDateTime.now())
+  )
   
   /**
    * RSVP to the event
    * @param userId ID of the user RSVPing
-   * @return true if successfully added, false if event is full
+   * @return (updated Event, success flag)
    */
-  def rsvp(userId: String): Boolean = {
+  def rsvp(userId: String): (Event, Boolean) = {
     if (participants.contains(userId)) {
-      false // Already registered
+      (this, false) // Already registered
     } else if (maxParticipants.isEmpty || participants.length < maxParticipants.get) {
-      participants = userId :: participants
-      // Remove from waiting list if they were on it
-      waitingList = waitingList.filterNot(_ == userId)
-      true
+      val updatedEvent = copy(
+        participants = userId :: participants,
+        waitingList = waitingList.filterNot(_ == userId)
+      )
+      (updatedEvent, true)
     } else {
       // Add to waiting list
       if (!waitingList.contains(userId)) {
-        waitingList = userId :: waitingList
+        val updatedEvent = copy(waitingList = userId :: waitingList)
+        (updatedEvent, false)
+      } else {
+        (this, false)
       }
-      false
     }
   }
   
   /**
    * Cancel RSVP
    * @param userId ID of the user canceling
+   * @return updated Event
    */
-  def cancelRsvp(userId: String): Unit = {
-    participants = participants.filterNot(_ == userId)
+  def cancelRsvp(userId: String): Event = {
+    val updatedParticipants = participants.filterNot(_ == userId)
     // Move someone from waiting list if there's space
-    if (waitingList.nonEmpty && (maxParticipants.isEmpty || participants.length < maxParticipants.get)) {
+    if (waitingList.nonEmpty && (maxParticipants.isEmpty || updatedParticipants.length < maxParticipants.get)) {
       val nextParticipant = waitingList.head
-      waitingList = waitingList.tail
-      participants = nextParticipant :: participants
+      copy(
+        participants = nextParticipant :: updatedParticipants,
+        waitingList = waitingList.tail
+      )
+    } else {
+      copy(participants = updatedParticipants)
     }
   }
   
@@ -89,28 +122,29 @@ case class Event(
   
   /**
    * Start the event
+   * @return updated Event with ONGOING status if valid, otherwise unchanged
    */
-  def start(): Unit = {
+  def start: Event = {
     if (status == EventStatus.UPCOMING) {
-      status = EventStatus.ONGOING
-    }
+      copy(status = EventStatus.ONGOING)
+    } else this
   }
   
   /**
    * Complete the event
+   * @return updated Event with COMPLETED status if valid, otherwise unchanged
    */
-  def complete(): Unit = {
+  def complete: Event = {
     if (status == EventStatus.ONGOING) {
-      status = EventStatus.COMPLETED
-    }
+      copy(status = EventStatus.COMPLETED)
+    } else this
   }
   
   /**
    * Cancel the event
+   * @return updated Event with CANCELLED status
    */
-  def cancel(): Unit = {
-    status = EventStatus.CANCELLED
-  }
+  def cancel: Event = copy(status = EventStatus.CANCELLED)
   
   /**
    * Check if the event is in the past
