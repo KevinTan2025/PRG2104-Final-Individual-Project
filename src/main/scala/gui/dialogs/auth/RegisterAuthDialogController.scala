@@ -379,7 +379,7 @@ class RegisterAuthDialogController extends Initializable {
     
     // Create and show OTP verification dialog
     val otpDialog = new OTPVerificationDialog(
-      parentController.get().map(_.getDialogStage).getOrElse(new scalafx.stage.Stage()),
+      parentController.get().map(_.dialogStage).getOrElse(new scalafx.stage.Stage()),
       email
     )
     

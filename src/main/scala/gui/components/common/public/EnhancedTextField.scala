@@ -49,14 +49,14 @@ class EnhancedTextField(placeholderText: String) extends TextField {
   /**
    * Get the actual user input
    */
-  def getUserInput: String = {
+  def userInput: String = {
     text.value.trim
   }
   
   /**
    * Set the user input programmatically
    */
-  def setUserInput(value: String): Unit = {
+  def userInput_=(value: String): Unit = {
     text = value.trim
     hasUserInputProperty.value = value.trim.nonEmpty
   }

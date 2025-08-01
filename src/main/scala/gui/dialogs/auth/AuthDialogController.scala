@@ -167,5 +167,5 @@ class AuthDialogController(parentStage: Stage) {
    * Get dialog window reference
    * @return Stage object
    */
-  def getDialogStage: Stage = dialog
+  def dialogStage: Stage = dialog
 }

@@ -124,10 +124,10 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val registerButton = new Button("Register") {
       onAction = (_: ActionEvent) => {
-        val username = usernameField.getUserInput
-        val email = emailField.getUserInput
-        val name = nameField.getUserInput
-        val contact = contactField.getUserInput
+        val username = usernameField.userInput
+        val email = emailField.userInput
+        val name = nameField.userInput
+        val contact = contactField.userInput
         val password = passwordField.text.value
         val confirmPassword = confirmPasswordField.text.value
         

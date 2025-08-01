@@ -77,7 +77,7 @@ class NotificationManager extends Manager[Notification] {
    * @param userId the user ID
    * @return number of unread notifications
    */
-  def getUnreadCount(userId: String): Int = {
+  def unreadCount(userId: String): Int = {
     items.values().asScala.count(n => n.recipientId == userId && !n.isRead)
   }
   
