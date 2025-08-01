@@ -307,7 +307,7 @@ object CommunityEngagementApp extends JFXApp3 {
     val announcementsList = new ListView[String]()
     
     val refreshAnnouncements = () => {
-      val announcements = service.getAnnouncements
+      val announcements = service.announcements
       val items = announcements.map(a => s"[${a.announcementType}] ${a.title} - ${a.timestamp.toLocalDate}")
       announcementsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -345,7 +345,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = announcementsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val announcements = service.getAnnouncements
+          val announcements = service.announcements
           if (selectedIndex < announcements.length) {
             val announcement = announcements(selectedIndex)
             val dialog = createCommentDialog(announcement.title)
@@ -369,7 +369,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = announcementsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val announcements = service.getAnnouncements
+          val announcements = service.announcements
           if (selectedIndex < announcements.length) {
             val announcement = announcements(selectedIndex)
             if (service.likeAnnouncement(announcement.announcementId)) {
@@ -498,7 +498,7 @@ object CommunityEngagementApp extends JFXApp3 {
     val foodPostsList = new ListView[String]()
     
     val refreshFoodPosts = () => {
-      val posts = service.getFoodPosts
+      val posts = service.foodPosts
       val items = posts.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
       foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -528,7 +528,7 @@ object CommunityEngagementApp extends JFXApp3 {
         } else {
           import model.FoodPostType
           val postType = if (filterType == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-          val filtered = service.getFoodPostsByType(postType)
+          val filtered = service.foodPostsByType(postType)
           val items = filtered.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
           foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
         }
@@ -540,11 +540,11 @@ object CommunityEngagementApp extends JFXApp3 {
         val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
           val posts = if (filterCombo.value.value == "All") {
-            service.getFoodPosts
+            service.foodPosts
           } else {
             import model.FoodPostType
             val postType = if (filterCombo.value.value == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-            service.getFoodPostsByType(postType)
+            service.foodPostsByType(postType)
           }
           if (selectedIndex < posts.length) {
             val post = posts(selectedIndex)
@@ -692,7 +692,7 @@ object CommunityEngagementApp extends JFXApp3 {
     val topicsList = new ListView[String]()
     
     val refreshTopics = () => {
-      val topics = service.getDiscussionTopics
+      val topics = service.discussionTopics
       val items = topics.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
       topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -732,7 +732,7 @@ object CommunityEngagementApp extends JFXApp3 {
             case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
             case _ => DiscussionCategory.GENERAL
           }
-          val filtered = service.getTopicsByCategory(cat)
+          val filtered = service.topicsByCategory(cat)
           val items = filtered.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
           topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
         }
@@ -744,7 +744,7 @@ object CommunityEngagementApp extends JFXApp3 {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
           val topics = if (categoryCombo.value.value == "All") {
-            service.getDiscussionTopics
+            service.discussionTopics
           } else {
             import model.DiscussionCategory
             val cat = categoryCombo.value.value match {
@@ -755,7 +755,7 @@ object CommunityEngagementApp extends JFXApp3 {
               case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
               case _ => DiscussionCategory.GENERAL
             }
-            service.getTopicsByCategory(cat)
+            service.topicsByCategory(cat)
           }
           
           if (selectedIndex < topics.length) {
@@ -783,7 +783,7 @@ object CommunityEngagementApp extends JFXApp3 {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
           val topics = if (categoryCombo.value.value == "All") {
-            service.getDiscussionTopics
+            service.discussionTopics
           } else {
             import model.DiscussionCategory
             val cat = categoryCombo.value.value match {
@@ -794,7 +794,7 @@ object CommunityEngagementApp extends JFXApp3 {
               case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
               case _ => DiscussionCategory.GENERAL
             }
-            service.getTopicsByCategory(cat)
+            service.topicsByCategory(cat)
           }
           
           if (selectedIndex < topics.length) {
@@ -816,7 +816,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val topics = service.getDiscussionTopics
+          val topics = service.discussionTopics
           if (selectedIndex < topics.length) {
             val topic = topics(selectedIndex)
             if (service.moderateContent(topic.topicId, "topic")) {
@@ -972,7 +972,7 @@ object CommunityEngagementApp extends JFXApp3 {
     val eventsList = new ListView[String]()
     
     val refreshEvents = () => {
-      val events = service.getUpcomingEvents
+      val events = service.upcomingEvents
       val items = events.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
       eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -993,7 +993,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = eventsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val events = service.getUpcomingEvents
+          val events = service.upcomingEvents
           if (selectedIndex < events.length) {
             val event = events(selectedIndex)
             if (service.rsvpToEvent(event.eventId)) {
@@ -1013,7 +1013,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = eventsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val events = service.getUpcomingEvents
+          val events = service.upcomingEvents
           if (selectedIndex < events.length) {
             val event = events(selectedIndex)
             if (service.cancelRsvp(event.eventId)) {
@@ -1033,7 +1033,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         service.getCurrentUser match {
           case Some(user) =>
-            val myEvents = service.getMyEvents(user.userId)
+            val myEvents = service.myEvents(user.userId)
             val items = myEvents.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
             eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
           case None =>
@@ -1182,7 +1182,7 @@ object CommunityEngagementApp extends JFXApp3 {
     val notificationsList = new ListView[String]()
     
     val refreshNotifications = () => {
-      val notifications = service.getNotifications
+      val notifications = service.notifications
       val items = notifications.map { n =>
         val readStatus = if (n.isRead) "✓" else "●"
         s"$readStatus [${n.notificationType}] ${n.title} - ${n.timestamp.toLocalDate}"
@@ -1196,7 +1196,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = notificationsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val notifications = service.getNotifications
+          val notifications = service.notifications
           if (selectedIndex < notifications.length) {
             val notification = notifications(selectedIndex)
             if (service.markNotificationAsRead(notification.notificationId)) {
@@ -1224,7 +1224,7 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val viewUnreadButton = new Button("Unread Only") {
       onAction = (_: ActionEvent) => {
-        val unread = service.getUnreadNotifications
+        val unread = service.unreadNotifications
         val items = unread.map { n =>
           val readStatus = if (n.isRead) "✓" else "●"
           s"$readStatus [${n.notificationType}] ${n.title} - ${n.timestamp.toLocalDate}"
@@ -1243,7 +1243,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = notificationsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val notifications = service.getNotifications
+          val notifications = service.notifications
           if (selectedIndex < notifications.length) {
             val notification = notifications(selectedIndex)
             if (service.deleteNotification(notification.notificationId)) {
@@ -1261,7 +1261,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = notificationsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val notifications = service.getNotifications
+          val notifications = service.notifications
           if (selectedIndex < notifications.length) {
             val notification = notifications(selectedIndex)
             showNotificationDetails(notification)
@@ -1273,7 +1273,7 @@ object CommunityEngagementApp extends JFXApp3 {
     }
     
     // Stats display
-    val unreadCount = service.getUnreadNotificationCount
+    val unreadCount = service.unreadNotificationCount
     val statsLabel = new Label(s"Unread notifications: $unreadCount") {
       style = "-fx-font-weight: bold; -fx-text-fill: #2196F3;"
     }
@@ -1478,7 +1478,7 @@ ${notification.message}
     dialog.headerText = "All registered users"
     
     val usersList = new ListView[String]()
-    val users = service.getAllUsers
+    val users = service.allUsers
     val items = users.map(u => s"${u.username} (${u.name}) - ${u.userRole} - ${if (u.isActive) "Active" else "Inactive"}")
     usersList.items = scalafx.collections.ObservableBuffer(items: _*)
     
@@ -1507,8 +1507,8 @@ ${notification.message}
     dialog.title = "System Statistics"
     dialog.headerText = "Detailed platform statistics"
     
-    val stats = service.getDashboardStatistics
-    val detailedStats = service.getDetailedStatistics
+    val stats = service.dashboardStatistics
+    val detailedStats = service.detailedStatistics
     
     val statsText = s"""
 Platform Overview:
@@ -1556,7 +1556,7 @@ User Activity:
     dialog.headerText = "Moderate platform content"
     
     val contentList = new ListView[String]()
-    val moderationItems = service.getContentForModeration
+    val moderationItems = service.contentForModeration
     val items = moderationItems.map { case (id, contentType, title) =>
       s"[$contentType] $title (ID: $id)"
     }

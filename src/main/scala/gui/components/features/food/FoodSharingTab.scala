@@ -54,7 +54,7 @@ class FoodSharingTab(
         } else {
           import model.FoodPostType
           val postType = if (filterType == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-          currentPostsProperty.value = service.getFoodPostsByType(postType)
+          currentPostsProperty.value = service.foodPostsByType(postType)
           updateListView()
         }
       }
@@ -131,7 +131,7 @@ class FoodSharingTab(
   }
   
   private def refreshFoodPosts(): Unit = {
-    currentPostsProperty.value = service.getFoodPosts
+    currentPostsProperty.value = service.foodPosts
     updateListView()
   }
   

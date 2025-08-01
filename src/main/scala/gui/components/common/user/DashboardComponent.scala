@@ -149,7 +149,7 @@ class DashboardComponent extends BaseTabComponent {
   }
   
   private def createMyStatsCard(): VBox = {
-    val stats = service.getDashboardStatistics
+    val stats = service.dashboardStatistics
     
     new VBox {
       spacing = 10
