@@ -9,6 +9,7 @@ import scalafx.Includes._
 import gui.utils.GuiUtils
 import java.net.URL
 import java.util.ResourceBundle
+import java.util.concurrent.atomic.AtomicReference
 import scala.util.matching.Regex
 
 /**
@@ -37,8 +38,8 @@ class RegisterAuthDialogController extends Initializable {
   @FXML private var btnRegister: Button = _
   @FXML private var btnRegisterToLogin: Button = _
   
-  // Parent controller reference
-  private var parentController: Option[AuthDialogController] = None
+  // Parent controller reference using AtomicReference for thread-safe mutable state
+  private val parentController: AtomicReference[Option[AuthDialogController]] = new AtomicReference(None)
   
   // Community service instance
   private val communityService = service.CommunityEngagementService.getInstance
@@ -63,7 +64,7 @@ class RegisterAuthDialogController extends Initializable {
    * @param controller Parent controller instance
    */
   def setParentController(controller: AuthDialogController): Unit = {
-    parentController = Some(controller)
+    parentController.set(Some(controller))
   }
   
   /**
@@ -361,7 +362,7 @@ class RegisterAuthDialogController extends Initializable {
    */
   @FXML
   def handleRegisterBack(event: ActionEvent): Unit = {
-    parentController.foreach(_.showWelcomeMode())
+    parentController.get().foreach(_.showWelcomeMode())
   }
   
   /**
@@ -378,7 +379,7 @@ class RegisterAuthDialogController extends Initializable {
     
     // Create and show OTP verification dialog
     val otpDialog = new OTPVerificationDialog(
-      parentController.map(_.getDialogStage).getOrElse(new scalafx.stage.Stage()),
+      parentController.get().map(_.getDialogStage).getOrElse(new scalafx.stage.Stage()),
       email
     )
     
@@ -435,7 +436,7 @@ class RegisterAuthDialogController extends Initializable {
       
       if (registrationResult) {
         GuiUtils.showInfo("Registration Successful", "🎉 Account created successfully! Welcome to the community platform!")
-        parentController.foreach(_.setAuthResult(AuthResult.RegisterSuccess))
+        parentController.get().foreach(_.setAuthResult(AuthResult.RegisterSuccess))
       } else {
         GuiUtils.showError("Registration Failed", "An error occurred during registration, please try again later")
       }
@@ -451,55 +452,59 @@ class RegisterAuthDialogController extends Initializable {
    */
   private def validateAllFields(username: String, name: String, contact: String, 
                                email: String, password: String, confirmPassword: String): Boolean = {
-    var isValid = true
     
-    // Validate username
-    if (username.isEmpty) {
-      lblUsernameStatus.text = "✗ Please enter username"
-      updateStatusLabelStyle(lblUsernameStatus, "error")
-      isValid = false
-    }
+    // Define validation functions that return true if valid
+    val validations = List(
+      () => {
+        if (username.isEmpty) {
+          lblUsernameStatus.text = "✗ Please enter username"
+          updateStatusLabelStyle(lblUsernameStatus, "error")
+          false
+        } else true
+      },
+      () => {
+        if (name.isEmpty) {
+          lblNameStatus.text = "✗ Please enter name"
+          updateStatusLabelStyle(lblNameStatus, "error")
+          false
+        } else true
+      },
+      () => {
+        if (contact.isEmpty) {
+          lblContactStatus.text = "✗ Please enter contact information"
+          updateStatusLabelStyle(lblContactStatus, "error")
+          false
+        } else true
+      },
+      () => {
+        if (email.isEmpty) {
+          lblEmailStatus.text = "✗ Please enter email address"
+          updateStatusLabelStyle(lblEmailStatus, "error")
+          false
+        } else true
+      },
+      () => {
+        if (password.isEmpty) {
+          lblPasswordStatus.text = "✗ Please enter password"
+          updateStatusLabelStyle(lblPasswordStatus, "error")
+          false
+        } else true
+      },
+      () => {
+        if (confirmPassword.isEmpty) {
+          lblConfirmPasswordStatus.text = "✗ Please confirm password"
+          updateStatusLabelStyle(lblConfirmPasswordStatus, "error")
+          false
+        } else if (password != confirmPassword) {
+          lblConfirmPasswordStatus.text = "✗ Passwords do not match"
+          updateStatusLabelStyle(lblConfirmPasswordStatus, "error")
+          false
+        } else true
+      }
+    )
     
-    // Validate name
-    if (name.isEmpty) {
-      lblNameStatus.text = "✗ Please enter name"
-      updateStatusLabelStyle(lblNameStatus, "error")
-      isValid = false
-    }
-    
-    // Validate contact information
-    if (contact.isEmpty) {
-      lblContactStatus.text = "✗ Please enter contact information"
-      updateStatusLabelStyle(lblContactStatus, "error")
-      isValid = false
-    }
-    
-    // Validate email
-    if (email.isEmpty) {
-      lblEmailStatus.text = "✗ Please enter email address"
-      updateStatusLabelStyle(lblEmailStatus, "error")
-      isValid = false
-    }
-    
-    // Validate password
-    if (password.isEmpty) {
-      lblPasswordStatus.text = "✗ Please enter password"
-      updateStatusLabelStyle(lblPasswordStatus, "error")
-      isValid = false
-    }
-    
-    // Validate confirm password
-    if (confirmPassword.isEmpty) {
-      lblConfirmPasswordStatus.text = "✗ Please confirm password"
-      updateStatusLabelStyle(lblConfirmPasswordStatus, "error")
-      isValid = false
-    } else if (password != confirmPassword) {
-      lblConfirmPasswordStatus.text = "✗ Passwords do not match"
-      updateStatusLabelStyle(lblConfirmPasswordStatus, "error")
-      isValid = false
-    }
-    
-    isValid
+    // Execute all validations and return true only if all are valid
+    validations.map(_.apply()).forall(identity)
   }
   
   /**
@@ -507,6 +512,6 @@ class RegisterAuthDialogController extends Initializable {
    */
   @FXML
   def handleRegisterToLogin(event: ActionEvent): Unit = {
-    parentController.foreach(_.showLoginMode())
+    parentController.get().foreach(_.showLoginMode())
   }
 }
