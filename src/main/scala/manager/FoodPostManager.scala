@@ -165,7 +165,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * Get statistics for food sharing
    * @return tuple of (total posts, active posts, completed posts, total helped)
    */
-  def getStatistics: (Int, Int, Int, Int) = {
+  def statistics: (Int, Int, Int, Int) = {
     val allPosts = items.values().asScala.toList
     val activePosts = allPosts.count(_.isActive)
     val completedPosts = allPosts.count(_.status == FoodPostStatus.COMPLETED)

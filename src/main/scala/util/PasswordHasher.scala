@@ -100,7 +100,7 @@ object PasswordHasher {
    * Get password requirements description
    * @return string describing password requirements
    */
-  def getPasswordRequirements: String = {
+  def passwordRequirements: String = {
     "Password must be at least 8 characters long and contain at least one letter, one digit, and one special character."
   }
 }

@@ -69,7 +69,7 @@ case class DiscussionTopic(
    * Get the number of replies
    * @return number of replies
    */
-  def getReplyCount: Int = replies.length
+  def replyCount: Int = replies.length
   
   /**
    * Implement Likeable trait methods
