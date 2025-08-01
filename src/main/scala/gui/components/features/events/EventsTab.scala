@@ -122,7 +122,7 @@ class EventsTab(
   }
   
   private def refreshEvents(): Unit = {
-    val events = service.getUpcomingEvents
+    val events = service.upcomingEvents
     val items = events.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
     eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
@@ -130,7 +130,7 @@ class EventsTab(
   private def handleRSVP(): Unit = {
     val selectedIndex = eventsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val events = service.getUpcomingEvents
+      val events = service.upcomingEvents
       if (selectedIndex < events.length) {
         val event = events(selectedIndex)
         if (service.rsvpToEvent(event.eventId)) {
@@ -148,7 +148,7 @@ class EventsTab(
   private def handleCancelRSVP(): Unit = {
     val selectedIndex = eventsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val events = service.getUpcomingEvents
+      val events = service.upcomingEvents
       if (selectedIndex < events.length) {
         val event = events(selectedIndex)
         if (service.cancelRsvp(event.eventId)) {
@@ -166,7 +166,7 @@ class EventsTab(
   private def handleViewMyEvents(): Unit = {
     service.getCurrentUser match {
       case Some(user) =>
-        val myEvents = service.getMyEvents(user.userId)
+        val myEvents = service.myEvents(user.userId)
         val items = myEvents.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
         eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
       case None =>

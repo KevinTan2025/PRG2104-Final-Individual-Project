@@ -102,9 +102,9 @@ class AnnouncementsTab(
         new Label("📊 Announcement Stats") {
           style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
         },
-        createStatRow("Total Announcements", service.getAnnouncements.size.toString),
-        createStatRow("This Week", service.getAnnouncements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusWeeks(1))).toString),
-        createStatRow("This Month", service.getAnnouncements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusMonths(1))).toString)
+        createStatRow("Total Announcements", service.announcements.size.toString),
+        createStatRow("This Week", service.announcements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusWeeks(1))).toString),
+        createStatRow("This Month", service.announcements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusMonths(1))).toString)
       )
     }
   }

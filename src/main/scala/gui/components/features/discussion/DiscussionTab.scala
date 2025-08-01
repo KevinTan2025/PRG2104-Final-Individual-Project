@@ -133,7 +133,7 @@ class DiscussionTab(
   }
   
   private def refreshTopics(): Unit = {
-    currentTopicsProperty.value = service.getDiscussionTopics
+    currentTopicsProperty.value = service.discussionTopics
     updateListView()
   }
   
@@ -145,7 +145,7 @@ class DiscussionTab(
   private def handleCategoryFilter(): Unit = {
     val category = categoryCombo.value.value
     if (category == "All") {
-      currentTopicsProperty.value = service.getDiscussionTopics
+      currentTopicsProperty.value = service.discussionTopics
     } else {
       import model.DiscussionCategory
       val cat = category match {
@@ -156,7 +156,7 @@ class DiscussionTab(
         case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
         case _ => DiscussionCategory.GENERAL
       }
-      currentTopicsProperty.value = service.getTopicsByCategory(cat)
+      currentTopicsProperty.value = service.topicsByCategory(cat)
     }
     updateListView()
   }

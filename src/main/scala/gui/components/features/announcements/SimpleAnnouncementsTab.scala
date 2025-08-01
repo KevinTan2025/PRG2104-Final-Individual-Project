@@ -62,7 +62,7 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
   // Handles the refresh action to load announcements
 
   private def handleRefresh(): Unit = {
-    val announcements = service.getAnnouncements
+    val announcements = service.announcements
     val items = announcements.map(a => s"[${a.announcementType}] ${a.title} - ${a.timestamp}")
     announcementsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
@@ -86,7 +86,7 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
   private def handleComment(): Unit = {
     val selectedIndex = announcementsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val announcements = service.getAnnouncements
+      val announcements = service.announcements
       if (selectedIndex < announcements.length) {
         val announcement = announcements(selectedIndex)
         val dialog = new CommentDialog(announcement.title, (_: String) => handleRefresh())
@@ -100,7 +100,7 @@ class SimpleAnnouncementsTab extends BaseTabComponent {
   private def handleLike(): Unit = {
     val selectedIndex = announcementsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val announcements = service.getAnnouncements
+      val announcements = service.announcements
       if (selectedIndex < announcements.length) {
         val announcement = announcements(selectedIndex)
         if (service.likeAnnouncement(announcement.announcementId)) {
