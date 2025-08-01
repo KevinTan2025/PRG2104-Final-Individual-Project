@@ -21,7 +21,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * Get all food stock items
    * @return list of all food stock items
    */
-  def getAllFoodStocks: List[FoodStock] = {
+  def allFoodStocks: List[FoodStock] = {
     all.sortBy(_.foodName)
   }
   
@@ -30,7 +30,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param category the category to filter by
    * @return list of food stock items in the specified category
    */
-  def getFoodStocksByCategory(category: FoodCategory): List[FoodStock] = {
+  def foodStocksByCategory(category: FoodCategory): List[FoodStock] = {
     items.values().asScala.filter(_.category == category).toList.sortBy(_.foodName)
   }
   
@@ -39,31 +39,31 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param status the status to filter by
    * @return list of food stock items with the specified status
    */
-  def getFoodStocksByStatus(status: StockStatus): List[FoodStock] = {
-    items.values().asScala.filter(_.getStockStatus == status).toList.sortBy(_.foodName)
+  def foodStocksByStatus(status: StockStatus): List[FoodStock] = {
+    items.values().asScala.filter(_.stockStatus == status).toList.sortBy(_.foodName)
   }
   
   /**
    * Get low stock items
    * @return list of food stock items that are low in stock
    */
-  def getLowStockItems: List[FoodStock] = {
-    getFoodStocksByStatus(StockStatus.LOW_STOCK)
+  def lowStockItems: List[FoodStock] = {
+    foodStocksByStatus(StockStatus.LOW_STOCK)
   }
   
   /**
    * Get out of stock items
    * @return list of food stock items that are out of stock
    */
-  def getOutOfStockItems: List[FoodStock] = {
-    getFoodStocksByStatus(StockStatus.OUT_OF_STOCK)
+  def outOfStockItems: List[FoodStock] = {
+    foodStocksByStatus(StockStatus.OUT_OF_STOCK)
   }
   
   /**
    * Get expired items
    * @return list of food stock items that are expired
    */
-  def getExpiredItems: List[FoodStock] = {
+  def expiredItems: List[FoodStock] = {
     items.values().asScala.filter(_.isExpired).toList.sortBy(_.expiryDate)
   }
   
@@ -72,7 +72,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param days number of days to look ahead
    * @return list of food stock items expiring within specified days
    */
-  def getExpiringSoonItems(days: Int = 7): List[FoodStock] = {
+  def expiringSoonItems(days: Int = 7): List[FoodStock] = {
     items.values().asScala.filter(_.isExpiringSoon(days)).toList.sortBy(_.expiryDate)
   }
   
@@ -95,7 +95,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param location the location to filter by
    * @return list of food stock items in the specified location
    */
-  def getFoodStocksByLocation(location: String): List[FoodStock] = {
+  def foodStocksByLocation(location: String): List[FoodStock] = {
     items.values().asScala.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.foodName)
   }
   
@@ -159,7 +159,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param stockId the stock ID
    * @return list of stock movements
    */
-  def getStockMovements(stockId: String): List[StockMovement] = {
+  def stockMovements(stockId: String): List[StockMovement] = {
     get(stockId) match {
       case Some(stock) => stock.stockHistory.sortBy(_.timestamp).reverse
       case None => List.empty
@@ -199,10 +199,10 @@ class FoodStockManager extends Manager[FoodStock] {
    * Get stock statistics
    * @return tuple of (total items, low stock items, out of stock items, expired items)
    */
-  def getStockStatistics: (Int, Int, Int, Int) = {
+  def stockStatistics: (Int, Int, Int, Int) = {
     val allStocks = items.values().asScala.toList
-    val lowStockCount = allStocks.count(_.getStockStatus == StockStatus.LOW_STOCK)
-    val outOfStockCount = allStocks.count(_.getStockStatus == StockStatus.OUT_OF_STOCK)
+    val lowStockCount = allStocks.count(_.stockStatus == StockStatus.LOW_STOCK)
+    val outOfStockCount = allStocks.count(_.stockStatus == StockStatus.OUT_OF_STOCK)
     val expiredCount = allStocks.count(_.isExpired)
     
     (allStocks.size, lowStockCount, outOfStockCount, expiredCount)
@@ -212,7 +212,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * Get stock value summary (if costs were tracked)
    * For now, just return counts by category
    */
-  def getStockSummaryByCategory: Map[FoodCategory, Int] = {
+  def stockSummaryByCategory: Map[FoodCategory, Int] = {
     items.values().asScala.groupBy(_.category).map { case (category, stocks) =>
       category -> stocks.size
     }.toMap
@@ -224,7 +224,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * @return number of items removed
    */
   def removeExpiredItems(userId: String): Int = {
-    val expiredItems = getExpiredItems
+    val expiredItems = this.expiredItems
     expiredItems.foreach { stock =>
       stock.removeStock(stock.currentQuantity, userId, "Expired item removal")
     }
@@ -236,10 +236,10 @@ class FoodStockManager extends Manager[FoodStock] {
    * @return list of alert messages
    */
   def generateStockAlerts: List[String] = {
-    val lowStockItems = getLowStockItems
-    val outOfStockItems = getOutOfStockItems
-    val expiringSoonItems = getExpiringSoonItems()
-    val expiredItems = getExpiredItems
+    val lowStockItems = this.lowStockItems
+    val outOfStockItems = this.outOfStockItems
+    val expiringSoonItems = this.expiringSoonItems()
+    val expiredItems = this.expiredItems
     
     val lowStockAlerts = if (lowStockItems.nonEmpty) {
       s"⚠️ ${lowStockItems.size} items are low in stock" ::
@@ -258,7 +258,7 @@ class FoodStockManager extends Manager[FoodStock] {
     val expiringSoonAlerts = if (expiringSoonItems.nonEmpty) {
       s"⏰ ${expiringSoonItems.size} items are expiring soon" ::
       expiringSoonItems.take(3).map { stock =>
-        val daysLeft = stock.getDaysUntilExpiry.getOrElse(0)
+        val daysLeft = stock.daysUntilExpiry.getOrElse(0)
         s"  • ${stock.foodName}: ${daysLeft} days left"
       }.toList
     } else List.empty

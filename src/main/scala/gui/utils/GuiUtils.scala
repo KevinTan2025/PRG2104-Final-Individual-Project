@@ -13,11 +13,11 @@ object GuiUtils {
   
   private val mainStageProperty = ObjectProperty[Option[Stage]](None)
   
-  def setMainStage(stage: Stage): Unit = {
+  def mainStage_=(stage: Stage): Unit = {
     mainStageProperty.value = Some(stage)
   }
   
-  def getMainStage: Option[Stage] = mainStageProperty.value
+  def mainStage: Option[Stage] = mainStageProperty.value
   
   /**
    * Show an information alert
