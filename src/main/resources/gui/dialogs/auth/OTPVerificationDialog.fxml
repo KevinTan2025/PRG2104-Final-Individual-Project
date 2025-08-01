@@ -6,7 +6,8 @@
 
 <VBox fx:id="vboxMainContainer" alignment="CENTER" spacing="20.0" styleClass="main-container" 
       stylesheets="@OTPVerificationDialog.css"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gui.dialogs.auth.OTPVerificationDialogController">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>

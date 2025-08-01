@@ -5,12 +5,12 @@ import javafx.stage.WindowEvent
 
 /**
  * Facebook-style authentication popup dialog
- * 重构为使用独立的FXML文件和控制器架构
+ * Refactored to use independent FXML files and controller architecture
  */
 
 class FacebookStyleAuthDialog(parentStage: Stage) {
   
-  // 使用新的AuthDialogController来管理认证流程
+  // Use new AuthDialogController to manage authentication flow
   private val authController = new AuthDialogController(parentStage)
   
   // Main dialog
@@ -27,20 +27,20 @@ class FacebookStyleAuthDialog(parentStage: Stage) {
 
   
   /**
-   * 显示认证对话框，默认从欢迎界面开始
-   * @return 认证结果
+   * Show authentication dialog, starting from welcome screen by default
+   * @return Authentication result
    */
   def show(): AuthResult = {
     show(AuthMode.WelcomeMode)
   }
   
   /**
-   * 显示认证对话框，从指定模式开始
-   * @param initialMode 初始认证模式
-   * @return 认证结果
+   * Show authentication dialog, starting from specified mode
+   * @param initialMode Initial authentication mode
+   * @return Authentication result
    */
   def show(initialMode: AuthMode): AuthResult = {
-    // 使用AuthDialogController显示对话框
+    // Use AuthDialogController to show dialog
     authController.show(initialMode)
   }
 

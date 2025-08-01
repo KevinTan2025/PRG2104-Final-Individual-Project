@@ -10,7 +10,7 @@ import javafx.stage.WindowEvent
 import gui.utils.GuiUtils
 
 /**
- * 认证模式枚举
+ * Authentication mode enumeration
  */
 sealed trait AuthMode
 object AuthMode {
@@ -20,7 +20,7 @@ object AuthMode {
 }
 
 /**
- * 认证结果枚举
+ * Authentication result enumeration
  */
 sealed trait AuthResult
 object AuthResult {
@@ -31,14 +31,14 @@ object AuthResult {
 }
 
 /**
- * 主认证对话框控制器
- * 管理Welcome、Login和Register三个独立的FXML对话框
+ * Main authentication dialog controller
+ * Manages Welcome, Login and Register three independent FXML dialogs
  */
 class AuthDialogController(parentStage: Stage) {
   
   private val authResultProperty = ObjectProperty[Option[AuthResult]](None)
   
-  // 主对话框窗口
+  // Main dialog window
   private val dialog = new Stage {
     title = "Community Platform - Authentication"
     initModality(Modality.ApplicationModal)
@@ -51,23 +51,23 @@ class AuthDialogController(parentStage: Stage) {
     }
   }
   
-  // 三个子对话框控制器
+  // Three sub-dialog controllers
   private var welcomeController: Option[WelcomeAuthDialogController] = None
   private var loginController: Option[LoginAuthDialogController] = None
   private var registerController: Option[RegisterAuthDialogController] = None
   
   /**
-   * 显示认证对话框
-   * @return 认证结果
+   * Show authentication dialog
+   * @return Authentication result
    */
   def show(): AuthResult = {
     show(AuthMode.WelcomeMode)
   }
   
   /**
-   * 显示认证对话框，指定初始模式
-   * @param initialMode 初始显示模式
-   * @return 认证结果
+   * Show authentication dialog with specified initial mode
+   * @param initialMode Initial display mode
+   * @return Authentication result
    */
   def show(initialMode: AuthMode): AuthResult = {
     initialMode match {
@@ -82,14 +82,14 @@ class AuthDialogController(parentStage: Stage) {
   }
   
   /**
-   * 显示欢迎界面
+   * Show welcome screen
    */
   def showWelcomeMode(): Unit = {
     try {
       val loader = new FXMLLoader(getClass.getResource("/gui/dialogs/auth/WelcomeAuthDialog.fxml"))
       val root: Parent = loader.load()
       
-      // 获取控制器并设置回调
+      // Get controller and set callback
       welcomeController = Some(loader.getController[WelcomeAuthDialogController]())
       welcomeController.foreach { controller =>
         controller.setParentController(this)
@@ -100,20 +100,20 @@ class AuthDialogController(parentStage: Stage) {
       
     } catch {
       case e: Exception =>
-        GuiUtils.showError("加载错误", s"无法加载欢迎界面: ${e.getMessage}")
+        GuiUtils.showError("Loading Error", s"Unable to load welcome screen: ${e.getMessage}")
         authResultProperty.value = Some(AuthResult.Cancelled)
     }
   }
   
   /**
-   * 显示登录界面
+   * Show login screen
    */
   def showLoginMode(): Unit = {
     try {
       val loader = new FXMLLoader(getClass.getResource("/gui/dialogs/auth/LoginAuthDialog.fxml"))
       val root: Parent = loader.load()
       
-      // 获取控制器并设置回调
+      // Get controller and set callback
       loginController = Some(loader.getController[LoginAuthDialogController]())
       loginController.foreach { controller =>
         controller.setParentController(this)
@@ -124,20 +124,20 @@ class AuthDialogController(parentStage: Stage) {
       
     } catch {
       case e: Exception =>
-        GuiUtils.showError("加载错误", s"无法加载登录界面: ${e.getMessage}")
+        GuiUtils.showError("Loading Error", s"Unable to load login screen: ${e.getMessage}")
         authResultProperty.value = Some(AuthResult.Cancelled)
     }
   }
   
   /**
-   * 显示注册界面
+   * Show registration screen
    */
   def showRegisterMode(): Unit = {
     try {
       val loader = new FXMLLoader(getClass.getResource("/gui/dialogs/auth/RegisterAuthDialog.fxml"))
       val root: Parent = loader.load()
       
-      // 获取控制器并设置回调
+      // Get controller and set callback
       registerController = Some(loader.getController[RegisterAuthDialogController]())
       registerController.foreach { controller =>
         controller.setParentController(this)
@@ -148,14 +148,14 @@ class AuthDialogController(parentStage: Stage) {
       
     } catch {
       case e: Exception =>
-        GuiUtils.showError("加载错误", s"无法加载注册界面: ${e.getMessage}")
+        GuiUtils.showError("Loading Error", s"Unable to load registration screen: ${e.getMessage}")
         authResultProperty.value = Some(AuthResult.Cancelled)
     }
   }
   
   /**
-   * 设置认证结果并关闭对话框
-   * @param result 认证结果
+   * Set authentication result and close dialog
+   * @param result Authentication result
    */
   def setAuthResult(result: AuthResult): Unit = {
     authResultProperty.value = Some(result)
@@ -163,8 +163,8 @@ class AuthDialogController(parentStage: Stage) {
   }
   
   /**
-   * 获取对话框窗口引用
-   * @return Stage对象
+   * Get dialog window reference
+   * @return Stage object
    */
   def getDialogStage: Stage = dialog
 }

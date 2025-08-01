@@ -10,12 +10,12 @@ import java.net.URL
 import java.util.ResourceBundle
 
 /**
- * 登录界面控制器
- * 对接LoginAuthDialog.fxml
+ * Login screen controller
+ * Connects to LoginAuthDialog.fxml
  */
 class LoginAuthDialogController extends Initializable {
   
-  // FXML组件绑定
+  // FXML component binding
   @FXML private var btnLoginBack: Button = _
   @FXML private var lblLoginTitle: Label = _
   @FXML private var txtLoginUsername: TextField = _
@@ -27,14 +27,14 @@ class LoginAuthDialogController extends Initializable {
   @FXML private var lblLoginDemo: Label = _
   @FXML private var btnLoginToRegister: Button = _
   
-  // 父控制器引用
+  // Parent controller reference
   private var parentController: Option[AuthDialogController] = None
   
-  // 社区服务实例
+  // Community service instance
   private val communityService = service.CommunityEngagementService.getInstance
   
   /**
-   * 初始化方法
+   * Initialization method
    */
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupComponents()
@@ -42,54 +42,54 @@ class LoginAuthDialogController extends Initializable {
   }
   
   /**
-   * 设置父控制器
-   * @param controller 父控制器实例
+   * Set parent controller
+   * @param controller Parent controller instance
    */
   def setParentController(controller: AuthDialogController): Unit = {
     parentController = Some(controller)
   }
   
   /**
-   * 设置组件初始状态
+   * Set initial state of components
    */
   private def setupComponents(): Unit = {
-    // 清空状态标签
+    // Clear status labels
     clearStatusLabels()
     
-    // 设置焦点到用户名字段
+    // Set focus to username field
     Platform.runLater {
       txtLoginUsername.requestFocus()
     }
   }
   
   /**
-   * 设置事件处理器
+   * Set event handlers
    */
   private def setupEventHandlers(): Unit = {
-    // 用户名字段变化监听
+    // Username field change listener
     txtLoginUsername.text.onChange { (_, _, newValue) =>
       validateUsernameInput(newValue)
     }
     
-    // 密码字段变化监听
+    // Password field change listener
     txtLoginPassword.text.onChange { (_, _, newValue) =>
       validatePasswordInput(newValue)
     }
     
-    // 回车键登录
+    // Enter key login
     txtLoginPassword.onAction = (_: ActionEvent) => handleLogin(null)
   }
   
   /**
-   * 验证用户名输入
-   * @param username 用户名
+   * Validate username input
+   * @param username Username
    */
   private def validateUsernameInput(username: String): Unit = {
     if (username.trim.isEmpty) {
       lblLoginUsernameStatus.text = ""
       updateFieldStyle(txtLoginUsername, "normal")
     } else {
-      lblLoginUsernameStatus.text = "✓ 用户名格式正确"
+      lblLoginUsernameStatus.text = "✓ Username format is correct"
       updateStatusLabelStyle(lblLoginUsernameStatus, "success")
       updateFieldStyle(txtLoginUsername, "success")
     }
@@ -97,15 +97,15 @@ class LoginAuthDialogController extends Initializable {
   }
   
   /**
-   * 验证密码输入
-   * @param password 密码
+   * Validate password input
+   * @param password Password
    */
   private def validatePasswordInput(password: String): Unit = {
     if (password.trim.isEmpty) {
       lblLoginPasswordStatus.text = ""
       updateFieldStyle(txtLoginPassword, "normal")
     } else {
-      lblLoginPasswordStatus.text = "✓ 密码已输入"
+      lblLoginPasswordStatus.text = "✓ Password entered"
       updateStatusLabelStyle(lblLoginPasswordStatus, "success")
       updateFieldStyle(txtLoginPassword, "success")
     }
@@ -113,23 +113,23 @@ class LoginAuthDialogController extends Initializable {
   }
   
   /**
-   * 更新字段样式
-   * @param field 字段控件
-   * @param status 状态类型
+   * Update field style
+   * @param field Field control
+   * @param status Status type
    */
   private def updateFieldStyle(field: TextField, status: String): Unit = {
     field.getStyleClass.removeAll("error-field", "success-field")
     status match {
       case "error" => field.getStyleClass.add("error-field")
       case "success" => field.getStyleClass.add("success-field")
-      case _ => // normal状态不添加特殊样式
+      case _ => // Normal status does not add special styles
     }
   }
   
   /**
-   * 更新状态标签样式
-   * @param label 标签控件
-   * @param status 状态类型
+   * Update status label style
+   * @param label Label control
+   * @param status Status type
    */
   private def updateStatusLabelStyle(label: Label, status: String): Unit = {
     label.getStyleClass.removeAll("error-status", "success-status", "warning-status")
@@ -137,19 +137,19 @@ class LoginAuthDialogController extends Initializable {
       case "error" => label.getStyleClass.add("error-status")
       case "success" => label.getStyleClass.add("success-status")
       case "warning" => label.getStyleClass.add("warning-status")
-      case _ => // normal状态不添加特殊样式
+      case _ => // Normal status does not add special styles
     }
   }
   
   /**
-   * 清空错误状态
+   * Clear error status
    */
   private def clearErrorStatus(): Unit = {
     lblLoginErrorStatus.text = ""
   }
   
   /**
-   * 清空所有状态标签
+   * Clear all status labels
    */
   private def clearStatusLabels(): Unit = {
     lblLoginUsernameStatus.text = ""
@@ -158,7 +158,7 @@ class LoginAuthDialogController extends Initializable {
   }
   
   /**
-   * 处理返回按钮点击事件
+   * Handle back button click event
    */
   @FXML
   def handleLoginBack(event: ActionEvent): Unit = {
@@ -166,55 +166,55 @@ class LoginAuthDialogController extends Initializable {
   }
   
   /**
-   * 处理登录按钮点击事件
+   * Handle login button click event
    */
   @FXML
   def handleLogin(event: ActionEvent): Unit = {
     val username = txtLoginUsername.text.value.trim
     val password = txtLoginPassword.text.value
     
-    // 验证输入
+    // Validate input
     if (username.isEmpty || password.isEmpty) {
-      lblLoginErrorStatus.text = "✗ 请输入用户名和密码"
+      lblLoginErrorStatus.text = "✗ Please enter username and password"
       updateStatusLabelStyle(lblLoginErrorStatus, "error")
       return
     }
     
-    // 尝试登录
+    // Attempt login
     try {
       val loginResult = communityService.login(username, password)
       
       if (loginResult.isDefined) {
-        // 登录成功
-        lblLoginErrorStatus.text = "✓ 登录成功！"
+        // Login successful
+        lblLoginErrorStatus.text = "✓ Login successful!"
         updateStatusLabelStyle(lblLoginErrorStatus, "success")
         
-        // 延迟关闭对话框
+        // Delay closing dialog
         Platform.runLater {
           Thread.sleep(500)
           parentController.foreach(_.setAuthResult(AuthResult.LoginSuccess))
         }
       } else {
-        // 登录失败
-        lblLoginErrorStatus.text = "✗ 用户名或密码错误"
+        // Login failed
+        lblLoginErrorStatus.text = "✗ Username or password incorrect"
         updateStatusLabelStyle(lblLoginErrorStatus, "error")
         updateFieldStyle(txtLoginUsername, "error")
         updateFieldStyle(txtLoginPassword, "error")
         
-        // 清空密码字段
+        // Clear password field
         txtLoginPassword.clear()
         txtLoginPassword.requestFocus()
       }
     } catch {
       case e: Exception =>
-        lblLoginErrorStatus.text = s"✗ 登录失败: ${e.getMessage}"
+        lblLoginErrorStatus.text = s"✗ Login failed: ${e.getMessage}"
         updateStatusLabelStyle(lblLoginErrorStatus, "error")
-        GuiUtils.showError("登录错误", s"登录过程中发生错误: ${e.getMessage}")
+        GuiUtils.showError("Login Error", s"Error occurred during login: ${e.getMessage}")
     }
   }
   
   /**
-   * 处理跳转到注册页面按钮点击事件
+   * Handle jump to registration page button click event
    */
   @FXML
   def handleLoginToRegister(event: ActionEvent): Unit = {

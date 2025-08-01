@@ -15,11 +15,11 @@ import scala.util.Random
 
 /**
  * OTP Verification Dialog for user registration
- * 使用FXML界面的包装类
+ * Wrapper class using FXML interface
  */
 class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
   
-  // 对话框窗口
+  // Dialog window
   private val dialog = new Stage {
     title = "📧 Email Verification - Community Platform"
     initModality(Modality.ApplicationModal)
@@ -27,23 +27,23 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
     resizable = false
   }
   
-  // 控制器引用
+  // Controller reference
   private var controller: Option[OTPVerificationDialogController] = None
   
-  // 验证状态
+  // Verification status
   private val isVerifiedProperty = BooleanProperty(false)
   
   /**
-   * 显示OTP验证对话框
-   * @param onSuccess 验证成功回调
-   * @param onFailure 验证失败回调
+   * Show OTP verification dialog
+   * @param onSuccess Verification success callback
+   * @param onFailure Verification failure callback
    */
   def show(onSuccess: () => Unit, onFailure: () => Unit): Unit = {
     try {
       val loader = new FXMLLoader(getClass.getResource("/gui/dialogs/auth/OTPVerificationDialog.fxml"))
       val root: Parent = loader.load()
       
-      // 获取控制器并设置参数
+      // Get controller and set parameters
       controller = Some(loader.getController[OTPVerificationDialogController]())
       controller.foreach { ctrl =>
         ctrl.setEmailAndParent(userEmail, parentStage)
@@ -57,13 +57,13 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
       
     } catch {
       case e: Exception =>
-        GuiUtils.showError("加载错误", s"无法加载OTP验证界面: ${e.getMessage}")
+        GuiUtils.showError("Loading Error", s"Unable to load OTP verification interface: ${e.getMessage}")
         onFailure()
     }
   }
   /**
-   * 获取验证状态
-   * @return 是否已验证
+   * Get verification status
+   * @return Whether verified
    */
   def isOTPVerified: Boolean = {
     controller.map(_.isOTPVerified).getOrElse(false)

@@ -7,12 +7,12 @@ import java.net.URL
 import java.util.ResourceBundle
 
 /**
- * 欢迎界面控制器
- * 对接WelcomeAuthDialog.fxml
+ * Welcome screen controller
+ * Connects to WelcomeAuthDialog.fxml
  */
 class WelcomeAuthDialogController extends Initializable {
   
-  // FXML组件绑定
+  // FXML component binding
   @FXML private var lblTitle: Label = _
   @FXML private var lblWelcomeIcon: Label = _
   @FXML private var lblWelcomeText: Label = _
@@ -20,35 +20,35 @@ class WelcomeAuthDialogController extends Initializable {
   @FXML private var btnWelcomeRegister: Button = _
   @FXML private var btnWelcomeGuest: Button = _
   
-  // 父控制器引用
+  // Parent controller reference
   private var parentController: Option[AuthDialogController] = None
   
   /**
-   * 初始化方法
+   * Initialization method
    */
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
-    // 设置组件的初始状态
+    // Set initial state of components
     setupComponents()
   }
   
   /**
-   * 设置父控制器
-   * @param controller 父控制器实例
+   * Set parent controller
+   * @param controller Parent controller instance
    */
   def setParentController(controller: AuthDialogController): Unit = {
     parentController = Some(controller)
   }
   
   /**
-   * 设置组件初始状态
+   * Set initial state of components
    */
   private def setupComponents(): Unit = {
-    // 可以在这里设置组件的初始状态
-    // 例如设置文本、样式等
+    // Can set initial state of components here
+    // For example, set text, styles, etc.
   }
   
   /**
-   * 处理登录按钮点击事件
+   * Handle login button click event
    */
   @FXML
   def handleWelcomeLogin(event: ActionEvent): Unit = {
@@ -56,7 +56,7 @@ class WelcomeAuthDialogController extends Initializable {
   }
   
   /**
-   * 处理注册按钮点击事件
+   * Handle register button click event
    */
   @FXML
   def handleWelcomeRegister(event: ActionEvent): Unit = {
@@ -64,7 +64,7 @@ class WelcomeAuthDialogController extends Initializable {
   }
   
   /**
-   * 处理访客模式按钮点击事件
+   * Handle guest mode button click event
    */
   @FXML
   def handleWelcomeGuest(event: ActionEvent): Unit = {

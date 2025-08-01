@@ -16,12 +16,12 @@ import java.util.ResourceBundle
 import scala.util.Random
 
 /**
- * OTP验证对话框控制器
- * 对接OTPVerificationDialog.fxml
+ * OTP verification dialog controller
+ * Connects to OTPVerificationDialog.fxml
  */
 class OTPVerificationDialogController extends Initializable {
   
-  // FXML组件绑定
+  // FXML component binding
   @FXML private var lblEmailIcon: Label = _
   @FXML private var lblTitle: Label = _
   @FXML private var lblEmailPrompt: Label = _
@@ -34,18 +34,18 @@ class OTPVerificationDialogController extends Initializable {
   @FXML private var lblVerificationStatus: Label = _
   @FXML private var btnCancel: Button = _
   
-  // 验证状态
+  // Verification status
   private val isVerifiedProperty = BooleanProperty(false)
   private val onVerificationSuccessProperty = ObjectProperty[() => Unit](() => {})
   private val onVerificationFailureProperty = ObjectProperty[() => Unit](() => {})
   
-  // OTP相关
+  // OTP related
   private var otpCode: String = _
   private var userEmail: String = _
   private var parentStage: Stage = _
   
   /**
-   * 初始化方法
+   * Initialization method
    */
   override def initialize(location: URL, resources: ResourceBundle): Unit = {
     setupComponents()
@@ -53,9 +53,9 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 设置用户邮箱和父窗口
-   * @param email 用户邮箱
-   * @param parent 父窗口
+   * Set user email and parent window
+   * @param email User email
+   * @param parent Parent window
    */
   def setEmailAndParent(email: String, parent: Stage): Unit = {
     userEmail = email
@@ -65,9 +65,9 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 设置验证回调函数
-   * @param onSuccess 成功回调
-   * @param onFailure 失败回调
+   * Set verification callback functions
+   * @param onSuccess Success callback
+   * @param onFailure Failure callback
    */
   def setVerificationCallbacks(onSuccess: () => Unit, onFailure: () => Unit): Unit = {
     onVerificationSuccessProperty.value = onSuccess
@@ -75,31 +75,31 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 设置组件初始状态
+   * Set initial state of components
    */
   private def setupComponents(): Unit = {
-    // 清空状态标签
+    // Clear status labels
     clearStatusLabels()
     
-    // 设置焦点到OTP输入字段
+    // Set focus to OTP input field
     Platform.runLater {
       txtOtpField.requestFocus()
     }
   }
   
   /**
-   * 设置事件处理器
+   * Set event handlers
    */
   private def setupEventHandlers(): Unit = {
-    // OTP字段变化监听
+    // OTP field change listener
     txtOtpField.text.onChange { (_, _, newValue) =>
       validateOTPInput(newValue)
     }
     
-    // 回车键验证
+    // Enter key verification
     txtOtpField.onAction = (_: ActionEvent) => handleVerification(null)
     
-    // 限制输入只能是数字，最多6位
+    // Limit input to numbers only, maximum 6 digits
     txtOtpField.textFormatter = new scalafx.scene.control.TextFormatter[String](
       (change: scalafx.scene.control.TextFormatter.Change) => {
         val newText = change.getControlNewText
@@ -109,30 +109,30 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 验证OTP输入
-   * @param otp OTP输入值
+   * Validate OTP input
+   * @param otp OTP input value
    */
   private def validateOTPInput(otp: String): Unit = {
     if (otp.isEmpty) {
       lblOtpInputStatus.text = ""
       updateFieldStyle(txtOtpField, "normal")
     } else if (otp.length < 6) {
-      lblOtpInputStatus.text = "请输入6位验证码"
+      lblOtpInputStatus.text = "Please enter 6-digit verification code"
       updateStatusLabelStyle(lblOtpInputStatus, "warning")
       updateFieldStyle(txtOtpField, "warning")
     } else if (otp.length == 6 && otp.forall(_.isDigit)) {
-      lblOtpInputStatus.text = "✓ 格式正确"
+      lblOtpInputStatus.text = "✓ Format correct"
       updateStatusLabelStyle(lblOtpInputStatus, "success")
       updateFieldStyle(txtOtpField, "success")
     } else {
-      lblOtpInputStatus.text = "✗ 请输入6位数字"
+      lblOtpInputStatus.text = "✗ Please enter 6 digits"
       updateStatusLabelStyle(lblOtpInputStatus, "error")
       updateFieldStyle(txtOtpField, "error")
     }
   }
   
   /**
-   * 生成新的OTP
+   * Generate new OTP
    */
   private def generateNewOTP(): Unit = {
     val random = new Random()
@@ -140,12 +140,12 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 模拟发送邮件通知
+   * Simulate email notification
    */
   private def simulateEmailNotification(): Unit = {
     Platform.runLater {
       val emailDialog = new Stage {
-        title = "📧 邮件通知"
+        title = "📧 Email Notification"
         initModality(Modality.ApplicationModal)
         initOwner(parentStage)
         resizable = false
@@ -155,7 +155,7 @@ class OTPVerificationDialogController extends Initializable {
         val loader = new FXMLLoader(getClass.getResource("/gui/dialogs/auth/EmailNotificationDialog.fxml"))
         val root: Parent = loader.load()
         
-        // 如果有专门的邮件通知控制器，可以在这里设置
+        // If there is a dedicated email notification controller, it can be set here
         // val controller = loader.getController[EmailNotificationDialogController]()
         // controller.setOTPCode(otpCode)
         // controller.setUserEmail(userEmail)
@@ -166,21 +166,21 @@ class OTPVerificationDialogController extends Initializable {
         
       } catch {
         case _: Exception =>
-          // 如果没有专门的邮件通知FXML，使用简单的信息对话框
+          // If there is no dedicated email notification FXML, use simple info dialog
           GuiUtils.showInfo(
-            "📧 邮件已发送",
-            s"验证码已发送到: $userEmail\n\n" +
-            s"您的验证码是: $otpCode\n\n" +
-            "(这是演示模式，实际应用中验证码会通过邮件发送)"
+            "📧 Email Sent",
+            s"Verification code sent to: $userEmail\n\n" +
+            s"Your verification code is: $otpCode\n\n" +
+            "(This is demo mode, in actual application verification code would be sent via email)"
           )
       }
     }
   }
   
   /**
-   * 更新字段样式
-   * @param field 字段控件
-   * @param status 状态类型
+   * Update field style
+   * @param field Field control
+   * @param status Status type
    */
   private def updateFieldStyle(field: TextField, status: String): Unit = {
     field.getStyleClass.removeAll("error-field", "success-field", "warning-field")
@@ -188,14 +188,14 @@ class OTPVerificationDialogController extends Initializable {
       case "error" => field.getStyleClass.add("error-field")
       case "success" => field.getStyleClass.add("success-field")
       case "warning" => field.getStyleClass.add("warning-field")
-      case _ => // normal状态不添加特殊样式
+      case _ => // normal status does not add special style
     }
   }
   
   /**
-   * 更新状态标签样式
-   * @param label 标签控件
-   * @param status 状态类型
+   * Update status label style
+   * @param label Label control
+   * @param status Status type
    */
   private def updateStatusLabelStyle(label: Label, status: String): Unit = {
     label.getStyleClass.removeAll("error-status", "success-status", "warning-status")
@@ -203,12 +203,12 @@ class OTPVerificationDialogController extends Initializable {
       case "error" => label.getStyleClass.add("error-status")
       case "success" => label.getStyleClass.add("success-status")
       case "warning" => label.getStyleClass.add("warning-status")
-      case _ => // normal状态不添加特殊样式
+      case _ => // normal status does not add special style
     }
   }
   
   /**
-   * 清空状态标签
+   * Clear status labels
    */
   private def clearStatusLabels(): Unit = {
     lblOtpInputStatus.text = ""
@@ -216,73 +216,73 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 处理验证按钮点击事件
+   * Handle verification button click event
    */
   @FXML
   def handleVerification(event: ActionEvent): Unit = {
     val enteredOTP = txtOtpField.text.value.trim
     
     if (enteredOTP.isEmpty) {
-      lblVerificationStatus.text = "✗ 请输入验证码"
+      lblVerificationStatus.text = "✗ Please enter verification code"
       updateStatusLabelStyle(lblVerificationStatus, "error")
       return
     }
     
     if (enteredOTP.length != 6 || !enteredOTP.forall(_.isDigit)) {
-      lblVerificationStatus.text = "✗ 验证码必须是6位数字"
+      lblVerificationStatus.text = "✗ Verification code must be 6 digits"
       updateStatusLabelStyle(lblVerificationStatus, "error")
       return
     }
     
     if (enteredOTP == otpCode) {
-      // 验证成功
+      // Verification successful
       isVerifiedProperty.value = true
-      lblVerificationStatus.text = "✓ 验证成功！"
+      lblVerificationStatus.text = "✓ Verification successful!"
       updateStatusLabelStyle(lblVerificationStatus, "success")
       
-      // 延迟关闭对话框并调用成功回调
+      // Delay closing dialog and call success callback
       Platform.runLater {
         Thread.sleep(500)
         onVerificationSuccessProperty.value()
         closeDialog()
       }
     } else {
-      // 验证失败
-      lblVerificationStatus.text = "✗ 验证码错误，请重新输入"
+      // Verification failed
+      lblVerificationStatus.text = "✗ Verification code incorrect, please re-enter"
       updateStatusLabelStyle(lblVerificationStatus, "error")
       updateFieldStyle(txtOtpField, "error")
       
-      // 清空输入字段并重新聚焦
+      // Clear input field and refocus
       txtOtpField.clear()
       txtOtpField.requestFocus()
     }
   }
   
   /**
-   * 处理重新发送邮件按钮点击事件
+   * Handle resend email button click event
    */
   @FXML
   def handleResendEmail(event: ActionEvent): Unit = {
-    // 生成新的OTP
+    // Generate new OTP
     generateNewOTP()
     
-    // 清空输入和状态
+    // Clear input and status
     txtOtpField.clear()
     clearStatusLabels()
     
-    // 模拟发送邮件
+    // Simulate sending email
     simulateEmailNotification()
     
-    // 显示重新发送成功信息
-    lblVerificationStatus.text = "📧 验证码已重新发送"
+    // Show resend success message
+    lblVerificationStatus.text = "📧 Verification code resent"
     updateStatusLabelStyle(lblVerificationStatus, "success")
     
-    // 聚焦到输入字段
+    // Focus on input field
     txtOtpField.requestFocus()
   }
   
   /**
-   * 处理取消按钮点击事件
+   * Handle cancel button click event
    */
   @FXML
   def handleCancel(event: ActionEvent): Unit = {
@@ -291,7 +291,7 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 关闭对话框
+   * Close dialog
    */
   private def closeDialog(): Unit = {
     val stage = btnCancel.scene.value.window.value.asInstanceOf[javafx.stage.Stage]
@@ -301,23 +301,23 @@ class OTPVerificationDialogController extends Initializable {
   }
   
   /**
-   * 显示OTP验证对话框
-   * @param email 用户邮箱
-   * @param parent 父窗口
-   * @param onSuccess 成功回调
-   * @param onFailure 失败回调
+   * Show OTP verification dialog
+   * @param email User email
+   * @param parent Parent window
+   * @param onSuccess Success callback
+   * @param onFailure Failure callback
    */
   def showOTPDialog(email: String, parent: Stage, onSuccess: () => Unit, onFailure: () => Unit): Unit = {
     setEmailAndParent(email, parent)
     setVerificationCallbacks(onSuccess, onFailure)
     
-    // 自动发送第一次OTP
+    // Automatically send first OTP
     simulateEmailNotification()
   }
   
   /**
-   * 获取验证状态
-   * @return 是否已验证
+   * Get verification status
+   * @return Whether verified
    */
   def isOTPVerified: Boolean = isVerifiedProperty.value
 }

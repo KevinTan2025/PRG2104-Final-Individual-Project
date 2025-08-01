@@ -6,7 +6,8 @@
 
 <ScrollPane fx:id="spMainContainer" fitToWidth="true" hbarPolicy="NEVER" styleClass="register-scroll-pane" vbarPolicy="AS_NEEDED" 
             stylesheets="@RegisterAuthDialog.css"
-            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="gui.dialogs.auth.RegisterAuthDialogController">
    <content>
       <VBox fx:id="vboxRegisterContent" alignment="CENTER" spacing="12.0" styleClass="register-content">
          <padding>
