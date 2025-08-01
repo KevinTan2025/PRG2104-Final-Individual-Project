@@ -22,7 +22,7 @@ class AnnouncementBoard extends Manager[Announcement] {
    * @param announcementType the type to filter by
    * @return list of announcements of the specified type
    */
-  def getAnnouncementsByType(announcementType: AnnouncementType): List[Announcement] = {
+  def announcementsByType(announcementType: AnnouncementType): List[Announcement] = {
     items.values().asScala.filter(_.announcementType == announcementType).toList.sortBy(_.timestamp).reverse
   }
   
@@ -30,7 +30,7 @@ class AnnouncementBoard extends Manager[Announcement] {
    * Get active announcements (not deactivated)
    * @return list of active announcements
    */
-  def getActiveAnnouncements: List[Announcement] = {
+  def activeAnnouncements: List[Announcement] = {
     items.values().asScala.filter(_.isActive).toList.sortBy(_.timestamp).reverse
   }
   
@@ -39,7 +39,7 @@ class AnnouncementBoard extends Manager[Announcement] {
    * @param priority the priority level to filter by
    * @return list of announcements with the specified priority
    */
-  def getAnnouncementsByPriority(priority: Priority): List[Announcement] = {
+  def announcementsByPriority(priority: Priority): List[Announcement] = {
     items.values().asScala.filter(_.priority == priority).toList.sortBy(_.timestamp).reverse
   }
   
@@ -61,7 +61,7 @@ class AnnouncementBoard extends Manager[Announcement] {
    * @param authorId the author ID to filter by
    * @return list of announcements by the specified author
    */
-  def getAnnouncementsByAuthor(authorId: String): List[Announcement] = {
+  def announcementsByAuthor(authorId: String): List[Announcement] = {
     items.values().asScala.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
   }
   
@@ -70,7 +70,7 @@ class AnnouncementBoard extends Manager[Announcement] {
    * @param days number of days to look back
    * @return list of recent announcements
    */
-  def getRecentAnnouncements(days: Int = 7): List[Announcement] = {
+  def recentAnnouncements(days: Int = 7): List[Announcement] = {
     val cutoffDate = LocalDateTime.now().minusDays(days)
     items.values().asScala.filter(_.timestamp.isAfter(cutoffDate)).toList.sortBy(_.timestamp).reverse
   }

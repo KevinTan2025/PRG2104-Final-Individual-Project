@@ -102,7 +102,7 @@ class ExportStockDialog(stocks: List[FoodStock]) {
     val rows = stocks.map { stock =>
       val expiryStr = stock.expiryDate.map(_.toString).getOrElse("No expiry")
       s"\"${stock.foodName}\",\"${stock.category}\",${stock.currentQuantity},\"${stock.unit}\"," +
-      s"\"${stock.getStockStatus}\",\"${stock.location}\",\"$expiryStr\""
+      s"\"${stock.stockStatus}\",\"${stock.location}\",\"$expiryStr\""
     }
     
     (header :: rows).mkString("\n")
