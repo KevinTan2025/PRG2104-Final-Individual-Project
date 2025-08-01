@@ -53,7 +53,7 @@ class CommunityEngagementService {
     isAnonymousMode = false
   }
   
-  def getCurrentUser: Option[User] = currentUser
+  def currentUserInfo: Option[User] = currentUser
   
   def isLoggedIn: Boolean = currentUser.isDefined
   
@@ -133,10 +133,10 @@ class CommunityEngagementService {
   }
   
   def announcements: List[Announcement] = {
-    val announcements = dbService.getAllAnnouncements
+    val announcements = dbService.allAnnouncements
     // Load comments for each announcement
     announcements.map { announcement =>
-      val comments = dbService.getComments("announcement", announcement.announcementId)
+      val comments = dbService.comments("announcement", announcement.announcementId)
       announcement.copy(comments = comments)
     }
   }
@@ -209,7 +209,7 @@ class CommunityEngagementService {
     val foodPosts = dbService.activeFoodPosts
     // Load comments for each food post
     foodPosts.map { post =>
-      val comments = dbService.getComments("foodpost", post.postId)
+      val comments = dbService.comments("foodpost", post.postId)
       post.copy(comments = comments)
     }
   }
@@ -454,7 +454,7 @@ class CommunityEngagementService {
   }
   
   def myEvents(userId: String): List[Event] = {
-    dbService.getUserEvents(userId)
+    dbService.userEvents(userId)
   }
   
   def searchEvents(searchTerm: String): List[Event] = {
@@ -546,7 +546,7 @@ class CommunityEngagementService {
   
   def detailedStatistics: Map[String, Any] = {
     val totalNotifications = notifications.size
-    val announcements = dbService.getAllAnnouncements
+    val announcements = dbService.allAnnouncements
     val foodPosts = dbService.allFoodPosts
     
     val totalComments = announcements.flatMap(_.comments).size + foodPosts.flatMap(_.comments).size
@@ -560,7 +560,7 @@ class CommunityEngagementService {
   }
   
   def contentForModeration: List[(String, String, String)] = {
-    val announcements = dbService.getAllAnnouncements.filter(!_.isModerated)
+    val announcements = dbService.allAnnouncements.filter(!_.isModerated)
       .map(a => (a.announcementId, "announcement", a.title))
     val foodPosts = dbService.allFoodPosts.filter(!_.isModerated)
       .map(p => (p.postId, "foodpost", p.title))
@@ -575,8 +575,8 @@ class CommunityEngagementService {
   def dashboardStatistics: Map[String, Any] = {
     val totalUsers = dbService.userCount
     val adminUsers = dbService.adminCount
-    val communityMembers = dbService.getCommunityMemberCount
-    val activeAnnouncements = dbService.getAllAnnouncements.size
+    val communityMembers = dbService.communityMemberCount
+    val activeAnnouncements = dbService.allAnnouncements.size
     val foodStats = dbService.foodPostStatistics
     val notificationStats = currentUser.map(u => dbService.unreadNotificationCount(u.userId)).getOrElse(0)
     
@@ -621,7 +621,7 @@ class CommunityEngagementService {
   }
   
   def allFoodStocks: List[FoodStock] = {
-    dbService.getAllFoodStocks
+    dbService.allFoodStocks
   }
   
   def foodStockById(stockId: String): Option[FoodStock] = {
@@ -641,29 +641,29 @@ class CommunityEngagementService {
   }
   
   def foodStocksByCategory(category: FoodCategory): List[FoodStock] = {
-    dbService.getFoodStocksByCategory(category)
+    dbService.foodStocksByCategory(category)
   }
   
   def foodStocksByStatus(status: StockStatus): List[FoodStock] = {
     // Filter by status based on current quantities and expiry dates
-    allFoodStocks.filter(_.getStockStatus == status)
+    allFoodStocks.filter(_.stockStatus == status)
   }
   
   def foodStocksByLocation(location: String): List[FoodStock] = {
-    dbService.getFoodStocksByLocation(location)
+    dbService.foodStocksByLocation(location)
   }
   
   def generateStockAlerts: List[String] = {
     // Use functional approach with immutable collections
-    val lowStockAlerts = dbService.getLowStockItems.map { stock =>
+    val lowStockAlerts = dbService.lowStockItems.map { stock =>
       s"Low stock alert: ${stock.foodName} (${stock.currentQuantity} ${stock.unit} remaining)"
     }
     
-    val expiredAlerts = dbService.getExpiredItems.map { stock =>
+    val expiredAlerts = dbService.expiredItems.map { stock =>
       s"Expired: ${stock.foodName} expired on ${stock.expiryDate.getOrElse("Unknown date")}"
     }
     
-    val expiringSoonAlerts = dbService.getExpiringSoonItems(7).map { stock =>
+    val expiringSoonAlerts = dbService.expiringSoonItems(7).map { stock =>
       s"Expiring soon: ${stock.foodName} expires on ${stock.expiryDate.getOrElse("Unknown date")}"
     }
     
@@ -671,7 +671,7 @@ class CommunityEngagementService {
   }
   
   def stockStatistics: (Int, Int, Int, Int) = {
-    dbService.getFoodStockStatistics
+    dbService.foodStockStatistics
   }
   
   def addStock(stockId: String, quantity: Double, userId: String, notes: String = ""): Boolean = {
@@ -791,19 +791,19 @@ class CommunityEngagementService {
   }
   
   def stockMovements(stockId: String): List[StockMovement] = {
-    dbService.getStockMovementsByStockId(stockId)
+    dbService.stockMovementsByStockId(stockId)
   }
   
   def allStockMovements: List[StockMovement] = {
-    dbService.getAllStockMovements
+    dbService.allStockMovements
   }
   
   def stockMovementsByUser(userId: String): List[StockMovement] = {
-    dbService.getStockMovementsByUser(userId)
+    dbService.stockMovementsByUser(userId)
   }
   
   def stockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
-    dbService.getStockMovementsByDateRange(startDate, endDate)
+    dbService.stockMovementsByDateRange(startDate, endDate)
   }
   
   /**

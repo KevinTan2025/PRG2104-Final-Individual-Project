@@ -94,7 +94,7 @@ case class ActivityFeedItem(
   /**
    * Get formatted time string
    */
-  def getTimeAgo: String = {
+  def timeAgo: String = {
     val now = LocalDateTime.now()
     val duration = java.time.Duration.between(timestamp, now)
     
@@ -112,7 +112,7 @@ case class ActivityFeedItem(
   /**
    * Get category icon based on feed type
    */
-  def getCategoryIcon: String = feedType match {
+  def categoryIcon: String = feedType match {
     case ActivityFeedType.ANNOUNCEMENT => "📢"
     case ActivityFeedType.FOOD_SHARING => "🍕"
     case ActivityFeedType.DISCUSSION => "💬"
@@ -123,7 +123,7 @@ case class ActivityFeedItem(
   /**
    * Get category display name
    */
-  def getCategoryName: String = feedType match {
+  def categoryName: String = feedType match {
     case ActivityFeedType.ANNOUNCEMENT => "Announcement"
     case ActivityFeedType.FOOD_SHARING => "Food Sharing"
     case ActivityFeedType.DISCUSSION => "Discussion"
@@ -134,7 +134,7 @@ case class ActivityFeedItem(
   /**
    * Get category color for UI
    */
-  def getCategoryColor: String = feedType match {
+  def categoryColor: String = feedType match {
     case ActivityFeedType.ANNOUNCEMENT => "#1877f2"
     case ActivityFeedType.FOOD_SHARING => "#42b883"
     case ActivityFeedType.DISCUSSION => "#9b59b6"

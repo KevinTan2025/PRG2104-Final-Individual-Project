@@ -53,7 +53,7 @@ case class FoodStock(
   /**
    * Get current stock status
    */
-  def getStockStatus: StockStatus = {
+  def stockStatus: StockStatus = {
     if (isExpired) StockStatus.EXPIRED
     else if (currentQuantity <= 0) StockStatus.OUT_OF_STOCK
     else if (currentQuantity <= minimumThreshold) StockStatus.LOW_STOCK
@@ -165,7 +165,7 @@ case class FoodStock(
   /**
    * Get days until expiry
    */
-  def getDaysUntilExpiry: Option[Int] = {
+  def daysUntilExpiry: Option[Int] = {
     expiryDate.map { expiry =>
       val days = java.time.temporal.ChronoUnit.DAYS.between(LocalDateTime.now(), expiry)
       days.toInt
@@ -200,7 +200,7 @@ case class StockMovement(
   /**
    * Get formatted movement description
    */
-  def getDescription: String = {
+  def description: String = {
     val action = actionType match {
       case StockActionType.STOCK_IN => "Added"
       case StockActionType.STOCK_OUT => "Removed"

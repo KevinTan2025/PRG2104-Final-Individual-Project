@@ -21,7 +21,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * Get all stock movements
    * @return list of all stock movements
    */
-  def getAllStockMovements: List[StockMovement] = {
+  def allStockMovements: List[StockMovement] = {
     all.sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
@@ -30,7 +30,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param stockId the stock ID to filter by
    * @return list of stock movements for the specified stock
    */
-  def getMovementsByStockId(stockId: String): List[StockMovement] = {
+  def movementsByStockId(stockId: String): List[StockMovement] = {
     all.filter(_.stockId == stockId).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
@@ -39,7 +39,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param userId the user ID to filter by
    * @return list of stock movements by the specified user
    */
-  def getMovementsByUserId(userId: String): List[StockMovement] = {
+  def movementsByUserId(userId: String): List[StockMovement] = {
     all.filter(_.userId == userId).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
@@ -49,7 +49,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param endDate the end date
    * @return list of stock movements within the date range
    */
-  def getMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
+  def movementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
     all.filter { movement =>
       movement.timestamp.isAfter(startDate.minusSeconds(1)) && 
       movement.timestamp.isBefore(endDate.plusSeconds(1))
@@ -61,7 +61,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param actionType the action type to filter by
    * @return list of stock movements with the specified action type
    */
-  def getMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
+  def movementsByActionType(actionType: StockActionType): List[StockMovement] = {
     all.filter(_.actionType == actionType).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
@@ -70,7 +70,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param days number of days to look back
    * @return list of recent stock movements
    */
-  def getRecentMovements(days: Int = 7): List[StockMovement] = {
+  def recentMovements(days: Int = 7): List[StockMovement] = {
     val cutoffDate = LocalDateTime.now().minusDays(days)
     all.filter(_.timestamp.isAfter(cutoffDate)).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
@@ -79,7 +79,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * Get movement statistics
    * @return tuple of (total movements, additions, removals, adjustments)
    */
-  def getMovementStatistics: (Int, Int, Int, Int) = {
+  def movementStatistics: (Int, Int, Int, Int) = {
     val movements = all
     val total = movements.length
     val additions = movements.count(_.actionType == StockActionType.STOCK_IN)
@@ -93,7 +93,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param limit number of top users to return
    * @return list of (userId, movement count) pairs
    */
-  def getTopUsersByActivity(limit: Int = 10): List[(String, Int)] = {
+  def topUsersByActivity(limit: Int = 10): List[(String, Int)] = {
     all
       .groupBy(_.userId)
       .map { case (userId, movements) => (userId, movements.length) }
@@ -107,8 +107,8 @@ class StockMovementManager extends Manager[StockMovement] {
    * @param stockId the stock ID
    * @return summary string
    */
-  def getMovementSummary(stockId: String): String = {
-    val movements = getMovementsByStockId(stockId)
+  def movementSummary(stockId: String): String = {
+    val movements = movementsByStockId(stockId)
     if (movements.isEmpty) {
       "No movement history available."
     } else {
@@ -119,7 +119,7 @@ class StockMovementManager extends Manager[StockMovement] {
       val lastMovement = movements.head
       
       s"Total movements: $totalMovements (Add: $additions, Remove: $removals, Adjust: $adjustments)\n" +
-      s"Last activity: ${lastMovement.getDescription} by ${lastMovement.userId} on ${lastMovement.timestamp.toLocalDate}"
+      s"Last activity: ${lastMovement.description} by ${lastMovement.userId} on ${lastMovement.timestamp.toLocalDate}"
     }
   }
   
@@ -139,7 +139,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * Get movements that resulted in negative stock
    * @return list of movements that caused stock to go negative
    */
-  def getProblematicMovements: List[StockMovement] = {
+  def problematicMovements: List[StockMovement] = {
     // This would require cross-referencing with stock quantities
     // For now, return removals with high quantities that might be problematic
     all.filter { movement =>
