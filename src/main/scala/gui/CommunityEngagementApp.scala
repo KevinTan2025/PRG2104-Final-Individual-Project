@@ -139,7 +139,7 @@ object CommunityEngagementApp extends JFXApp3 {
         } else if (password != confirmPassword) {
           showAlert(Alert.AlertType.Error, "Password Mismatch", "Password and confirmation do not match.")
         } else if (!util.PasswordHasher.isPasswordValid(password)) {
-          showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+          showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.passwordRequirements)
         } else if (!service.isUsernameAvailable(username)) {
           showAlert(Alert.AlertType.Error, "Username Taken", s"The username '$username' is already taken. Please choose a different one.")
         } else if (!service.isEmailAvailable(email)) {
@@ -693,7 +693,7 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val refreshTopics = () => {
       val topics = service.discussionTopics
-      val items = topics.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
+      val items = topics.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies")
       topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
     
@@ -733,7 +733,7 @@ object CommunityEngagementApp extends JFXApp3 {
             case _ => DiscussionCategory.GENERAL
           }
           val filtered = service.topicsByCategory(cat)
-          val items = filtered.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
+          val items = filtered.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies")
           topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
         }
       }
@@ -837,7 +837,7 @@ object CommunityEngagementApp extends JFXApp3 {
         val searchTerm = searchField.text.value
         if (searchTerm.nonEmpty) {
           val results = service.searchTopics(searchTerm)
-          val items = results.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
+          val items = results.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies")
           topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
         } else {
           refreshTopics()
@@ -1392,7 +1392,7 @@ ${notification.message}
             } else if (newPass != confirmPass) {
               showAlert(Alert.AlertType.Error, "Password Mismatch", "New password and confirmation do not match.")
             } else if (!util.PasswordHasher.isPasswordValid(newPass)) {
-              showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+              showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.passwordRequirements)
             } else {
               if (service.resetPassword(currentPass, newPass)) {
                 showAlert(Alert.AlertType.Information, "Success", "Password changed successfully!")

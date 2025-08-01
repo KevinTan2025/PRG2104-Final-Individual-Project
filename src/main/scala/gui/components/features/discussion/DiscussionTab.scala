@@ -138,7 +138,7 @@ class DiscussionTab(
   }
   
   private def updateListView(): Unit = {
-    val items = currentTopicsProperty.value.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies • ${t.likes} likes")
+    val items = currentTopicsProperty.value.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies • ${t.likes} likes")
     topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
   

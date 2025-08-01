@@ -71,7 +71,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    */
   def popularTopics(limit: Int = 10): List[DiscussionTopic] = {
     items.values().asScala.toList
-      .sortBy(topic => topic.likes + topic.getReplyCount)
+      .sortBy(topic => topic.likes + topic.replyCount)
       .reverse
       .take(limit)
   }

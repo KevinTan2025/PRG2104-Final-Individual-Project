@@ -57,5 +57,5 @@ class TabPaneComponent extends BaseComponent {
    * Get the underlying TabPane
    * @return The JavaFX TabPane
    */
-  def getTabPane: TabPane = tabPaneGeneric
+  def tabPane: TabPane = tabPaneGeneric
 }
