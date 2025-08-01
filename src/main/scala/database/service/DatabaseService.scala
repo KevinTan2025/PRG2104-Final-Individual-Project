@@ -52,7 +52,7 @@ class DatabaseService {
     userDAO.findById(userId)
   }
   
-  def getAllUsers: List[User] = {
+  def allUsers: List[User] = {
     userDAO.findAll()
   }
   
@@ -84,16 +84,16 @@ class DatabaseService {
     }
   }
   
-  def getUserCount: Int = {
+  def userCount: Int = {
     userDAO.count()
   }
   
-  def getAdminCount: Int = {
+  def adminCount: Int = {
     userDAO.countAdmins()
   }
   
   def getCommunityMemberCount: Int = {
-    getUserCount - getAdminCount
+    userCount - adminCount
   }
   
   /**
@@ -144,22 +144,22 @@ class DatabaseService {
     foodPostDAO.findById(postId)
   }
   
-  def getAllFoodPosts: List[FoodPost] = {
+  def allFoodPosts: List[FoodPost] = {
     foodPostDAO.findAll()
   }
   
-  def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
+  def foodPostsByType(postType: FoodPostType): List[FoodPost] = {
     foodPostDAO.findByType(postType)
   }
   
-  def getFoodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
+  def foodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
     foodPostDAO.findByStatus(status)
   }
   
-  def getActiveFoodPosts: List[FoodPost] = {
+  def activeFoodPosts: List[FoodPost] = {
     // Get both PENDING and ACCEPTED food posts
-    val pendingPosts = getFoodPostsByStatus(FoodPostStatus.PENDING)
-    val acceptedPosts = getFoodPostsByStatus(FoodPostStatus.ACCEPTED)
+    val pendingPosts = foodPostsByStatus(FoodPostStatus.PENDING)
+    val acceptedPosts = foodPostsByStatus(FoodPostStatus.ACCEPTED)
     (pendingPosts ++ acceptedPosts).sortBy(_.timestamp).reverse
   }
   
@@ -183,7 +183,7 @@ class DatabaseService {
     foodPostDAO.delete(postId)
   }
   
-  def getFoodPostStatistics: (Int, Int, Int) = {
+  def foodPostStatistics: (Int, Int, Int) = {
     foodPostDAO.getStatistics
   }
   
@@ -262,7 +262,7 @@ class DatabaseService {
     }
   }
   
-  def getNotificationsForUser(userId: String): List[Notification] = {
+  def notificationsForUser(userId: String): List[Notification] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         """SELECT * FROM notifications 
@@ -311,7 +311,7 @@ class DatabaseService {
     }
   }
   
-  def getUnreadNotificationCount(userId: String): Int = {
+  def unreadNotificationCount(userId: String): Int = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT COUNT(*) FROM notifications WHERE recipient_id = ? AND is_read = 0",
@@ -396,15 +396,15 @@ class DatabaseService {
     discussionTopicDAO.findById(topicId)
   }
   
-  def getAllDiscussionTopics: List[DiscussionTopic] = {
+  def allDiscussionTopics: List[DiscussionTopic] = {
     discussionTopicDAO.findAll()
   }
   
-  def getDiscussionTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
+  def discussionTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
     discussionTopicDAO.findByCategory(category)
   }
   
-  def getDiscussionTopicsByAuthor(authorId: String): List[DiscussionTopic] = {
+  def discussionTopicsByAuthor(authorId: String): List[DiscussionTopic] = {
     discussionTopicDAO.findByAuthor(authorId)
   }
   
@@ -438,11 +438,11 @@ class DatabaseService {
     discussionReplyDAO.findById(replyId)
   }
   
-  def getRepliesForTopic(topicId: String): List[Reply] = {
+  def repliesForTopic(topicId: String): List[Reply] = {
     discussionReplyDAO.findByTopicId(topicId)
   }
   
-  def getRepliesByAuthor(authorId: String): List[Reply] = {
+  def repliesByAuthor(authorId: String): List[Reply] = {
     discussionReplyDAO.findByAuthor(authorId)
   }
   
@@ -454,7 +454,7 @@ class DatabaseService {
     discussionReplyDAO.delete(replyId)
   }
   
-  def getReplyCountForTopic(topicId: String): Int = {
+  def replyCountForTopic(topicId: String): Int = {
     discussionReplyDAO.getReplyCountForTopic(topicId)
   }
 
@@ -474,7 +474,7 @@ class DatabaseService {
     eventDAO.delete(eventId)
   }
   
-  def getEventById(eventId: String): Option[Event] = {
+  def eventById(eventId: String): Option[Event] = {
     eventDAO.findById(eventId)
   }
   
@@ -486,7 +486,7 @@ class DatabaseService {
     eventDAO.findUpcomingEvents()
   }
   
-  def getEventsByOrganizer(organizerId: String): List[Event] = {
+  def eventsByOrganizer(organizerId: String): List[Event] = {
     eventDAO.findEventsByOrganizer(organizerId)
   }
   

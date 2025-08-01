@@ -22,7 +22,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param postType the type to filter by
    * @return list of food posts of the specified type
    */
-  def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
+  def foodPostsByType(postType: FoodPostType): List[FoodPost] = {
     items.values().asScala.filter(_.postType == postType).toList.sortBy(_.timestamp).reverse
   }
   
@@ -30,7 +30,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * Get active food posts (pending or accepted)
    * @return list of active food posts
    */
-  def getActiveFoodPosts: List[FoodPost] = {
+  def activeFoodPosts: List[FoodPost] = {
     items.values().asScala.filter(_.isActive).toList.sortBy(_.timestamp).reverse
   }
   
@@ -39,7 +39,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param status the status to filter by
    * @return list of food posts with the specified status
    */
-  def getFoodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
+  def foodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
     items.values().asScala.filter(_.status == status).toList.sortBy(_.timestamp).reverse
   }
   

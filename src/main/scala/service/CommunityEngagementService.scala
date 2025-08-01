@@ -110,7 +110,7 @@ class CommunityEngagementService {
       
       if (dbService.saveAnnouncement(announcement)) {
         // Notify all users about new announcement
-        dbService.getAllUsers.foreach { recipient =>
+        dbService.allUsers.foreach { recipient =>
           if (recipient.userId != user.userId) {
             val notification = Notification(
               notificationId = UUID.randomUUID().toString,
@@ -183,7 +183,7 @@ class CommunityEngagementService {
       
       if (dbService.saveFoodPost(post)) {
         // Notify relevant users
-        dbService.getAllUsers.foreach { recipient =>
+        dbService.allUsers.foreach { recipient =>
           if (recipient.userId != user.userId) {
             val notification = Notification(
               notificationId = UUID.randomUUID().toString,
@@ -206,7 +206,7 @@ class CommunityEngagementService {
   }
   
   def getFoodPosts: List[FoodPost] = {
-    val foodPosts = dbService.getActiveFoodPosts
+    val foodPosts = dbService.activeFoodPosts
     // Load comments for each food post
     foodPosts.map { post =>
       val comments = dbService.getComments("foodpost", post.postId)
@@ -215,7 +215,7 @@ class CommunityEngagementService {
   }
   
   def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
-    dbService.getFoodPostsByType(postType)
+    dbService.foodPostsByType(postType)
   }
   
   def searchFoodPosts(searchTerm: String): List[FoodPost] = {
@@ -257,11 +257,11 @@ class CommunityEngagementService {
   }
 
   def getDiscussionTopics: List[DiscussionTopic] = {
-    dbService.getAllDiscussionTopics
+    dbService.allDiscussionTopics
   }
 
   def getTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
-    dbService.getDiscussionTopicsByCategory(category)
+    dbService.discussionTopicsByCategory(category)
   }
 
   def addReplyToTopic(topicId: String, content: String): Boolean = {
@@ -462,11 +462,11 @@ class CommunityEngagementService {
   }
   
   def getEventsByOrganizer(organizerId: String): List[Event] = {
-    dbService.getEventsByOrganizer(organizerId)
+    dbService.eventsByOrganizer(organizerId)
   }
   
   def getEventById(eventId: String): Option[Event] = {
-    dbService.getEventById(eventId)
+    dbService.eventById(eventId)
   }
   
   def updateEvent(event: Event): Boolean = {
@@ -476,7 +476,7 @@ class CommunityEngagementService {
   def deleteEvent(eventId: String): Boolean = {
     currentUser.exists { user =>
       // Check if user is the organizer or an admin
-      val event = dbService.getEventById(eventId)
+      val event = dbService.eventById(eventId)
       event.exists(e => e.organizerId == user.userId || user.hasAdminPrivileges) &&
       dbService.deleteEvent(eventId)
     }
@@ -488,13 +488,13 @@ class CommunityEngagementService {
   
   def getNotifications: List[Notification] = {
     currentUser.map { user =>
-      dbService.getNotificationsForUser(user.userId)
+      dbService.notificationsForUser(user.userId)
     }.getOrElse(List.empty)
   }
   
   def getUnreadNotifications: List[Notification] = {
     currentUser.map { user =>
-      dbService.getNotificationsForUser(user.userId).filter(!_.isRead)
+      dbService.notificationsForUser(user.userId).filter(!_.isRead)
     }.getOrElse(List.empty)
   }
   
@@ -504,7 +504,7 @@ class CommunityEngagementService {
   
   def getUnreadNotificationCount: Int = {
     currentUser.map { user =>
-      dbService.getUnreadNotificationCount(user.userId)
+      dbService.unreadNotificationCount(user.userId)
     }.getOrElse(0)
   }
   
@@ -541,13 +541,13 @@ class CommunityEngagementService {
   }
   
   def getAllUsers: List[User] = {
-    dbService.getAllUsers
+    dbService.allUsers
   }
   
   def getDetailedStatistics: Map[String, Any] = {
     val totalNotifications = getNotifications.size
     val announcements = dbService.getAllAnnouncements
-    val foodPosts = dbService.getAllFoodPosts
+    val foodPosts = dbService.allFoodPosts
     
     val totalComments = announcements.flatMap(_.comments).size + foodPosts.flatMap(_.comments).size
     val totalLikes = announcements.map(_.likes).sum + foodPosts.map(_.likes).sum
@@ -562,7 +562,7 @@ class CommunityEngagementService {
   def getContentForModeration: List[(String, String, String)] = {
     val announcements = dbService.getAllAnnouncements.filter(!_.isModerated)
       .map(a => (a.announcementId, "announcement", a.title))
-    val foodPosts = dbService.getAllFoodPosts.filter(!_.isModerated)
+    val foodPosts = dbService.allFoodPosts.filter(!_.isModerated)
       .map(p => (p.postId, "foodpost", p.title))
     
     announcements ++ foodPosts
@@ -573,12 +573,12 @@ class CommunityEngagementService {
    */
   
   def getDashboardStatistics: Map[String, Any] = {
-    val totalUsers = dbService.getUserCount
-    val adminUsers = dbService.getAdminCount
+    val totalUsers = dbService.userCount
+    val adminUsers = dbService.adminCount
     val communityMembers = dbService.getCommunityMemberCount
     val activeAnnouncements = dbService.getAllAnnouncements.size
-    val foodStats = dbService.getFoodPostStatistics
-    val notificationStats = currentUser.map(u => dbService.getUnreadNotificationCount(u.userId)).getOrElse(0)
+    val foodStats = dbService.foodPostStatistics
+    val notificationStats = currentUser.map(u => dbService.unreadNotificationCount(u.userId)).getOrElse(0)
     
     Map(
       "totalUsers" -> totalUsers,

@@ -30,7 +30,7 @@ class ActivityFeedService {
       }
       
       // Get food posts
-      val foodPostItems = dbService.getAllFoodPosts.filter(_.status == FoodPostStatus.PENDING).map { foodPost =>
+      val foodPostItems = dbService.allFoodPosts.filter(_.status == FoodPostStatus.PENDING).map { foodPost =>
         val authorName = dbService.findUserById(foodPost.authorId)
           .map(_.name)
           .getOrElse("Unknown User")
@@ -249,7 +249,7 @@ class ActivityFeedService {
   def getActivityFeedStats(): Map[String, Int] = {
     try {
       val announcements = dbService.getAllAnnouncements.size
-      val foodPosts = dbService.getAllFoodPosts.size
+      val foodPosts = dbService.allFoodPosts.size
       val events = getUpcomingEvents().size
       val discussions = getActiveDiscussionTopics().size
       

@@ -22,7 +22,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * @return list of all food stock items
    */
   def getAllFoodStocks: List[FoodStock] = {
-    getAll.sortBy(_.foodName)
+    all.sortBy(_.foodName)
   }
   
   /**
@@ -170,7 +170,7 @@ class FoodStockManager extends Manager[FoodStock] {
    * Get all stock movements across all items
    * @return list of all stock movements
    */
-  def getAllStockMovements: List[StockMovement] = {
+  def allStockMovements: List[StockMovement] = {
     items.values().asScala.flatMap(_.stockHistory).toList.sortBy(_.timestamp).reverse
   }
   
@@ -179,8 +179,8 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param userId the user ID
    * @return list of stock movements performed by the user
    */
-  def getStockMovementsByUser(userId: String): List[StockMovement] = {
-    getAllStockMovements.filter(_.userId == userId)
+  def stockMovementsByUser(userId: String): List[StockMovement] = {
+    allStockMovements.filter(_.userId == userId)
   }
   
   /**
@@ -189,8 +189,8 @@ class FoodStockManager extends Manager[FoodStock] {
    * @param endDate end date
    * @return list of stock movements within the date range
    */
-  def getStockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
-    getAllStockMovements.filter { movement =>
+  def stockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
+    allStockMovements.filter { movement =>
       movement.timestamp.isAfter(startDate) && movement.timestamp.isBefore(endDate)
     }
   }

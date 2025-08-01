@@ -22,7 +22,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return list of all stock movements
    */
   def getAllStockMovements: List[StockMovement] = {
-    getAll.sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
+    all.sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
   /**
@@ -31,7 +31,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return list of stock movements for the specified stock
    */
   def getMovementsByStockId(stockId: String): List[StockMovement] = {
-    getAll.filter(_.stockId == stockId).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
+    all.filter(_.stockId == stockId).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
   /**
@@ -40,7 +40,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return list of stock movements by the specified user
    */
   def getMovementsByUserId(userId: String): List[StockMovement] = {
-    getAll.filter(_.userId == userId).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
+    all.filter(_.userId == userId).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
   /**
@@ -50,7 +50,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return list of stock movements within the date range
    */
   def getMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
-    getAll.filter { movement =>
+    all.filter { movement =>
       movement.timestamp.isAfter(startDate.minusSeconds(1)) && 
       movement.timestamp.isBefore(endDate.plusSeconds(1))
     }.sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
@@ -62,7 +62,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return list of stock movements with the specified action type
    */
   def getMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
-    getAll.filter(_.actionType == actionType).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
+    all.filter(_.actionType == actionType).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
   /**
@@ -72,7 +72,7 @@ class StockMovementManager extends Manager[StockMovement] {
    */
   def getRecentMovements(days: Int = 7): List[StockMovement] = {
     val cutoffDate = LocalDateTime.now().minusDays(days)
-    getAll.filter(_.timestamp.isAfter(cutoffDate)).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
+    all.filter(_.timestamp.isAfter(cutoffDate)).sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
   /**
@@ -80,7 +80,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return tuple of (total movements, additions, removals, adjustments)
    */
   def getMovementStatistics: (Int, Int, Int, Int) = {
-    val movements = getAll
+    val movements = all
     val total = movements.length
     val additions = movements.count(_.actionType == StockActionType.STOCK_IN)
     val removals = movements.count(_.actionType == StockActionType.STOCK_OUT)
@@ -94,7 +94,7 @@ class StockMovementManager extends Manager[StockMovement] {
    * @return list of (userId, movement count) pairs
    */
   def getTopUsersByActivity(limit: Int = 10): List[(String, Int)] = {
-    getAll
+    all
       .groupBy(_.userId)
       .map { case (userId, movements) => (userId, movements.length) }
       .toList
@@ -130,7 +130,7 @@ class StockMovementManager extends Manager[StockMovement] {
    */
   def cleanupOldMovements(days: Int = 365): Int = {
     val cutoffDate = LocalDateTime.now().minusDays(days)
-    val oldMovements = getAll.filter(_.timestamp.isBefore(cutoffDate))
+    val oldMovements = all.filter(_.timestamp.isBefore(cutoffDate))
     oldMovements.foreach(movement => remove(movement.movementId))
     oldMovements.length
   }
@@ -142,12 +142,12 @@ class StockMovementManager extends Manager[StockMovement] {
   def getProblematicMovements: List[StockMovement] = {
     // This would require cross-referencing with stock quantities
     // For now, return removals with high quantities that might be problematic
-    getAll.filter { movement =>
+    all.filter { movement =>
       movement.actionType == StockActionType.STOCK_OUT && movement.quantity > 100
     }.sortBy(_.timestamp)(Ordering[LocalDateTime].reverse)
   }
   
   override def toString: String = {
-    s"StockMovementManager(${getAll.length} movements)"
+    s"StockMovementManager(${all.length} movements)"
   }
 }

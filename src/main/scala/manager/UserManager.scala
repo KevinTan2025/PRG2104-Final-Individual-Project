@@ -23,7 +23,7 @@ trait Manager[T] {
     Option(items.get(id))
   }
   
-  def getAll: List[T] = {
+  def all: List[T] = {
     items.values().asScala.toList
   }
   
@@ -78,7 +78,7 @@ class UserManager extends Manager[User] {
    * @param username the username to search for
    * @return the user if found, None otherwise
    */
-  def getUserByUsername(username: String): Option[User] = {
+  def userByUsername(username: String): Option[User] = {
     items.values().asScala.find(_.username == username)
   }
   
@@ -87,7 +87,7 @@ class UserManager extends Manager[User] {
    * @param email the email to search for
    * @return the user if found, None otherwise
    */
-  def getUserByEmail(email: String): Option[User] = {
+  def userByEmail(email: String): Option[User] = {
     items.values().asScala.find(_.email == email)
   }
   
@@ -95,7 +95,7 @@ class UserManager extends Manager[User] {
    * Get all admin users
    * @return list of admin users
    */
-  def getAdminUsers: List[AdminUser] = {
+  def adminUsers: List[AdminUser] = {
     items.values().asScala.collect {
       case admin: AdminUser => admin
     }.toList
@@ -105,7 +105,7 @@ class UserManager extends Manager[User] {
    * Get all community members
    * @return list of community members
    */
-  def getCommunityMembers: List[CommunityMember] = {
+  def communityMembers: List[CommunityMember] = {
     items.values().asScala.collect {
       case member: CommunityMember => member
     }.toList
