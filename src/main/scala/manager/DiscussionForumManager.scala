@@ -22,7 +22,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    * @param category the category to filter by
    * @return list of topics in the specified category
    */
-  def getTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
+  def topicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
     items.values().asScala.filter(_.category == category).toList.sortBy(_.timestamp).reverse
   }
   
@@ -30,7 +30,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    * Get active topics (not closed)
    * @return list of active topics
    */
-  def getActiveTopics: List[DiscussionTopic] = {
+  def activeTopics: List[DiscussionTopic] = {
     items.values().asScala.filter(_.isActive).toList.sortBy(_.timestamp).reverse
   }
   
@@ -38,7 +38,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    * Get pinned topics
    * @return list of pinned topics
    */
-  def getPinnedTopics: List[DiscussionTopic] = {
+  def pinnedTopics: List[DiscussionTopic] = {
     items.values().asScala.filter(_.isPinned).toList.sortBy(_.timestamp).reverse
   }
   
@@ -47,7 +47,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    * @param authorId the author ID to filter by
    * @return list of topics by the specified author
    */
-  def getTopicsByAuthor(authorId: String): List[DiscussionTopic] = {
+  def topicsByAuthor(authorId: String): List[DiscussionTopic] = {
     items.values().asScala.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
   }
   
@@ -69,7 +69,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    * @param limit maximum number of topics to return
    * @return list of popular topics
    */
-  def getPopularTopics(limit: Int = 10): List[DiscussionTopic] = {
+  def popularTopics(limit: Int = 10): List[DiscussionTopic] = {
     items.values().asScala.toList
       .sortBy(topic => topic.likes + topic.getReplyCount)
       .reverse
@@ -81,7 +81,7 @@ class DiscussionForumManager extends Manager[DiscussionTopic] {
    * @param days number of days to look back
    * @return list of recent topics
    */
-  def getRecentTopics(days: Int = 7): List[DiscussionTopic] = {
+  def recentTopics(days: Int = 7): List[DiscussionTopic] = {
     val cutoffDate = LocalDateTime.now().minusDays(days)
     items.values().asScala.filter(_.timestamp.isAfter(cutoffDate)).toList.sortBy(_.timestamp).reverse
   }

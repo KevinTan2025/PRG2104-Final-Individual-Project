@@ -21,7 +21,7 @@ class EventManager extends Manager[Event] {
    * Get upcoming events
    * @return list of upcoming events
    */
-  def getUpcomingEvents: List[Event] = {
+  def upcomingEvents: List[Event] = {
     val now = LocalDateTime.now()
     items.values().asScala.filter { event =>
       event.status == EventStatus.UPCOMING && event.startDateTime.isAfter(now)
@@ -32,7 +32,7 @@ class EventManager extends Manager[Event] {
    * Get ongoing events
    * @return list of ongoing events
    */
-  def getOngoingEvents: List[Event] = {
+  def ongoingEvents: List[Event] = {
     items.values().asScala.filter(_.status == EventStatus.ONGOING).toList.sortBy(_.startDateTime)
   }
   
@@ -41,7 +41,7 @@ class EventManager extends Manager[Event] {
    * @param organizerId the organizer ID to filter by
    * @return list of events organized by the specified user
    */
-  def getEventsByOrganizer(organizerId: String): List[Event] = {
+  def eventsByOrganizer(organizerId: String): List[Event] = {
     items.values().asScala.filter(_.organizerId == organizerId).toList.sortBy(_.startDateTime).reverse
   }
   
@@ -50,7 +50,7 @@ class EventManager extends Manager[Event] {
    * @param userId the user ID
    * @return list of events the user is attending
    */
-  def getEventsByParticipant(userId: String): List[Event] = {
+  def eventsByParticipant(userId: String): List[Event] = {
     items.values().asScala.filter(_.participants.contains(userId)).toList.sortBy(_.startDateTime)
   }
   
@@ -73,7 +73,7 @@ class EventManager extends Manager[Event] {
    * @param location the location to filter by
    * @return list of events in the specified location
    */
-  def getEventsByLocation(location: String): List[Event] = {
+  def eventsByLocation(location: String): List[Event] = {
     items.values().asScala.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.startDateTime)
   }
   
@@ -83,7 +83,7 @@ class EventManager extends Manager[Event] {
    * @param endDate the end date
    * @return list of events within the date range
    */
-  def getEventsInDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[Event] = {
+  def eventsInDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[Event] = {
     items.values().asScala.filter { event =>
       !event.startDateTime.isBefore(startDate) && !event.startDateTime.isAfter(endDate)
     }.toList.sortBy(_.startDateTime)
@@ -201,7 +201,7 @@ class EventManager extends Manager[Event] {
    * Get event statistics
    * @return tuple of (total events, upcoming events, completed events, total participants)
    */
-  def getStatistics: (Int, Int, Int, Int) = {
+  def statistics: (Int, Int, Int, Int) = {
     val allEvents = items.values().asScala.toList
     val upcomingEvents = allEvents.count(_.status == EventStatus.UPCOMING)
     val completedEvents = allEvents.count(_.status == EventStatus.COMPLETED)

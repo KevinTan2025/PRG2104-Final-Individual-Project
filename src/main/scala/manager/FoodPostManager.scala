@@ -48,7 +48,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param authorId the author ID to filter by
    * @return list of food posts by the specified author
    */
-  def getFoodPostsByAuthor(authorId: String): List[FoodPost] = {
+  def foodPostsByAuthor(authorId: String): List[FoodPost] = {
     items.values().asScala.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
   }
   
@@ -71,7 +71,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param location the location to filter by
    * @return list of food posts in the specified location
    */
-  def getFoodPostsByLocation(location: String): List[FoodPost] = {
+  def foodPostsByLocation(location: String): List[FoodPost] = {
     items.values().asScala.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.timestamp).reverse
   }
   
@@ -80,7 +80,7 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param hours number of hours to look ahead
    * @return list of food posts expiring soon
    */
-  def getExpiringSoon(hours: Int = 24): List[FoodPost] = {
+  def expiringSoon(hours: Int = 24): List[FoodPost] = {
     val cutoffTime = LocalDateTime.now().plusHours(hours)
     items.values().asScala.filter { post =>
       post.expiryDate.exists(_.isBefore(cutoffTime)) && post.isActive

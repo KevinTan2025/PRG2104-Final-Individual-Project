@@ -19,10 +19,10 @@ class ActivityFeedService {
    * @param userId optional user ID for personalized content (likes, etc.)
    * @return List of activity feed items sorted by timestamp (newest first)
    */
-  def getActivityFeed(limit: Int = 50, userId: Option[String] = None): List[ActivityFeedItem] = {
+  def activityFeed(limit: Int = 50, userId: Option[String] = None): List[ActivityFeedItem] = {
     try {
       // Get announcements
-      val announcementItems = dbService.getAllAnnouncements.filter(_.isActive).map { announcement =>
+      val announcementItems = dbService.allAnnouncements.filter(_.isActive).map { announcement =>
         val authorName = dbService.findUserById(announcement.authorId)
           .map(_.name)
           .getOrElse("Unknown User")
@@ -38,7 +38,7 @@ class ActivityFeedService {
       }
       
       // Get events (upcoming events only)
-      val eventItems = getUpcomingEvents().map { event =>
+      val eventItems = upcomingEvents().map { event =>
         val organizerName = dbService.findUserById(event.organizerId)
           .map(_.name)
           .getOrElse("Unknown User")
@@ -46,7 +46,7 @@ class ActivityFeedService {
       }
       
       // Get discussion topics
-      val discussionItems = getActiveDiscussionTopics().map { topic =>
+      val discussionItems = activeDiscussionTopics().map { topic =>
         val authorName = dbService.findUserById(topic.authorId)
           .map(_.name)
           .getOrElse("Unknown User")
@@ -69,8 +69,8 @@ class ActivityFeedService {
   /**
    * Get activity feed filtered by type
    */
-  def getActivityFeedByType(feedType: ActivityFeedType, limit: Int = 20, userId: Option[String] = None): List[ActivityFeedItem] = {
-    getActivityFeed(limit = 100, userId)
+  def activityFeedByType(feedType: ActivityFeedType, limit: Int = 20, userId: Option[String] = None): List[ActivityFeedItem] = {
+    activityFeed(limit = 100, userId)
       .filter(_.feedType == feedType)
       .take(limit)
   }
@@ -182,7 +182,7 @@ class ActivityFeedService {
         case _ => "unknown"
       }
       
-      dbService.getComments(contentTypeString, itemId)
+      dbService.comments(contentTypeString, itemId)
     } catch {
       case e: Exception =>
         println(s"Error getting comments: ${e.getMessage}")
@@ -194,7 +194,7 @@ class ActivityFeedService {
    * Search activity feed
    */
   def searchActivityFeed(searchTerm: String, feedTypes: List[ActivityFeedType] = List.empty): List[ActivityFeedItem] = {
-    val allItems = getActivityFeed(limit = 200)
+    val allItems = activityFeed(limit = 200)
     
     val filteredByType = if (feedTypes.nonEmpty) {
       allItems.filter(item => feedTypes.contains(item.feedType))
@@ -212,10 +212,10 @@ class ActivityFeedService {
   /**
    * Get trending items (most liked in the last 24 hours)
    */
-  def getTrendingItems(limit: Int = 10): List[ActivityFeedItem] = {
+  def trendingItems(limit: Int = 10): List[ActivityFeedItem] = {
     val oneDayAgo = LocalDateTime.now().minusDays(1)
     
-    getActivityFeed(limit = 100)
+    activityFeed(limit = 100)
       .filter(_.timestamp.isAfter(oneDayAgo))
       .sortBy(_.likes)
       .reverse
@@ -225,19 +225,19 @@ class ActivityFeedService {
   /**
    * Get recent activity for a specific user
    */
-  def getUserActivity(userId: String, limit: Int = 20): List[ActivityFeedItem] = {
-    getActivityFeed(limit = 200)
+  def userActivity(userId: String, limit: Int = 20): List[ActivityFeedItem] = {
+    activityFeed(limit = 200)
       .filter(_.authorId == userId)
       .take(limit)
   }
   
   // Helper methods for getting data not yet in DatabaseService
   
-  private def getUpcomingEvents(): List[Event] = {
+  private def upcomingEvents(): List[Event] = {
     dbService.upcomingEvents
   }
   
-  private def getActiveDiscussionTopics(): List[DiscussionTopic] = {
+  private def activeDiscussionTopics(): List[DiscussionTopic] = {
     // TODO: This should be replaced with proper database call when DiscussionDAO is implemented
     // For now, return empty list or mock data
     List.empty
@@ -246,12 +246,12 @@ class ActivityFeedService {
   /**
    * Get activity feed statistics
    */
-  def getActivityFeedStats(): Map[String, Int] = {
+  def activityFeedStats(): Map[String, Int] = {
     try {
-      val announcements = dbService.getAllAnnouncements.size
+      val announcements = dbService.allAnnouncements.size
       val foodPosts = dbService.allFoodPosts.size
-      val events = getUpcomingEvents().size
-      val discussions = getActiveDiscussionTopics().size
+      val events = upcomingEvents().size
+      val discussions = activeDiscussionTopics().size
       
       Map(
         "announcements" -> announcements,
