@@ -1,7 +1,7 @@
 package gui.components.layout
 
 import javafx.fxml.{FXML, FXMLLoader}
-import javafx.scene.control.{Label, TabPane}
+import javafx.scene.control.{Label, Tab, TabPane}
 import javafx.scene.layout.VBox
 import scalafx.scene.layout.Region
 import scalafx.Includes._
@@ -24,14 +24,14 @@ class MainTabPane extends BaseComponent {
   
   // FXML injected controls
   @FXML private var tabPaneMain: TabPane = _
-  @FXML private var tabDashboard = null
-  @FXML private var tabAnnouncements = null
-  @FXML private var tabFoodSharing = null
-  @FXML private var tabFoodStock = null
-  @FXML private var tabDiscussion = null
-  @FXML private var tabEvents = null
-  @FXML private var tabNotifications = null
-  @FXML private var tabAppInfo = null
+  @FXML private var tabDashboard: Tab = _
+  @FXML private var tabAnnouncements: Tab = _
+  @FXML private var tabFoodSharing: Tab = _
+  @FXML private var tabFoodStock: Tab = _
+  @FXML private var tabDiscussion: Tab = _
+  @FXML private var tabEvents: Tab = _
+  @FXML private var tabNotifications: Tab = _
+  @FXML private var tabAppInfo: Tab = _
   
   // Content containers
   @FXML private var vboxDashboardContent: VBox = _

@@ -1,7 +1,7 @@
 package gui.components.layout
 
 import javafx.fxml.{FXML, FXMLLoader}
-import javafx.scene.control.{Label, TabPane}
+import javafx.scene.control.{Label, Tab, TabPane}
 import javafx.scene.layout.VBox
 import scalafx.scene.layout.Region
 import scalafx.Includes._
@@ -24,13 +24,13 @@ class AnonymousMainTabPane(
   
   // FXML injected controls
   @FXML private var tabPaneAnonymous: TabPane = _
-  @FXML private var tabAnonymousDashboard = null
-  @FXML private var tabAnonymousAnnouncements = null
-  @FXML private var tabAnonymousFoodSharing = null
-  @FXML private var tabAnonymousFoodStock = null
-  @FXML private var tabAnonymousDiscussion = null
-  @FXML private var tabAnonymousEvents = null
-  @FXML private var tabAnonymousAppInfo = null
+  @FXML private var tabAnonymousDashboard: Tab = _
+  @FXML private var tabAnonymousAnnouncements: Tab = _
+  @FXML private var tabAnonymousFoodSharing: Tab = _
+  @FXML private var tabAnonymousFoodStock: Tab = _
+  @FXML private var tabAnonymousDiscussion: Tab = _
+  @FXML private var tabAnonymousEvents: Tab = _
+  @FXML private var tabAnonymousAppInfo: Tab = _
   
   // Content containers
   @FXML private var vboxAnonymousDashboardContent: VBox = _

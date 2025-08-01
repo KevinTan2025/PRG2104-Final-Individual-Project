@@ -3,8 +3,10 @@ package gui.dialogs.auth
 import javafx.fxml.{FXML, Initializable}
 import javafx.scene.control.{Button, Label}
 import javafx.event.ActionEvent
+import scalafx.Includes._
 import java.net.URL
 import java.util.ResourceBundle
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Welcome screen controller
@@ -20,8 +22,8 @@ class WelcomeAuthDialogController extends Initializable {
   @FXML private var btnWelcomeRegister: Button = _
   @FXML private var btnWelcomeGuest: Button = _
   
-  // Parent controller reference
-  private var parentController: Option[AuthDialogController] = None
+  // Parent controller reference using AtomicReference for thread-safe mutable state
+  private val parentController: AtomicReference[Option[AuthDialogController]] = new AtomicReference(None)
   
   /**
    * Initialization method
@@ -36,7 +38,7 @@ class WelcomeAuthDialogController extends Initializable {
    * @param controller Parent controller instance
    */
   def setParentController(controller: AuthDialogController): Unit = {
-    parentController = Some(controller)
+    parentController.set(Some(controller))
   }
   
   /**
@@ -52,7 +54,7 @@ class WelcomeAuthDialogController extends Initializable {
    */
   @FXML
   def handleWelcomeLogin(event: ActionEvent): Unit = {
-    parentController.foreach(_.showLoginMode())
+    parentController.get().foreach(_.showLoginMode())
   }
   
   /**
@@ -60,7 +62,7 @@ class WelcomeAuthDialogController extends Initializable {
    */
   @FXML
   def handleWelcomeRegister(event: ActionEvent): Unit = {
-    parentController.foreach(_.showRegisterMode())
+    parentController.get().foreach(_.showRegisterMode())
   }
   
   /**
@@ -68,6 +70,6 @@ class WelcomeAuthDialogController extends Initializable {
    */
   @FXML
   def handleWelcomeGuest(event: ActionEvent): Unit = {
-    parentController.foreach(_.setAuthResult(AuthResult.ContinueAsGuest))
+    parentController.get().foreach(_.setAuthResult(AuthResult.ContinueAsGuest))
   }
 }

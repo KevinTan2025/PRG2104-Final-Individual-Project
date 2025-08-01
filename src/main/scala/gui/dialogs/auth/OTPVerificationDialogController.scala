@@ -13,6 +13,7 @@ import scalafx.Includes._
 import gui.utils.GuiUtils
 import java.net.URL
 import java.util.ResourceBundle
+import java.util.concurrent.atomic.AtomicReference
 import scala.util.Random
 
 /**
@@ -39,10 +40,10 @@ class OTPVerificationDialogController extends Initializable {
   private val onVerificationSuccessProperty = ObjectProperty[() => Unit](() => {})
   private val onVerificationFailureProperty = ObjectProperty[() => Unit](() => {})
   
-  // OTP related
-  private var otpCode: String = _
-  private var userEmail: String = _
-  private var parentStage: Stage = _
+  // OTP related using AtomicReference for thread-safe mutable state
+  private val otpCode: AtomicReference[Option[String]] = new AtomicReference(None)
+  private val userEmail: AtomicReference[Option[String]] = new AtomicReference(None)
+  private val parentStage: AtomicReference[Option[Stage]] = new AtomicReference(None)
   
   /**
    * Initialization method
@@ -58,8 +59,8 @@ class OTPVerificationDialogController extends Initializable {
    * @param parent Parent window
    */
   def setEmailAndParent(email: String, parent: Stage): Unit = {
-    userEmail = email
-    parentStage = parent
+    userEmail.set(Some(email))
+    parentStage.set(Some(parent))
     lblUserEmail.text = email
     generateNewOTP()
   }
@@ -136,7 +137,7 @@ class OTPVerificationDialogController extends Initializable {
    */
   private def generateNewOTP(): Unit = {
     val random = new Random()
-    otpCode = (100000 + random.nextInt(900000)).toString
+    otpCode.set(Some((100000 + random.nextInt(900000)).toString))
   }
   
   /**
@@ -147,7 +148,7 @@ class OTPVerificationDialogController extends Initializable {
       val emailDialog = new Stage {
         title = "📧 Email Notification"
         initModality(Modality.ApplicationModal)
-        initOwner(parentStage)
+        parentStage.get().foreach(initOwner(_))
         resizable = false
       }
       
@@ -234,7 +235,7 @@ class OTPVerificationDialogController extends Initializable {
       return
     }
     
-    if (enteredOTP == otpCode) {
+    if (otpCode.get().contains(enteredOTP)) {
       // Verification successful
       isVerifiedProperty.value = true
       lblVerificationStatus.text = "✓ Verification successful!"

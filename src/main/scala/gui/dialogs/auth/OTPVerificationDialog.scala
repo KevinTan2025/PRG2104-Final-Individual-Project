@@ -11,6 +11,7 @@ import scalafx.scene.layout.{VBox, HBox}
 import scalafx.geometry.{Pos, Insets}
 import scalafx.Includes._
 import gui.utils.GuiUtils
+import java.util.concurrent.atomic.AtomicReference
 import scala.util.Random
 
 /**
@@ -27,8 +28,8 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
     resizable = false
   }
   
-  // Controller reference
-  private var controller: Option[OTPVerificationDialogController] = None
+  // Controller reference using AtomicReference for thread-safe mutable state
+  private val controller: AtomicReference[Option[OTPVerificationDialogController]] = new AtomicReference(None)
   
   // Verification status
   private val isVerifiedProperty = BooleanProperty(false)
@@ -44,8 +45,8 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
       val root: Parent = loader.load()
       
       // Get controller and set parameters
-      controller = Some(loader.getController[OTPVerificationDialogController]())
-      controller.foreach { ctrl =>
+      controller.set(Some(loader.getController[OTPVerificationDialogController]()))
+      controller.get().foreach { ctrl =>
         ctrl.setEmailAndParent(userEmail, parentStage)
         ctrl.setVerificationCallbacks(onSuccess, onFailure)
         ctrl.showOTPDialog(userEmail, parentStage, onSuccess, onFailure)
@@ -66,7 +67,7 @@ class OTPVerificationDialog(parentStage: Stage, userEmail: String) {
    * @return Whether verified
    */
   def isOTPVerified: Boolean = {
-    controller.map(_.isOTPVerified).getOrElse(false)
+    controller.get().map(_.isOTPVerified).getOrElse(false)
   }
   
 

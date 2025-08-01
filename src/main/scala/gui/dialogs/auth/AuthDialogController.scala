@@ -8,6 +8,7 @@ import scalafx.beans.property.ObjectProperty
 import scalafx.Includes._
 import javafx.stage.WindowEvent
 import gui.utils.GuiUtils
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Authentication mode enumeration
@@ -52,9 +53,9 @@ class AuthDialogController(parentStage: Stage) {
   }
   
   // Three sub-dialog controllers
-  private var welcomeController: Option[WelcomeAuthDialogController] = None
-  private var loginController: Option[LoginAuthDialogController] = None
-  private var registerController: Option[RegisterAuthDialogController] = None
+  private val welcomeController = new AtomicReference[Option[WelcomeAuthDialogController]](None)
+  private val loginController = new AtomicReference[Option[LoginAuthDialogController]](None)
+  private val registerController = new AtomicReference[Option[RegisterAuthDialogController]](None)
   
   /**
    * Show authentication dialog
@@ -90,8 +91,8 @@ class AuthDialogController(parentStage: Stage) {
       val root: Parent = loader.load()
       
       // Get controller and set callback
-      welcomeController = Some(loader.getController[WelcomeAuthDialogController]())
-      welcomeController.foreach { controller =>
+      welcomeController.set(Some(loader.getController[WelcomeAuthDialogController]()))
+      welcomeController.get().foreach { controller =>
         controller.setParentController(this)
       }
       
@@ -114,8 +115,8 @@ class AuthDialogController(parentStage: Stage) {
       val root: Parent = loader.load()
       
       // Get controller and set callback
-      loginController = Some(loader.getController[LoginAuthDialogController]())
-      loginController.foreach { controller =>
+      loginController.set(Some(loader.getController[LoginAuthDialogController]()))
+      loginController.get().foreach { controller =>
         controller.setParentController(this)
       }
       
@@ -138,8 +139,8 @@ class AuthDialogController(parentStage: Stage) {
       val root: Parent = loader.load()
       
       // Get controller and set callback
-      registerController = Some(loader.getController[RegisterAuthDialogController]())
-      registerController.foreach { controller =>
+      registerController.set(Some(loader.getController[RegisterAuthDialogController]()))
+      registerController.get().foreach { controller =>
         controller.setParentController(this)
       }
       

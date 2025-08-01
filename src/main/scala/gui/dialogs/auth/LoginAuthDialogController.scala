@@ -8,6 +8,7 @@ import scalafx.Includes._
 import gui.utils.GuiUtils
 import java.net.URL
 import java.util.ResourceBundle
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * Login screen controller
@@ -27,8 +28,8 @@ class LoginAuthDialogController extends Initializable {
   @FXML private var lblLoginDemo: Label = _
   @FXML private var btnLoginToRegister: Button = _
   
-  // Parent controller reference
-  private var parentController: Option[AuthDialogController] = None
+  // Parent controller reference using AtomicReference for thread-safe mutable state
+  private val parentController: AtomicReference[Option[AuthDialogController]] = new AtomicReference(None)
   
   // Community service instance
   private val communityService = service.CommunityEngagementService.getInstance
@@ -46,7 +47,7 @@ class LoginAuthDialogController extends Initializable {
    * @param controller Parent controller instance
    */
   def setParentController(controller: AuthDialogController): Unit = {
-    parentController = Some(controller)
+    parentController.set(Some(controller))
   }
   
   /**
@@ -162,7 +163,7 @@ class LoginAuthDialogController extends Initializable {
    */
   @FXML
   def handleLoginBack(event: ActionEvent): Unit = {
-    parentController.foreach(_.showWelcomeMode())
+    parentController.get().foreach(_.showWelcomeMode())
   }
   
   /**
@@ -192,7 +193,7 @@ class LoginAuthDialogController extends Initializable {
         // Delay closing dialog
         Platform.runLater {
           Thread.sleep(500)
-          parentController.foreach(_.setAuthResult(AuthResult.LoginSuccess))
+          parentController.get().foreach(_.setAuthResult(AuthResult.LoginSuccess))
         }
       } else {
         // Login failed
@@ -218,6 +219,6 @@ class LoginAuthDialogController extends Initializable {
    */
   @FXML
   def handleLoginToRegister(event: ActionEvent): Unit = {
-    parentController.foreach(_.showRegisterMode())
+    parentController.get().foreach(_.showRegisterMode())
   }
 }
