@@ -186,7 +186,7 @@ class FoodPostDetailsDialog(foodPost: FoodPost, onUpdate: () => Unit) {
     }
     
     // Create buttons list functionally
-    val acceptButton = if (foodPost.status == FoodPostStatus.PENDING && service.getCurrentUser.isDefined) {
+    val acceptButton = if (foodPost.status == FoodPostStatus.PENDING && service.currentUserInfo.isDefined) {
       Some(new Button("Accept Post") {
         onAction = _ => {
           if (service.acceptFoodPost(foodPost.postId)) {
@@ -201,7 +201,7 @@ class FoodPostDetailsDialog(foodPost: FoodPost, onUpdate: () => Unit) {
       })
     } else None
     
-    val completeButton = if (foodPost.status == FoodPostStatus.ACCEPTED && service.getCurrentUser.isDefined) {
+    val completeButton = if (foodPost.status == FoodPostStatus.ACCEPTED && service.currentUserInfo.isDefined) {
       Some(new Button("Mark Complete") {
         onAction = _ => {
           if (service.completeFoodPost(foodPost.postId)) {

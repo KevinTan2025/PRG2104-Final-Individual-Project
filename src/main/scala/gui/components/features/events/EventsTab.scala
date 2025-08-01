@@ -164,7 +164,7 @@ class EventsTab(
   }
   
   private def handleViewMyEvents(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val myEvents = service.myEvents(user.userId)
         val items = myEvents.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")

@@ -97,7 +97,7 @@ class AnonymousMenuBarComponent(
    */
   private def showAuthDialog(): Unit = {
     try {
-      GuiUtils.getMainStage match {
+      GuiUtils.mainStage match {
         case Some(mainStage) =>
           val authDialog = new gui.dialogs.auth.FacebookStyleAuthDialog(mainStage)
           authDialog.show() match {
@@ -128,7 +128,7 @@ class AnonymousMenuBarComponent(
    */
   private def showRegisterDialog(): Unit = {
     try {
-      GuiUtils.getMainStage match {
+      GuiUtils.mainStage match {
         case Some(mainStage) =>
           val authDialog = new gui.dialogs.auth.FacebookStyleAuthDialog(mainStage)
           authDialog.show(gui.dialogs.auth.AuthMode.RegisterMode) match {

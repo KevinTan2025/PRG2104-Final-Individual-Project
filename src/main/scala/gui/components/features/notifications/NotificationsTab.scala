@@ -112,7 +112,7 @@ class NotificationsTab extends BaseTabComponent {
   }
   
   private def handleMarkAllAsRead(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val count = service.markAllNotificationsAsRead
         GuiUtils.showInfo("Success", s"Marked $count notifications as read.")

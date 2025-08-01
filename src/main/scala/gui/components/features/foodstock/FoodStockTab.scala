@@ -208,7 +208,7 @@ class FoodStockTab extends BaseTabComponent {
   private def updateStocksList(stocks: List[FoodStock]): Unit = {
     if (stocksList != null) {
       val items = stocks.map { stock =>
-        val status = stock.getStockStatus
+        val status = stock.stockStatus
         val statusIcon = status match {
           case StockStatus.IN_STOCK => "✅"
           case StockStatus.LOW_STOCK => "⚠️"
@@ -216,7 +216,7 @@ class FoodStockTab extends BaseTabComponent {
           case StockStatus.EXPIRED => "💀"
         }
         
-        val expiryInfo = stock.getDaysUntilExpiry match {
+        val expiryInfo = stock.daysUntilExpiry match {
           case Some(days) if days <= 0 => " (EXPIRED)"
           case Some(days) if days <= 7 => s" (${days}d left)"
           case Some(days) => s" (${days}d left)"
@@ -302,7 +302,7 @@ class FoodStockTab extends BaseTabComponent {
         val historyText = if (movements.nonEmpty) {
           movements.map { movement =>
             s"${movement.timestamp.toLocalDate} ${movement.timestamp.toLocalTime.toString.take(8)} - " +
-            s"${movement.getDescription} by ${movement.userId}"
+            s"${movement.description} by ${movement.userId}"
           }.mkString("\n")
         } else {
           "No movement history available."
@@ -331,7 +331,7 @@ class FoodStockTab extends BaseTabComponent {
     // Filter by status
     val filteredStocks = if (status != "All") {
       val statusEnum = StockStatus.valueOf(status)
-      categoryFiltered.filter(_.getStockStatus == statusEnum)
+      categoryFiltered.filter(_.stockStatus == statusEnum)
     } else {
       categoryFiltered
     }
@@ -391,7 +391,7 @@ class FoodStockTab extends BaseTabComponent {
         
         val statusFiltered = if (status != "All") {
           val statusEnum = StockStatus.valueOf(status)
-          categoryFiltered.filter(_.getStockStatus == statusEnum)
+          categoryFiltered.filter(_.stockStatus == statusEnum)
         } else {
           categoryFiltered
         }
