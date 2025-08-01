@@ -92,7 +92,7 @@ class DatabaseService {
     userDAO.countAdmins()
   }
   
-  def getCommunityMemberCount: Int = {
+  def communityMemberCount: Int = {
     userCount - adminCount
   }
   
@@ -108,7 +108,7 @@ class DatabaseService {
     announcementDAO.findById(announcementId)
   }
   
-  def getAllAnnouncements: List[Announcement] = {
+  def allAnnouncements: List[Announcement] = {
     announcementDAO.findAll()
   }
   
@@ -128,7 +128,7 @@ class DatabaseService {
     announcementDAO.delete(announcementId)
   }
   
-  def getAnnouncementCount: Int = {
+  def announcementCount: Int = {
     announcementDAO.count()
   }
   
@@ -184,7 +184,7 @@ class DatabaseService {
   }
   
   def foodPostStatistics: (Int, Int, Int) = {
-    foodPostDAO.getStatistics
+    foodPostDAO.statistics
   }
   
   /**
@@ -208,7 +208,7 @@ class DatabaseService {
     }
   }
   
-  def getComments(contentType: String, contentId: String): List[Comment] = {
+  def comments(contentType: String, contentId: String): List[Comment] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         """SELECT * FROM comments 
@@ -455,7 +455,7 @@ class DatabaseService {
   }
   
   def replyCountForTopic(topicId: String): Int = {
-    discussionReplyDAO.getReplyCountForTopic(topicId)
+    discussionReplyDAO.replyCountForTopic(topicId)
   }
 
   /**
@@ -502,12 +502,12 @@ class DatabaseService {
     eventDAO.cancelRsvp(eventId, userId)
   }
   
-  def getEventRsvpCount(eventId: String): Int = {
-    eventDAO.getRsvpCount(eventId)
+  def eventRsvpCount(eventId: String): Int = {
+    eventDAO.rsvpCount(eventId)
   }
-  
-  def getUserEvents(userId: String): List[Event] = {
-    eventDAO.getUserEvents(userId)
+
+  def userEvents(userId: String): List[Event] = {
+    eventDAO.userEvents(userId)
   }
   
   /**
@@ -522,15 +522,15 @@ class DatabaseService {
     foodStockDAO.findById(stockId)
   }
   
-  def getAllFoodStocks: List[FoodStock] = {
+  def allFoodStocks: List[FoodStock] = {
     foodStockDAO.findAll()
   }
   
-  def getFoodStocksByCategory(category: FoodCategory): List[FoodStock] = {
+  def foodStocksByCategory(category: FoodCategory): List[FoodStock] = {
     foodStockDAO.findByCategory(category)
   }
   
-  def getFoodStocksByLocation(location: String): List[FoodStock] = {
+  def foodStocksByLocation(location: String): List[FoodStock] = {
     foodStockDAO.findByLocation(location)
   }
   
@@ -546,20 +546,20 @@ class DatabaseService {
     foodStockDAO.delete(stockId)
   }
   
-  def getLowStockItems: List[FoodStock] = {
+  def lowStockItems: List[FoodStock] = {
     foodStockDAO.findLowStock()
   }
   
-  def getExpiredItems: List[FoodStock] = {
+  def expiredItems: List[FoodStock] = {
     foodStockDAO.findExpired()
   }
   
-  def getExpiringSoonItems(days: Int = 7): List[FoodStock] = {
+  def expiringSoonItems(days: Int = 7): List[FoodStock] = {
     foodStockDAO.findExpiringSoon(days)
   }
   
-  def getFoodStockStatistics: (Int, Int, Int, Int) = {
-    foodStockDAO.getStatistics
+  def foodStockStatistics: (Int, Int, Int, Int) = {
+    foodStockDAO.statistics
   }
   
   /**
@@ -574,23 +574,23 @@ class DatabaseService {
     stockMovementDAO.findById(movementId)
   }
   
-  def getAllStockMovements: List[StockMovement] = {
+  def allStockMovements: List[StockMovement] = {
     stockMovementDAO.findAll()
   }
   
-  def getStockMovementsByStockId(stockId: String): List[StockMovement] = {
+  def stockMovementsByStockId(stockId: String): List[StockMovement] = {
     stockMovementDAO.findByStockId(stockId)
   }
   
-  def getStockMovementsByUser(userId: String): List[StockMovement] = {
+  def stockMovementsByUser(userId: String): List[StockMovement] = {
     stockMovementDAO.findByUserId(userId)
   }
   
-  def getStockMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
+  def stockMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
     stockMovementDAO.findByActionType(actionType)
   }
   
-  def getStockMovementsByDateRange(startDate: java.time.LocalDateTime, endDate: java.time.LocalDateTime): List[StockMovement] = {
+  def stockMovementsByDateRange(startDate: java.time.LocalDateTime, endDate: java.time.LocalDateTime): List[StockMovement] = {
     stockMovementDAO.findByDateRange(startDate, endDate)
   }
 }

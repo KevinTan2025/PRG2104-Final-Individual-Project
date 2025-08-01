@@ -28,7 +28,7 @@ object DatabaseConnection {
   private val DB_NAME = "community_platform.db"
   private val DB_PATH = s"$DB_DIR/$DB_NAME"
   private val DB_URL = s"jdbc:sqlite:$DB_PATH"
-  private val connection: java.util.concurrent.atomic.AtomicReference[Option[Connection]] = new java.util.concurrent.atomic.AtomicReference(None)
+  private val connectionRef: java.util.concurrent.atomic.AtomicReference[Option[Connection]] = new java.util.concurrent.atomic.AtomicReference(None)
   
   // Ensure database directory exists
   private def ensureDbDirectoryExists(): Unit = {
@@ -42,15 +42,15 @@ object DatabaseConnection {
    * Get database connection, create if not exists
    * Returns Try[Connection] for functional error handling
    */
-  def getConnectionSafe: Try[Connection] = {
-    connection.get() match {
+  def connectionSafe: Try[Connection] = {
+    connectionRef.get() match {
       case Some(conn) if !conn.isClosed => Success(conn)
       case _ =>
         Try {
           ensureDbDirectoryExists()
           Class.forName("org.sqlite.JDBC")
           val conn = DriverManager.getConnection(DB_URL)
-          connection.set(Some(conn))
+          connectionRef.set(Some(conn))
           conn
         }.recoverWith {
           case e: SQLException =>
@@ -68,8 +68,8 @@ object DatabaseConnection {
    * @deprecated Use getConnectionSafe for better error handling
    */
   @deprecated("Use getConnectionSafe for functional error handling", "1.0")
-  def getConnection: Connection = {
-    getConnectionSafe match {
+  def connection: Connection = {
+    connectionSafe match {
       case Success(conn) => conn
       case Failure(error) => throw error
     }
@@ -79,7 +79,7 @@ object DatabaseConnection {
    * Execute SQL query and return ResultSet
    */
   def executeQuery(sql: String, params: Any*): ResultSet = {
-    val conn = getConnection
+    val conn = connection
     val stmt = conn.prepareStatement(sql)
     setParameters(stmt, params: _*)
     stmt.executeQuery()
@@ -89,7 +89,7 @@ object DatabaseConnection {
    * Execute SQL update/insert/delete and return affected rows count
    */
   def executeUpdate(sql: String, params: Any*): Int = {
-    val conn = getConnection
+    val conn = connection
     val stmt = conn.prepareStatement(sql)
     setParameters(stmt, params: _*)
     val result = stmt.executeUpdate()
@@ -101,7 +101,7 @@ object DatabaseConnection {
    * Execute SQL update/insert and return generated ID
    */
   def executeUpdateWithGeneratedKey(sql: String, params: Any*): Option[String] = {
-    val conn = getConnection
+    val conn = connection
     val stmt = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)
     setParameters(stmt, params: _*)
     stmt.executeUpdate()
@@ -143,19 +143,19 @@ object DatabaseConnection {
    * Close database connection
    */
   def close(): Unit = {
-    connection.get().foreach { conn =>
+    connectionRef.get().foreach { conn =>
       if (!conn.isClosed) {
         conn.close()
       }
     }
-    connection.set(None)
+    connectionRef.set(None)
   }
   
   /**
    * Execute SQL script from string
    */
   def executeSqlScript(script: String): Unit = {
-    val conn = getConnection
+    val conn = connection
     val statements = script.split(";").filter(_.trim.nonEmpty)
     
     statements.foreach { sql =>

@@ -241,7 +241,7 @@ class FoodStockDAO {
     }
   }
   
-  def getStatistics: (Int, Int, Int, Int) = {
+  def statistics: (Int, Int, Int, Int) = {
     try {
       // Total items
       val totalRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM food_stocks")

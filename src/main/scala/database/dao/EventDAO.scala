@@ -194,7 +194,7 @@ class EventDAO {
       val event = findById(eventId)
       event match {
         case Some(e) if e.maxParticipants.isDefined =>
-          val currentRsvps = getRsvpCount(eventId)
+          val currentRsvps = rsvpCount(eventId)
           if (currentRsvps >= e.maxParticipants.get) {
             return false // Event is full
           }
@@ -230,7 +230,7 @@ class EventDAO {
     }
   }
   
-  def getRsvpCount(eventId: String): Int = {
+  def rsvpCount(eventId: String): Int = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT COUNT(*) FROM event_rsvps WHERE event_id = ?", eventId
@@ -245,7 +245,7 @@ class EventDAO {
     }
   }
   
-  def getEventRsvps(eventId: String): List[String] = {
+  def eventRsvps(eventId: String): List[String] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT user_id FROM event_rsvps WHERE event_id = ?", eventId
@@ -264,7 +264,7 @@ class EventDAO {
     }
   }
   
-  def getUserEvents(userId: String): List[Event] = {
+  def userEvents(userId: String): List[Event] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         """SELECT e.* FROM events e
@@ -299,7 +299,7 @@ class EventDAO {
     val likes = rs.getInt("likes")
     
     // Get RSVPs for this event
-    val participants = getEventRsvps(eventId)
+    val participants = eventRsvps(eventId)
     
     // Create event with all properties from database
     Event(

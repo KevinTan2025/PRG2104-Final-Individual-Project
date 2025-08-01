@@ -194,7 +194,7 @@ class FoodPostDAO {
     }
   }
   
-  def getStatistics: (Int, Int, Int) = {
+  def statistics: (Int, Int, Int) = {
     try {
       val totalRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM food_posts")
       val total = if (totalRs.next()) totalRs.getInt(1) else 0

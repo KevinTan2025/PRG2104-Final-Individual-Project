@@ -171,7 +171,7 @@ class DiscussionReplyDAO {
     }
   }
   
-  def getReplyCountForTopic(topicId: String): Int = {
+  def replyCountForTopic(topicId: String): Int = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT COUNT(*) as count FROM discussion_replies WHERE topic_id = ?",

@@ -186,7 +186,7 @@ class StockMovementDAO {
     }
   }
   
-  def getStatistics: Map[String, Int] = {
+  def statistics: Map[String, Int] = {
     try {
       val totalRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM stock_movements")
       val totalMovements = if (totalRs.next()) totalRs.getInt(1) else 0
