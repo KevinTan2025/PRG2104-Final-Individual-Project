@@ -67,7 +67,7 @@ class ProfileDialog {
             } else if (newPass != confirmPass) {
               GuiUtils.showError("Password Mismatch", "New password and confirmation do not match.")
             } else if (!util.PasswordHasher.isPasswordValid(newPass)) {
-              GuiUtils.showError("Invalid Password", util.PasswordHasher.getPasswordRequirements)
+              GuiUtils.showError("Invalid Password", util.PasswordHasher.passwordRequirements)
             } else {
               if (service.resetPassword(currentPass, newPass)) {
                 GuiUtils.showInfo("Success", "Password changed successfully!")

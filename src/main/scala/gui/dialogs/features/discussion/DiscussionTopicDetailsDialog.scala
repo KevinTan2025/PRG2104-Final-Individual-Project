@@ -50,7 +50,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
         new Label(s"Posted by: ${currentTopicProperty.value.authorId} on ${currentTopicProperty.value.timestamp.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))}") {
           style = "-fx-text-fill: #6c757d; -fx-font-size: 12px;"
         },
-        new Label(s"👍 ${currentTopicProperty.value.likes} likes • 💬 ${currentTopicProperty.value.getReplyCount} replies") {
+        new Label(s"👍 ${currentTopicProperty.value.likes} likes • 💬 ${currentTopicProperty.value.replyCount} replies") {
           style = "-fx-text-fill: #495057; -fx-font-weight: bold;"
         }
       )
@@ -77,7 +77,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
       padding = Insets(20)
     }
     
-    repliesBox.children.add(new Label(s"Replies (${currentTopicProperty.value.getReplyCount}):") {
+    repliesBox.children.add(new Label(s"Replies (${currentTopicProperty.value.replyCount}):") {
       style = "-fx-font-weight: bold; -fx-font-size: 14px;"
     })
     

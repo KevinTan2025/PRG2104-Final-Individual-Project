@@ -105,7 +105,7 @@ case class Event(
    * Get the number of available spots
    * @return number of available spots, or None if unlimited
    */
-  def getAvailableSpots: Option[Int] = {
+  def availableSpots: Option[Int] = {
     maxParticipants.map(_ - participants.length)
   }
   
