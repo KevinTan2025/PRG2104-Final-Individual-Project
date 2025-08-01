@@ -49,7 +49,7 @@ class NotificationsTab extends BaseTabComponent {
     }
     
     // Stats display
-    val unreadCount = service.getUnreadNotificationCount
+    val unreadCount = service.unreadNotificationCount
     val statsLabel = new Label(s"Unread notifications: $unreadCount") {
       style = "-fx-font-weight: bold; -fx-text-fill: #2196F3;"
     }
@@ -88,7 +88,7 @@ class NotificationsTab extends BaseTabComponent {
   }
   
   private def refreshNotifications(): Unit = {
-    val notifications = service.getNotifications
+    val notifications = service.notifications
     val items = notifications.map { n =>
       val readStatus = if (n.isRead) "✓" else "●"
       s"$readStatus [${n.notificationType}] ${n.title} - ${n.timestamp.toLocalDate}"
@@ -99,7 +99,7 @@ class NotificationsTab extends BaseTabComponent {
   private def handleMarkAsRead(): Unit = {
     val selectedIndex = notificationsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val notifications = service.getNotifications
+      val notifications = service.notifications
       if (selectedIndex < notifications.length) {
         val notification = notifications(selectedIndex)
         if (service.markNotificationAsRead(notification.notificationId)) {
@@ -123,7 +123,7 @@ class NotificationsTab extends BaseTabComponent {
   }
   
   private def handleViewUnread(): Unit = {
-    val unread = service.getUnreadNotifications
+    val unread = service.unreadNotifications
     val items = unread.map { n =>
       val readStatus = if (n.isRead) "✓" else "●"
       s"$readStatus [${n.notificationType}] ${n.title} - ${n.timestamp.toLocalDate}"
@@ -134,7 +134,7 @@ class NotificationsTab extends BaseTabComponent {
   private def handleDeleteNotification(): Unit = {
     val selectedIndex = notificationsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val notifications = service.getNotifications
+      val notifications = service.notifications
       if (selectedIndex < notifications.length) {
         val notification = notifications(selectedIndex)
         if (service.deleteNotification(notification.notificationId)) {
@@ -150,7 +150,7 @@ class NotificationsTab extends BaseTabComponent {
   private def handleViewDetails(): Unit = {
     val selectedIndex = notificationsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val notifications = service.getNotifications
+      val notifications = service.notifications
       if (selectedIndex < notifications.length) {
         val notification = notifications(selectedIndex)
         showNotificationDetails(notification)

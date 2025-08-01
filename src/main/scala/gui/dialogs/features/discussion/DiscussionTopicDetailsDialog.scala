@@ -117,7 +117,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   
   private def refreshDialog(): Unit = {
     // Update current topic data
-    service.getDiscussionTopics.find(_.topicId == currentTopicProperty.value.topicId) match {
+    service.discussionTopics.find(_.topicId == currentTopicProperty.value.topicId) match {
       case Some(updatedTopic) =>
         currentTopicProperty.value = updatedTopic
         initializeDialog() // Reinitialize the dialog with updated data

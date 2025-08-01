@@ -24,7 +24,7 @@ object AdminDialogs {
     dialog.headerText = "All registered users"
     
     val usersList = new ListView[String]()
-    val users = service.getAllUsers
+    val users = service.allUsers
     val items = users.map(u => s"${u.username} (${u.name}) - ${u.userRole} - ${if (u.isActive) "Active" else "Inactive"}")
     usersList.items = scalafx.collections.ObservableBuffer(items: _*)
     
@@ -53,8 +53,8 @@ object AdminDialogs {
     dialog.title = "System Statistics"
     dialog.headerText = "Detailed platform statistics"
     
-    val stats = service.getDashboardStatistics
-    val detailedStats = service.getDetailedStatistics
+    val stats = service.dashboardStatistics
+    val detailedStats = service.detailedStatistics
     
     val statsText = s"""
 Platform Overview:
@@ -102,7 +102,7 @@ User Activity:
     dialog.headerText = "Moderate platform content"
     
     val contentList = new ListView[String]()
-    val moderationItems = service.getContentForModeration
+    val moderationItems = service.contentForModeration
     val items = moderationItems.map { case (id, contentType, title) =>
       s"[$contentType] $title (ID: $id)"
     }
@@ -112,13 +112,13 @@ User Activity:
       onAction = (_: ActionEvent) => {
         val selectedIndex = contentList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val moderationItems = service.getContentForModeration
+          val moderationItems = service.contentForModeration
           if (selectedIndex < moderationItems.length) {
             val (id, contentType, title) = moderationItems(selectedIndex)
             if (service.moderateContent(id, contentType)) {
               GuiUtils.showInfo("Success", s"Content '$title' moderated successfully!")
               // Refresh the list
-              val updatedItems = service.getContentForModeration
+              val updatedItems = service.contentForModeration
               val newItems = updatedItems.map { case (id, contentType, title) =>
                 s"[$contentType] $title (ID: $id)"
               }
@@ -135,7 +135,7 @@ User Activity:
     
     val refreshButton = new Button("Refresh") {
       onAction = (_: ActionEvent) => {
-        val moderationItems = service.getContentForModeration
+        val moderationItems = service.contentForModeration
         val items = moderationItems.map { case (id, contentType, title) =>
           s"[$contentType] $title (ID: $id)"
         }

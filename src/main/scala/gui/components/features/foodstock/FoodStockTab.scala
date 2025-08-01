@@ -201,7 +201,7 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def refreshStocks(): Unit = {
-    val stocks = service.getAllFoodStocks
+    val stocks = service.allFoodStocks
     updateStocksList(stocks)
   }
   
@@ -298,7 +298,7 @@ class FoodStockTab extends BaseTabComponent {
   private def handleViewHistory(): Unit = {
     getSelectedStock() match {
       case Some(stock) =>
-        val movements = service.getStockMovements(stock.stockId)
+        val movements = service.stockMovements(stock.stockId)
         val historyText = if (movements.nonEmpty) {
           movements.map { movement =>
             s"${movement.timestamp.toLocalDate} ${movement.timestamp.toLocalTime.toString.take(8)} - " +
@@ -318,7 +318,7 @@ class FoodStockTab extends BaseTabComponent {
     val category = categoryCombo.value.value
     val status = statusCombo.value.value
     
-    val allStocks = service.getAllFoodStocks
+    val allStocks = service.allFoodStocks
     
     // Filter by category using functional approach
     val categoryFiltered = if (category != "All") {
@@ -355,7 +355,7 @@ class FoodStockTab extends BaseTabComponent {
       return
     }
     
-    val stocks = service.getAllFoodStocks
+    val stocks = service.allFoodStocks
     val exportDialog = new ExportStockDialog(stocks)
     exportDialog.showAndWait()
   }
@@ -375,7 +375,7 @@ class FoodStockTab extends BaseTabComponent {
     Option(stocksList).flatMap { list =>
       val selectedIndex = list.selectionModel().selectedIndex.value
       if (selectedIndex >= 0) {
-        val allStocks = service.getAllFoodStocks
+        val allStocks = service.allFoodStocks
         // Apply current filters to get the displayed list
         val category = categoryCombo.value.value
         val status = statusCombo.value.value
@@ -423,7 +423,7 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def createStockStatsCard(): VBox = {
-    val (total, lowStock, outOfStock, expired) = service.getStockStatistics
+    val (total, lowStock, outOfStock, expired) = service.stockStatistics
     
     new VBox {
       spacing = 10

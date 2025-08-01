@@ -132,7 +132,7 @@ class CommunityEngagementService {
     }
   }
   
-  def getAnnouncements: List[Announcement] = {
+  def announcements: List[Announcement] = {
     val announcements = dbService.getAllAnnouncements
     // Load comments for each announcement
     announcements.map { announcement =>
@@ -205,7 +205,7 @@ class CommunityEngagementService {
     }
   }
   
-  def getFoodPosts: List[FoodPost] = {
+  def foodPosts: List[FoodPost] = {
     val foodPosts = dbService.activeFoodPosts
     // Load comments for each food post
     foodPosts.map { post =>
@@ -214,7 +214,7 @@ class CommunityEngagementService {
     }
   }
   
-  def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
+  def foodPostsByType(postType: FoodPostType): List[FoodPost] = {
     dbService.foodPostsByType(postType)
   }
   
@@ -256,11 +256,11 @@ class CommunityEngagementService {
     }.flatten
   }
 
-  def getDiscussionTopics: List[DiscussionTopic] = {
+  def discussionTopics: List[DiscussionTopic] = {
     dbService.allDiscussionTopics
   }
 
-  def getTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
+  def topicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
     dbService.discussionTopicsByCategory(category)
   }
 
@@ -433,11 +433,11 @@ class CommunityEngagementService {
     }
   }
   
-  def getUpcomingEvents: List[Event] = {
+  def upcomingEvents: List[Event] = {
     dbService.upcomingEvents
   }
   
-  def getAllEvents: List[Event] = {
+  def allEvents: List[Event] = {
     dbService.allEvents
   }
   
@@ -453,7 +453,7 @@ class CommunityEngagementService {
     }
   }
   
-  def getMyEvents(userId: String): List[Event] = {
+  def myEvents(userId: String): List[Event] = {
     dbService.getUserEvents(userId)
   }
   
@@ -461,11 +461,11 @@ class CommunityEngagementService {
     dbService.searchEvents(searchTerm)
   }
   
-  def getEventsByOrganizer(organizerId: String): List[Event] = {
+  def eventsByOrganizer(organizerId: String): List[Event] = {
     dbService.eventsByOrganizer(organizerId)
   }
   
-  def getEventById(eventId: String): Option[Event] = {
+  def eventById(eventId: String): Option[Event] = {
     dbService.eventById(eventId)
   }
   
@@ -486,13 +486,13 @@ class CommunityEngagementService {
    * Notification Operations
    */
   
-  def getNotifications: List[Notification] = {
+  def notifications: List[Notification] = {
     currentUser.map { user =>
       dbService.notificationsForUser(user.userId)
     }.getOrElse(List.empty)
   }
   
-  def getUnreadNotifications: List[Notification] = {
+  def unreadNotifications: List[Notification] = {
     currentUser.map { user =>
       dbService.notificationsForUser(user.userId).filter(!_.isRead)
     }.getOrElse(List.empty)
@@ -502,7 +502,7 @@ class CommunityEngagementService {
     dbService.markNotificationAsRead(notificationId)
   }
   
-  def getUnreadNotificationCount: Int = {
+  def unreadNotificationCount: Int = {
     currentUser.map { user =>
       dbService.unreadNotificationCount(user.userId)
     }.getOrElse(0)
@@ -540,12 +540,12 @@ class CommunityEngagementService {
     }
   }
   
-  def getAllUsers: List[User] = {
+  def allUsers: List[User] = {
     dbService.allUsers
   }
   
-  def getDetailedStatistics: Map[String, Any] = {
-    val totalNotifications = getNotifications.size
+  def detailedStatistics: Map[String, Any] = {
+    val totalNotifications = notifications.size
     val announcements = dbService.getAllAnnouncements
     val foodPosts = dbService.allFoodPosts
     
@@ -559,7 +559,7 @@ class CommunityEngagementService {
     )
   }
   
-  def getContentForModeration: List[(String, String, String)] = {
+  def contentForModeration: List[(String, String, String)] = {
     val announcements = dbService.getAllAnnouncements.filter(!_.isModerated)
       .map(a => (a.announcementId, "announcement", a.title))
     val foodPosts = dbService.allFoodPosts.filter(!_.isModerated)
@@ -572,7 +572,7 @@ class CommunityEngagementService {
    * Statistics and Analytics
    */
   
-  def getDashboardStatistics: Map[String, Any] = {
+  def dashboardStatistics: Map[String, Any] = {
     val totalUsers = dbService.userCount
     val adminUsers = dbService.adminCount
     val communityMembers = dbService.getCommunityMemberCount
@@ -620,11 +620,11 @@ class CommunityEngagementService {
     dbService.saveFoodStock(foodStock)
   }
   
-  def getAllFoodStocks: List[FoodStock] = {
+  def allFoodStocks: List[FoodStock] = {
     dbService.getAllFoodStocks
   }
   
-  def getFoodStockById(stockId: String): Option[FoodStock] = {
+  def foodStockById(stockId: String): Option[FoodStock] = {
     dbService.findFoodStockById(stockId)
   }
   
@@ -640,16 +640,16 @@ class CommunityEngagementService {
     dbService.searchFoodStocks(searchTerm)
   }
   
-  def getFoodStocksByCategory(category: FoodCategory): List[FoodStock] = {
+  def foodStocksByCategory(category: FoodCategory): List[FoodStock] = {
     dbService.getFoodStocksByCategory(category)
   }
   
-  def getFoodStocksByStatus(status: StockStatus): List[FoodStock] = {
+  def foodStocksByStatus(status: StockStatus): List[FoodStock] = {
     // Filter by status based on current quantities and expiry dates
-    getAllFoodStocks.filter(_.getStockStatus == status)
+    allFoodStocks.filter(_.getStockStatus == status)
   }
   
-  def getFoodStocksByLocation(location: String): List[FoodStock] = {
+  def foodStocksByLocation(location: String): List[FoodStock] = {
     dbService.getFoodStocksByLocation(location)
   }
   
@@ -670,12 +670,12 @@ class CommunityEngagementService {
     lowStockAlerts ++ expiredAlerts ++ expiringSoonAlerts
   }
   
-  def getStockStatistics: (Int, Int, Int, Int) = {
+  def stockStatistics: (Int, Int, Int, Int) = {
     dbService.getFoodStockStatistics
   }
   
   def addStock(stockId: String, quantity: Double, userId: String, notes: String = ""): Boolean = {
-    getFoodStockById(stockId) match {
+    foodStockById(stockId) match {
       case Some(stock) =>
         val previousQuantity = stock.currentQuantity
         val newQuantity = previousQuantity + quantity
@@ -706,7 +706,7 @@ class CommunityEngagementService {
   }
   
   def removeStock(stockId: String, quantity: Double, userId: String, notes: String = ""): Boolean = {
-    getFoodStockById(stockId) match {
+    foodStockById(stockId) match {
       case Some(stock) =>
         val previousQuantity = stock.currentQuantity
         val newQuantity = math.max(0, previousQuantity - quantity)
@@ -737,7 +737,7 @@ class CommunityEngagementService {
   }
   
   def adjustStock(stockId: String, newQuantity: Double, userId: String, notes: String = ""): Boolean = {
-    getFoodStockById(stockId) match {
+    foodStockById(stockId) match {
       case Some(stock) =>
         val previousQuantity = stock.currentQuantity
         
@@ -773,7 +773,7 @@ class CommunityEngagementService {
   def addStockMovement(movement: StockMovement): Boolean = {
     dbService.saveStockMovement(movement)
     // Update the stock quantity based on the movement
-    getFoodStockById(movement.stockId) match {
+    foodStockById(movement.stockId) match {
       case Some(stock) =>
         val updatedStock = movement.actionType match {
           case StockActionType.STOCK_IN =>
@@ -790,19 +790,19 @@ class CommunityEngagementService {
     }
   }
   
-  def getStockMovements(stockId: String): List[StockMovement] = {
+  def stockMovements(stockId: String): List[StockMovement] = {
     dbService.getStockMovementsByStockId(stockId)
   }
   
-  def getAllStockMovements: List[StockMovement] = {
+  def allStockMovements: List[StockMovement] = {
     dbService.getAllStockMovements
   }
   
-  def getStockMovementsByUser(userId: String): List[StockMovement] = {
+  def stockMovementsByUser(userId: String): List[StockMovement] = {
     dbService.getStockMovementsByUser(userId)
   }
   
-  def getStockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
+  def stockMovementsByDateRange(startDate: LocalDateTime, endDate: LocalDateTime): List[StockMovement] = {
     dbService.getStockMovementsByDateRange(startDate, endDate)
   }
   
@@ -837,7 +837,7 @@ object CommunityEngagementService {
   lazy val getInstance: CommunityEngagementService = {
     val service = new CommunityEngagementService()
     // Initialize sample data only if no topics exist
-    if (service.getDiscussionTopics.isEmpty) {
+    if (service.discussionTopics.isEmpty) {
       service.initializeSampleDiscussionData()
     }
     service
