@@ -159,7 +159,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
   private def createActionButtons(): HBox = {
     val likeButton = new Button("👍 Like Topic") {
       onAction = _ => {
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(_) =>
             if (service.likeTopic(currentTopicProperty.value.topicId)) {
               GuiUtils.showInfo("Success", "Topic liked!")
@@ -177,7 +177,7 @@ class DiscussionTopicDetailsDialog(topic: DiscussionTopic, onUpdate: () => Unit 
     
     val replyButton = new Button("💬 Add Reply") {
       onAction = _ => {
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(_) =>
             showReplyDialog()
           case None =>

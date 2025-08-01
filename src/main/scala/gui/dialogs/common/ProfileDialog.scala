@@ -17,7 +17,7 @@ class ProfileDialog {
   private val service = CommunityEngagementService.getInstance
   
   def showAndWait(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val dialog = new Dialog[Unit]()
         dialog.title = "User Profile"

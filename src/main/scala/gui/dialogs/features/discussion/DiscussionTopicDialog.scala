@@ -54,7 +54,7 @@ class DiscussionTopicDialog(onSuccess: () => Unit) {
         if (title.isEmpty || content.isEmpty) {
           GuiUtils.showWarning("Missing Information", "Please fill in both title and content.")
         } else {
-          service.getCurrentUser match {
+          service.currentUserInfo match {
             case Some(_) =>
               val category = selectedCategory match {
                 case "NUTRITION" => DiscussionCategory.NUTRITION

@@ -12,7 +12,7 @@ import service.CommunityEngagementService
  */
 class SceneManager(stage: Stage, private val service: CommunityEngagementService) {
   
-  GuiUtils.setMainStage(stage)
+  GuiUtils.mainStage = stage
   
   def showAnonymousScene(): Unit = {
     // Enable anonymous mode in service
