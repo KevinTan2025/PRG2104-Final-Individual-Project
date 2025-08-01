@@ -6,7 +6,8 @@
 
 <VBox fx:id="vboxMainContainer" alignment="CENTER" spacing="15.0" styleClass="login-content" 
       stylesheets="@LoginAuthDialog.css"
-      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gui.dialogs.auth.LoginAuthDialogController">
    <padding>
       <Insets bottom="40.0" left="40.0" right="40.0" top="20.0" />
    </padding>
