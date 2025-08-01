@@ -92,8 +92,8 @@ class EnhancedActivityFeedComponent(
     
     try {
       val feedItems = contentFilter match {
-        case Some(filterType) => activityFeedService.getActivityFeedByType(filterType, 20, service.getCurrentUser.map(_.userId))
-        case None => activityFeedService.getActivityFeed(20, service.getCurrentUser.map(_.userId))
+        case Some(filterType) => activityFeedService.activityFeedByType(filterType, 20, service.currentUserInfo.map(_.userId))
+      case None => activityFeedService.activityFeed(20, service.currentUserInfo.map(_.userId))
       }
       
       if (feedItems.isEmpty) {
@@ -122,12 +122,12 @@ class EnhancedActivityFeedComponent(
       spacing = 10
       alignment = Pos.CenterLeft
       children = Seq(
-        new Label(s"${item.getCategoryIcon} ${item.getCategoryName}") {
+        new Label(s"${item.categoryIcon} ${item.categoryName}") {
           font = Font.font("System", FontWeight.Bold, 13)
-          textFill = Color.web(item.getCategoryColor)
+          textFill = Color.web(item.categoryColor)
         },
         new Region { HBox.setHgrow(this, scalafx.scene.layout.Priority.Always) },
-        new Label(item.getTimeAgo) {
+        new Label(item.timeAgo) {
           font = Font.font("System", 11)
           textFill = Color.web("#8a8d91")
         }
@@ -224,7 +224,7 @@ class EnhancedActivityFeedComponent(
   }
   
   private def createInteractionButtons(item: ActivityFeedItem): HBox = {
-    val currentUserId = service.getCurrentUser.map(_.userId)
+    val currentUserId = service.currentUserInfo.map(_.userId)
     val isLiked = currentUserId.exists(id => item.isLikedBy(id))
     
     val likeButton = new Button(s"👍 ${item.likes}") {
@@ -255,7 +255,7 @@ class EnhancedActivityFeedComponent(
   }
   
   private def handleLike(item: ActivityFeedItem, button: Button): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val wasLiked = item.isLikedBy(user.userId)
         val success = if (wasLiked) {
@@ -285,7 +285,7 @@ class EnhancedActivityFeedComponent(
   }
   
   private def handleComment(item: ActivityFeedItem): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val dialog = new CommentDialog(
           s"Comment on ${item.title}",

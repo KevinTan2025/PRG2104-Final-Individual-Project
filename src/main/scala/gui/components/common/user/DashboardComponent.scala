@@ -25,7 +25,7 @@ class DashboardComponent extends BaseTabComponent {
     new EnhancedActivityFeedComponent(service, () => refresh(), None)
   
   override def build(): ScalaFXTab = {
-    val currentUser = service.getCurrentUser
+    val currentUser = service.currentUserInfo
     // Home tab shows all activity types
     val userFeed = activityFeedComponent.build()
     val sidePanel = createUserSidePanel(currentUser)

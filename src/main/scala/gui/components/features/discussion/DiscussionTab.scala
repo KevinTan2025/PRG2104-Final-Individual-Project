@@ -176,7 +176,7 @@ class DiscussionTab(
     val selectedIndex = topicsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0 && selectedIndex < currentTopicsProperty.value.length) {
       val selectedTopic = currentTopicsProperty.value(selectedIndex)
-      service.getCurrentUser match {
+      service.currentUserInfo match {
         case Some(_) =>
           if (service.likeTopic(selectedTopic.topicId)) {
             GuiUtils.showInfo("Success", "Topic liked!")

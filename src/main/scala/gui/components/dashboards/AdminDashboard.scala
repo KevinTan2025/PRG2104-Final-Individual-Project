@@ -61,7 +61,7 @@ class AdminDashboard(service: CommunityEngagementService) {
   }
   
   private def createWelcomeSection(): VBox = {
-    val currentUser = service.getCurrentUser.get
+    val currentUser = service.currentUserInfo.get
     new VBox {
       spacing = 10
       alignment = Pos.CenterLeft

@@ -44,7 +44,7 @@ class MenuBarComponent(
    * Updates the user menu text with current user information
    */
   private def updateUserInfo(): Unit = {
-    val userInfo = service.getCurrentUser match {
+    val userInfo = service.currentUserInfo match {
       case Some(user) => s"${user.name} (${user.userRole})"
       case None => "Guest"
     }
@@ -61,7 +61,7 @@ class MenuBarComponent(
   
   @FXML
   private def handleExit(event: ActionEvent): Unit = {
-    GuiUtils.getMainStage.foreach(_.close())
+    GuiUtils.mainStage.foreach(_.close())
   }
   
   @FXML

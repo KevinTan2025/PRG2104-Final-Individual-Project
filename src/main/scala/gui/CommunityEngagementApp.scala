@@ -263,7 +263,7 @@ object CommunityEngagementApp extends JFXApp3 {
       )
     }
     
-    val userInfo = service.getCurrentUser match {
+    val userInfo = service.currentUserInfo match {
       case Some(user) => s"${user.name} (${user.userRole})"
       case None => "Guest"
     }
@@ -292,7 +292,7 @@ object CommunityEngagementApp extends JFXApp3 {
    * Create the dashboard tab based on user role
    */
   private def createDashboardTab(): ScalaFXTab = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) if user.userRole == "Administrator" =>
         new gui.components.dashboards.AdminDashboard(service).build()
       case _ =>
@@ -1031,7 +1031,7 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val viewMyEventsButton = new Button("My Events") {
       onAction = (_: ActionEvent) => {
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(user) =>
             val myEvents = service.myEvents(user.userId)
             val items = myEvents.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
@@ -1211,7 +1211,7 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val markAllReadButton = new Button("Mark All as Read") {
       onAction = (_: ActionEvent) => {
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(user) =>
             val count = service.markAllNotificationsAsRead
             showAlert(Alert.AlertType.Information, "Success", s"Marked $count notifications as read.")
@@ -1340,7 +1340,7 @@ ${notification.message}
    * Show profile management dialog
    */
   private def showProfileDialog(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val dialog = new Dialog[Unit]()
         dialog.title = "User Profile"
