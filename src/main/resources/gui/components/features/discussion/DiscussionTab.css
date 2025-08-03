@@ -1,0 +1,184 @@
+/* Discussion Tab Styles */
+.discussion-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Control Containers */
+.top-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}
+
+.search-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Button Styles */
+.create-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.create-button:hover {
+    -fx-background-color: #218838;
+}
+
+.create-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.reply-button {
+    -fx-background-color: #6f42c1;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.reply-button:hover {
+    -fx-background-color: #5a32a3;
+}
+
+.reply-button:pressed {
+    -fx-background-color: #4e2a8e;
+}
+
+.like-button {
+    -fx-background-color: #e83e8c;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.like-button:hover {
+    -fx-background-color: #e21e7b;
+}
+
+.like-button:pressed {
+    -fx-background-color: #d91a72;
+}
+
+.filter-button, .search-button, .refresh-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.filter-button:hover, .search-button:hover, .refresh-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.filter-button:pressed, .search-button:pressed, .refresh-button:pressed {
+    -fx-background-color: #004085;
+}
+
+/* Read-only mode button styles */
+.create-button.readonly, .reply-button.readonly, .like-button.readonly {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+}
+
+.create-button.readonly:hover, .reply-button.readonly:hover, .like-button.readonly:hover {
+    -fx-background-color: #5a6268;
+}
+
+/* Form Controls */
+.category-combo {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+    -fx-min-width: 150;
+}
+
+.category-combo:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 3, 0, 0, 0);
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+    -fx-min-width: 300;
+    -fx-prompt-text-fill: #6c757d;
+}
+
+.search-field:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 3, 0, 0, 0);
+}
+
+/* Topics List */
+.topics-list {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.topics-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.topics-list .list-cell:selected {
+    -fx-background-color: #6f42c1;
+    -fx-text-fill: white;
+}
+
+.topics-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.topics-list .list-cell:selected:hover {
+    -fx-background-color: #5a32a3;
+}
+
+/* Topic category indicators */
+.category-nutrition {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.category-agriculture {
+    -fx-text-fill: #20c997;
+    -fx-font-weight: bold;
+}
+
+.category-food-security {
+    -fx-text-fill: #fd7e14;
+    -fx-font-weight: bold;
+}
+
+.category-community-garden {
+    -fx-text-fill: #6f42c1;
+    -fx-font-weight: bold;
+}
+
+.category-cooking-tips {
+    -fx-text-fill: #e83e8c;
+    -fx-font-weight: bold;
+}
+
+.category-general {
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: bold;
+}

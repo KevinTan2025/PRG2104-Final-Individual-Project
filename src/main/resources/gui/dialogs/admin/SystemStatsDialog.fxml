@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+
+<TextArea xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="txtSystemStats" editable="false" prefColumnCount="50" prefRowCount="15" prefWidth="400.0" styleClass="admin-stats-textarea" stylesheets="@AdminDialogs.css" text="Platform Overview:&#10;- Total Users: 0&#10;- Community Members: 0&#10;- Administrators: 0&#10;&#10;Content Statistics:&#10;- Active Announcements: 0&#10;- Total Food Posts: 0&#10;- Active Food Posts: 0&#10;- Completed Food Posts: 0&#10;&#10;Events:&#10;- Total Events: 0&#10;- Upcoming Events: 0&#10;- Completed Events: 0&#10;&#10;User Activity:&#10;- Total Notifications Sent: 0&#10;- Total Comments: 0&#10;- Total Likes: 0" wrapText="true" />

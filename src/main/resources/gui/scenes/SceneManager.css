@@ -1,0 +1,108 @@
+/* Scene Manager CSS - Application-level styling */
+
+/* Root scene styling */
+.scene-root {
+    -fx-background-color: #f8f9fa;
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
+    -fx-font-size: 14px;
+}
+
+/* Anonymous scene specific styling */
+.anonymous-scene {
+    -fx-background-color: #e9ecef;
+}
+
+/* Main layout container */
+#bpMainLayout {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 2);
+}
+
+#bpAnonymousLayout {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 1);
+}
+
+/* Menu bar container styling */
+#menuBarContainer {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+#anonymousMenuBarContainer {
+    -fx-border-color: #ced4da;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: #ffffff;
+}
+
+/* Tab container styling */
+#mainTabContainer {
+    -fx-background-color: #ffffff;
+    -fx-padding: 10;
+}
+
+#anonymousTabContainer {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 10;
+}
+
+/* Scene transition effects */
+.scene-root {
+    -fx-opacity: 1.0;
+}
+
+.scene-root:disabled {
+    -fx-opacity: 0.6;
+}
+
+/* Application window styling */
+.scene-root .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.scene-root .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scene-root .scroll-pane .corner {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Focus and selection styling for scene elements */
+.scene-root .button:focused {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.scene-root .text-field:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2;
+}
+
+/* Error and validation styling */
+.scene-root .error {
+    -fx-border-color: #dc3545;
+    -fx-border-width: 2;
+}
+
+.scene-root .success {
+    -fx-border-color: #28a745;
+    -fx-border-width: 2;
+}
+
+/* Loading state styling */
+.scene-root .loading {
+    -fx-opacity: 0.7;
+    -fx-cursor: wait;
+}
+
+/* Responsive design considerations */
+@media (max-width: 800px) {
+    .scene-root {
+        -fx-font-size: 12px;
+    }
+    
+    #mainTabContainer,
+    #anonymousTabContainer {
+        -fx-padding: 5;
+    }
+}

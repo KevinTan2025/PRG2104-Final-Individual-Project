@@ -4,6 +4,19 @@ import java.sql.{Connection, DriverManager, PreparedStatement, ResultSet, SQLExc
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.io.File
+import scala.util.{Try, Success, Failure}
+
+/**
+ * Database error type definitions for functional error handling
+ */
+sealed trait DatabaseError extends Exception {
+  def message: String
+  def cause: Option[Throwable]
+}
+
+case class DatabaseConnectionError(message: String, cause: Option[Throwable] = None) extends DatabaseError
+case class DriverNotFoundError(message: String, cause: Option[Throwable] = None) extends DatabaseError
+case class QueryExecutionError(message: String, cause: Option[Throwable] = None) extends DatabaseError
 
 /**
  * Database connection manager for SQLite
@@ -15,7 +28,7 @@ object DatabaseConnection {
   private val DB_NAME = "community_platform.db"
   private val DB_PATH = s"$DB_DIR/$DB_NAME"
   private val DB_URL = s"jdbc:sqlite:$DB_PATH"
-  private var connection: Option[Connection] = None
+  private val connectionRef: java.util.concurrent.atomic.AtomicReference[Option[Connection]] = new java.util.concurrent.atomic.AtomicReference(None)
   
   // Ensure database directory exists
   private def ensureDbDirectoryExists(): Unit = {
@@ -27,23 +40,38 @@ object DatabaseConnection {
   
   /**
    * Get database connection, create if not exists
+   * Returns Try[Connection] for functional error handling
    */
-  def getConnection: Connection = {
-    connection match {
-      case Some(conn) if !conn.isClosed => conn
+  def connectionSafe: Try[Connection] = {
+    connectionRef.get() match {
+      case Some(conn) if !conn.isClosed => Success(conn)
       case _ =>
-        try {
+        Try {
           ensureDbDirectoryExists()
           Class.forName("org.sqlite.JDBC")
           val conn = DriverManager.getConnection(DB_URL)
-          connection = Some(conn)
+          connectionRef.set(Some(conn))
           conn
-        } catch {
+        }.recoverWith {
           case e: SQLException =>
-            throw new RuntimeException(s"Failed to connect to database: ${e.getMessage}")
+            println(s"Failed to connect to database: ${e.getMessage}")
+            Failure(DatabaseConnectionError(s"Database connection failed: ${e.getMessage}", Some(e)))
           case e: ClassNotFoundException =>
-            throw new RuntimeException("SQLite JDBC driver not found")
+            println("SQLite JDBC driver not found")
+            Failure(DriverNotFoundError("SQLite JDBC driver not found", Some(e)))
         }
+    }
+  }
+
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use getConnectionSafe for better error handling
+   */
+  @deprecated("Use getConnectionSafe for functional error handling", "1.0")
+  def connection: Connection = {
+    connectionSafe match {
+      case Success(conn) => conn
+      case Failure(error) => throw error
     }
   }
   
@@ -51,7 +79,7 @@ object DatabaseConnection {
    * Execute SQL query and return ResultSet
    */
   def executeQuery(sql: String, params: Any*): ResultSet = {
-    val conn = getConnection
+    val conn = connection
     val stmt = conn.prepareStatement(sql)
     setParameters(stmt, params: _*)
     stmt.executeQuery()
@@ -61,7 +89,7 @@ object DatabaseConnection {
    * Execute SQL update/insert/delete and return affected rows count
    */
   def executeUpdate(sql: String, params: Any*): Int = {
-    val conn = getConnection
+    val conn = connection
     val stmt = conn.prepareStatement(sql)
     setParameters(stmt, params: _*)
     val result = stmt.executeUpdate()
@@ -73,7 +101,7 @@ object DatabaseConnection {
    * Execute SQL update/insert and return generated ID
    */
   def executeUpdateWithGeneratedKey(sql: String, params: Any*): Option[String] = {
-    val conn = getConnection
+    val conn = connection
     val stmt = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)
     setParameters(stmt, params: _*)
     stmt.executeUpdate()
@@ -105,7 +133,7 @@ object DatabaseConnection {
             }
           case None => stmt.setNull(index + 1, java.sql.Types.NULL)
         }
-        case null => stmt.setNull(index + 1, java.sql.Types.NULL)
+        case None => stmt.setNull(index + 1, java.sql.Types.NULL) // Handle None case for Option types
         case _ => stmt.setObject(index + 1, param)
       }
     }
@@ -115,19 +143,19 @@ object DatabaseConnection {
    * Close database connection
    */
   def close(): Unit = {
-    connection.foreach { conn =>
+    connectionRef.get().foreach { conn =>
       if (!conn.isClosed) {
         conn.close()
       }
     }
-    connection = None
+    connectionRef.set(None)
   }
   
   /**
    * Execute SQL script from string
    */
   def executeSqlScript(script: String): Unit = {
-    val conn = getConnection
+    val conn = connection
     val statements = script.split(";").filter(_.trim.nonEmpty)
     
     statements.foreach { sql =>
@@ -138,7 +166,7 @@ object DatabaseConnection {
       } catch {
         case e: SQLException =>
           println(s"Error executing SQL: ${sql.trim}")
-          throw e
+          println(s"SQLException details: ${e.getMessage}")
       }
     }
   }

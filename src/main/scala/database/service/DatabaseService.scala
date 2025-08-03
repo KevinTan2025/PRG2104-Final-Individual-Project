@@ -6,6 +6,7 @@ import manager.{FoodStockManager, StockMovementManager}
 import model._
 import java.time.LocalDateTime
 import java.util.UUID
+import scala.util.{Try, Success, Failure}
 
 /**
  * Database service layer that provides high-level database operations
@@ -51,7 +52,7 @@ class DatabaseService {
     userDAO.findById(userId)
   }
   
-  def getAllUsers: List[User] = {
+  def allUsers: List[User] = {
     userDAO.findAll()
   }
   
@@ -66,10 +67,10 @@ class DatabaseService {
   def resetUserPassword(userId: String, currentPassword: String, newPassword: String): Boolean = {
     findUserById(userId) match {
       case Some(user) =>
-        if (user.resetPassword(currentPassword, newPassword)) {
-          userDAO.updatePassword(userId, user.getPasswordHash)
-        } else {
-          false
+        user.resetPassword(currentPassword, newPassword) match {
+          case Success(updatedUser) => 
+            userDAO.updatePassword(userId, updatedUser.passwordHash)
+          case Failure(_) => false
         }
       case None => false
     }
@@ -83,16 +84,16 @@ class DatabaseService {
     }
   }
   
-  def getUserCount: Int = {
+  def userCount: Int = {
     userDAO.count()
   }
   
-  def getAdminCount: Int = {
+  def adminCount: Int = {
     userDAO.countAdmins()
   }
   
-  def getCommunityMemberCount: Int = {
-    getUserCount - getAdminCount
+  def communityMemberCount: Int = {
+    userCount - adminCount
   }
   
   /**
@@ -107,7 +108,7 @@ class DatabaseService {
     announcementDAO.findById(announcementId)
   }
   
-  def getAllAnnouncements: List[Announcement] = {
+  def allAnnouncements: List[Announcement] = {
     announcementDAO.findAll()
   }
   
@@ -127,7 +128,7 @@ class DatabaseService {
     announcementDAO.delete(announcementId)
   }
   
-  def getAnnouncementCount: Int = {
+  def announcementCount: Int = {
     announcementDAO.count()
   }
   
@@ -143,22 +144,22 @@ class DatabaseService {
     foodPostDAO.findById(postId)
   }
   
-  def getAllFoodPosts: List[FoodPost] = {
+  def allFoodPosts: List[FoodPost] = {
     foodPostDAO.findAll()
   }
   
-  def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
+  def foodPostsByType(postType: FoodPostType): List[FoodPost] = {
     foodPostDAO.findByType(postType)
   }
   
-  def getFoodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
+  def foodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
     foodPostDAO.findByStatus(status)
   }
   
-  def getActiveFoodPosts: List[FoodPost] = {
+  def activeFoodPosts: List[FoodPost] = {
     // Get both PENDING and ACCEPTED food posts
-    val pendingPosts = getFoodPostsByStatus(FoodPostStatus.PENDING)
-    val acceptedPosts = getFoodPostsByStatus(FoodPostStatus.ACCEPTED)
+    val pendingPosts = foodPostsByStatus(FoodPostStatus.PENDING)
+    val acceptedPosts = foodPostsByStatus(FoodPostStatus.ACCEPTED)
     (pendingPosts ++ acceptedPosts).sortBy(_.timestamp).reverse
   }
   
@@ -182,8 +183,8 @@ class DatabaseService {
     foodPostDAO.delete(postId)
   }
   
-  def getFoodPostStatistics: (Int, Int, Int) = {
-    foodPostDAO.getStatistics
+  def foodPostStatistics: (Int, Int, Int) = {
+    foodPostDAO.statistics
   }
   
   /**
@@ -207,7 +208,7 @@ class DatabaseService {
     }
   }
   
-  def getComments(contentType: String, contentId: String): List[Comment] = {
+  def comments(contentType: String, contentId: String): List[Comment] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         """SELECT * FROM comments 
@@ -216,20 +217,22 @@ class DatabaseService {
         contentType, contentId
       )
       
-      val comments = scala.collection.mutable.ListBuffer[Comment]()
-      while (rs.next()) {
-        val commentId = rs.getString("comment_id")
-        val authorId = rs.getString("author_id")
-        val content = rs.getString("content")
-        val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
-        
-        comments += new Comment(commentId, authorId, content) {
-          override val timestamp: LocalDateTime = createdAt
+      val comments = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map { rs =>
+          val commentId = rs.getString("comment_id")
+          val authorId = rs.getString("author_id")
+          val content = rs.getString("content")
+          val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
+          
+          new Comment(commentId, authorId, content) {
+            override val timestamp: LocalDateTime = createdAt
+          }
         }
-      }
+        .toList
       
       rs.close()
-      comments.toList
+      comments
     } catch {
       case e: Exception =>
         println(s"Error getting comments: ${e.getMessage}")
@@ -259,7 +262,7 @@ class DatabaseService {
     }
   }
   
-  def getNotificationsForUser(userId: String): List[Notification] = {
+  def notificationsForUser(userId: String): List[Notification] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         """SELECT * FROM notifications 
@@ -268,26 +271,25 @@ class DatabaseService {
         userId
       )
       
-      val notifications = scala.collection.mutable.ListBuffer[Notification]()
-      while (rs.next()) {
-        val notificationId = rs.getString("notification_id")
-        val recipientId = rs.getString("recipient_id")
-        val senderId = Option(rs.getString("sender_id"))
-        val notificationType = NotificationType.valueOf(rs.getString("type"))
-        val title = rs.getString("title")
-        val message = rs.getString("message")
-        val relatedId = Option(rs.getString("related_id"))
-        val isRead = rs.getBoolean("is_read")
-        val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
-        
-        val notification = Notification(notificationId, recipientId, senderId, title, message, notificationType, relatedId, createdAt)
-        notification.isRead = isRead
-        
-        notifications += notification
-      }
+      val notifications = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map { rs =>
+          val notificationId = rs.getString("notification_id")
+          val recipientId = rs.getString("recipient_id")
+          val senderId = Option(rs.getString("sender_id"))
+          val notificationType = NotificationType.valueOf(rs.getString("type"))
+          val title = rs.getString("title")
+          val message = rs.getString("message")
+          val relatedId = Option(rs.getString("related_id"))
+          val isRead = rs.getBoolean("is_read")
+          val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
+          
+          Notification(notificationId, recipientId, senderId, title, message, notificationType, relatedId, createdAt, isRead)
+        }
+        .toList
       
       rs.close()
-      notifications.toList
+      notifications
     } catch {
       case e: Exception =>
         println(s"Error getting notifications for user: ${e.getMessage}")
@@ -309,7 +311,7 @@ class DatabaseService {
     }
   }
   
-  def getUnreadNotificationCount(userId: String): Int = {
+  def unreadNotificationCount(userId: String): Int = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT COUNT(*) FROM notifications WHERE recipient_id = ? AND is_read = 0",
@@ -394,15 +396,15 @@ class DatabaseService {
     discussionTopicDAO.findById(topicId)
   }
   
-  def getAllDiscussionTopics: List[DiscussionTopic] = {
+  def allDiscussionTopics: List[DiscussionTopic] = {
     discussionTopicDAO.findAll()
   }
   
-  def getDiscussionTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
+  def discussionTopicsByCategory(category: DiscussionCategory): List[DiscussionTopic] = {
     discussionTopicDAO.findByCategory(category)
   }
   
-  def getDiscussionTopicsByAuthor(authorId: String): List[DiscussionTopic] = {
+  def discussionTopicsByAuthor(authorId: String): List[DiscussionTopic] = {
     discussionTopicDAO.findByAuthor(authorId)
   }
   
@@ -436,11 +438,11 @@ class DatabaseService {
     discussionReplyDAO.findById(replyId)
   }
   
-  def getRepliesForTopic(topicId: String): List[Reply] = {
+  def repliesForTopic(topicId: String): List[Reply] = {
     discussionReplyDAO.findByTopicId(topicId)
   }
   
-  def getRepliesByAuthor(authorId: String): List[Reply] = {
+  def repliesByAuthor(authorId: String): List[Reply] = {
     discussionReplyDAO.findByAuthor(authorId)
   }
   
@@ -452,8 +454,8 @@ class DatabaseService {
     discussionReplyDAO.delete(replyId)
   }
   
-  def getReplyCountForTopic(topicId: String): Int = {
-    discussionReplyDAO.getReplyCountForTopic(topicId)
+  def replyCountForTopic(topicId: String): Int = {
+    discussionReplyDAO.replyCountForTopic(topicId)
   }
 
   /**
@@ -472,19 +474,19 @@ class DatabaseService {
     eventDAO.delete(eventId)
   }
   
-  def getEventById(eventId: String): Option[Event] = {
+  def eventById(eventId: String): Option[Event] = {
     eventDAO.findById(eventId)
   }
   
-  def getAllEvents(): List[Event] = {
+  def allEvents: List[Event] = {
     eventDAO.findAll()
   }
   
-  def getUpcomingEvents(): List[Event] = {
+  def upcomingEvents: List[Event] = {
     eventDAO.findUpcomingEvents()
   }
   
-  def getEventsByOrganizer(organizerId: String): List[Event] = {
+  def eventsByOrganizer(organizerId: String): List[Event] = {
     eventDAO.findEventsByOrganizer(organizerId)
   }
   
@@ -500,12 +502,12 @@ class DatabaseService {
     eventDAO.cancelRsvp(eventId, userId)
   }
   
-  def getEventRsvpCount(eventId: String): Int = {
-    eventDAO.getRsvpCount(eventId)
+  def eventRsvpCount(eventId: String): Int = {
+    eventDAO.rsvpCount(eventId)
   }
-  
-  def getUserEvents(userId: String): List[Event] = {
-    eventDAO.getUserEvents(userId)
+
+  def userEvents(userId: String): List[Event] = {
+    eventDAO.userEvents(userId)
   }
   
   /**
@@ -520,15 +522,15 @@ class DatabaseService {
     foodStockDAO.findById(stockId)
   }
   
-  def getAllFoodStocks: List[FoodStock] = {
+  def allFoodStocks: List[FoodStock] = {
     foodStockDAO.findAll()
   }
   
-  def getFoodStocksByCategory(category: FoodCategory): List[FoodStock] = {
+  def foodStocksByCategory(category: FoodCategory): List[FoodStock] = {
     foodStockDAO.findByCategory(category)
   }
   
-  def getFoodStocksByLocation(location: String): List[FoodStock] = {
+  def foodStocksByLocation(location: String): List[FoodStock] = {
     foodStockDAO.findByLocation(location)
   }
   
@@ -544,20 +546,20 @@ class DatabaseService {
     foodStockDAO.delete(stockId)
   }
   
-  def getLowStockItems: List[FoodStock] = {
+  def lowStockItems: List[FoodStock] = {
     foodStockDAO.findLowStock()
   }
   
-  def getExpiredItems: List[FoodStock] = {
+  def expiredItems: List[FoodStock] = {
     foodStockDAO.findExpired()
   }
   
-  def getExpiringSoonItems(days: Int = 7): List[FoodStock] = {
+  def expiringSoonItems(days: Int = 7): List[FoodStock] = {
     foodStockDAO.findExpiringSoon(days)
   }
   
-  def getFoodStockStatistics: (Int, Int, Int, Int) = {
-    foodStockDAO.getStatistics
+  def foodStockStatistics: (Int, Int, Int, Int) = {
+    foodStockDAO.statistics
   }
   
   /**
@@ -572,23 +574,23 @@ class DatabaseService {
     stockMovementDAO.findById(movementId)
   }
   
-  def getAllStockMovements: List[StockMovement] = {
+  def allStockMovements: List[StockMovement] = {
     stockMovementDAO.findAll()
   }
   
-  def getStockMovementsByStockId(stockId: String): List[StockMovement] = {
+  def stockMovementsByStockId(stockId: String): List[StockMovement] = {
     stockMovementDAO.findByStockId(stockId)
   }
   
-  def getStockMovementsByUser(userId: String): List[StockMovement] = {
+  def stockMovementsByUser(userId: String): List[StockMovement] = {
     stockMovementDAO.findByUserId(userId)
   }
   
-  def getStockMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
+  def stockMovementsByActionType(actionType: StockActionType): List[StockMovement] = {
     stockMovementDAO.findByActionType(actionType)
   }
   
-  def getStockMovementsByDateRange(startDate: java.time.LocalDateTime, endDate: java.time.LocalDateTime): List[StockMovement] = {
+  def stockMovementsByDateRange(startDate: java.time.LocalDateTime, endDate: java.time.LocalDateTime): List[StockMovement] = {
     stockMovementDAO.findByDateRange(startDate, endDate)
   }
 }
@@ -597,15 +599,5 @@ class DatabaseService {
  * Singleton object for DatabaseService
  */
 object DatabaseService {
-  private var instance: Option[DatabaseService] = None
-  
-  def getInstance: DatabaseService = {
-    instance match {
-      case Some(service) => service
-      case None =>
-        val service = new DatabaseService()
-        instance = Some(service)
-        service
-    }
-  }
+  lazy val getInstance: DatabaseService = new DatabaseService()
 }

@@ -1,6 +1,6 @@
 package gui.components.features.food
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout.{VBox, HBox}
 import scalafx.geometry.Insets
 import scalafx.Includes._
@@ -25,7 +25,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
   private val acceptBtn = SimpleComponentBuilder.button("Accept", handleAccept)
   private val filterBtn = SimpleComponentBuilder.button("Filter", handleFilter)
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     // Load initial food posts
     handleRefresh()
 
@@ -45,7 +45,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
       padding = Insets(10)
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Food Sharing"
       content = layoutContent
       closable = false
@@ -55,7 +55,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
   // Handles the refresh action to load food posts
   
   private def handleRefresh(): Unit = {
-    val posts = service.getFoodPosts
+    val posts = service.foodPosts
     val items = posts.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
     foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
@@ -83,7 +83,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
     } else {
       import model.FoodPostType
       val postType = if (filterType == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-      val filtered = service.getFoodPostsByType(postType)
+      val filtered = service.foodPostsByType(postType)
       val items = filtered.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
       foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -92,7 +92,7 @@ class SimpleFoodSharingTab extends BaseTabComponent {
   private def handleAccept(): Unit = {
     val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val posts = service.getFoodPosts
+      val posts = service.foodPosts
       if (selectedIndex < posts.length) {
         val post = posts(selectedIndex)
         if (service.acceptFoodPost(post.postId)) {

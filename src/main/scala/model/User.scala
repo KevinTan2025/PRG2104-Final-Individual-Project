@@ -2,57 +2,44 @@ package model
 
 import java.time.LocalDateTime
 import util.PasswordHasher
+import scala.util.{Try, Success, Failure}
 
 /**
- * Abstract base class representing a user in the community engagement platform
- * @param userId unique identifier for the user
- * @param username user's username
- * @param email user's email address
- * @param name user's display name
- * @param contactInfo user's contact information
- * @param passwordHash hashed password for authentication
+ * Sealed trait representing a user in the community engagement platform
+ * Uses functional programming principles with immutable data structures
  */
-abstract class User(
-  val userId: String,
-  var username: String,
-  var email: String,
-  var name: String,
-  var contactInfo: String,
-  private var passwordHash: String = ""
-) {
-  
-  val registrationDate: LocalDateTime = LocalDateTime.now()
-  var isActive: Boolean = true
-  
-  /**
-   * Abstract method to get user role
-   * @return string representation of user role
-   */
-  def getUserRole: String
+sealed trait User {
+  def userId: String
+  def username: String
+  def email: String
+  def name: String
+  def contactInfo: String
+  def passwordHash: String
+  def registrationDate: LocalDateTime
+  def isActive: Boolean
+  def userRole: String // Scala-style property instead of Java-style getter
   
   /**
-   * Update user profile information
+   * Update user profile information functionally
    * @param newName new display name
    * @param newContactInfo new contact information
+   * @return Try containing updated user instance
    */
-  def updateProfile(newName: String, newContactInfo: String): Unit = {
-    this.name = newName
-    this.contactInfo = newContactInfo
-  }
+  def updateProfile(newName: String, newContactInfo: String): Try[User]
   
   /**
-   * Set a new password (hashes the password before storing)
+   * Set a new password functionally (hashes the password before storing)
    * @param newPassword the new plain text password
-   * @return true if password was set successfully, false if invalid
+   * @return Try containing updated user instance with new password
    */
-  def setPassword(newPassword: String): Boolean = {
-    if (PasswordHasher.isPasswordValid(newPassword)) {
-      this.passwordHash = PasswordHasher.hashPassword(newPassword)
-      true
-    } else {
-      false
-    }
-  }
+  def setPassword(newPassword: String): Try[User]
+  
+  /**
+   * Set the password hash directly (for loading from database)
+   * @param hash the hashed password from database
+   * @return updated user instance with new password hash
+   */
+  def withPasswordHash(hash: String): User
   
   /**
    * Verify a password against the stored hash
@@ -65,30 +52,16 @@ abstract class User(
   }
   
   /**
-   * Get the stored password hash (for database storage)
-   * @return the hashed password
-   */
-  def getPasswordHash: String = passwordHash
-  
-  /**
-   * Set the password hash directly (for loading from database)
-   * @param hash the hashed password from database
-   */
-  def setPasswordHash(hash: String): Unit = {
-    this.passwordHash = hash
-  }
-  
-  /**
-   * Reset password with validation
+   * Reset password with validation functionally
    * @param currentPassword the current password for verification
    * @param newPassword the new password to set
-   * @return true if password was reset successfully, false otherwise
+   * @return Try containing updated user instance with new password
    */
-  def resetPassword(currentPassword: String, newPassword: String): Boolean = {
+  def resetPassword(currentPassword: String, newPassword: String): Try[User] = {
     if (verifyPassword(currentPassword) && PasswordHasher.isPasswordValid(newPassword)) {
       setPassword(newPassword)
     } else {
-      false
+      Failure(new IllegalArgumentException("Invalid current password or new password does not meet requirements"))
     }
   }
   
@@ -98,63 +71,140 @@ abstract class User(
    */
   def hasAdminPrivileges: Boolean = false
   
-  override def toString: String = s"User($userId, $username, $name, ${getUserRole})"
+  /**
+   * Toggle user active status functionally
+   * @return updated user instance with toggled active status
+   */
+  def toggleActiveStatus: User
 }
 
 /**
- * Community Member user class
+ * Companion object for User trait with utility functions
  */
-class CommunityMember(
+object User {
+  /**
+   * Create a string representation of a user
+   * @param user the user instance
+   * @return formatted string representation
+   */
+  def userToString(user: User): String = 
+    s"User(${user.userId}, ${user.username}, ${user.name}, ${user.userRole})"
+}
+
+/**
+ * Community Member user case class - immutable data structure
+ * @param userId unique identifier for the user
+ * @param username user's username
+ * @param email user's email address
+ * @param name user's display name
+ * @param contactInfo user's contact information
+ * @param passwordHash hashed password for authentication
+ * @param registrationDate when the user registered
+ * @param isActive whether the user account is active
+ */
+case class CommunityMember(
   userId: String,
   username: String,
   email: String,
   name: String,
   contactInfo: String,
-  passwordHash: String = ""
-) extends User(userId, username, email, name, contactInfo, passwordHash) {
+  passwordHash: String = "",
+  registrationDate: LocalDateTime = LocalDateTime.now(),
+  isActive: Boolean = true
+) extends User {
   
-  override def getUserRole: String = "Community Member"
+  override def userRole: String = "Community Member"
+  
+  override def updateProfile(newName: String, newContactInfo: String): Try[User] = {
+    Try(this.copy(name = newName, contactInfo = newContactInfo))
+  }
+  
+  override def setPassword(newPassword: String): Try[User] = {
+    if (PasswordHasher.isPasswordValid(newPassword)) {
+      Try(this.copy(passwordHash = PasswordHasher.hashPassword(newPassword)))
+    } else {
+      Failure(new IllegalArgumentException("Password does not meet security requirements"))
+    }
+  }
+  
+  override def withPasswordHash(hash: String): User = {
+    this.copy(passwordHash = hash)
+  }
+  
+  override def toggleActiveStatus: User = {
+    this.copy(isActive = !isActive)
+  }
   
   /**
-   * Member-specific functionality can be added here
+   * Member-specific functionality - pure functions that return actions/results
    */
-  def requestFood(): Unit = {
-    // Implementation for food requests
+  def createFoodRequest(): String = {
+    s"Food request created by user $userId"
   }
   
-  def offerFood(): Unit = {
-    // Implementation for food offers
+  def createFoodOffer(): String = {
+    s"Food offer created by user $userId"
   }
 }
 
 /**
- * Administrator user class with additional privileges
+ * Administrator user case class with additional privileges - immutable data structure
+ * @param userId unique identifier for the user
+ * @param username user's username
+ * @param email user's email address
+ * @param name user's display name
+ * @param contactInfo user's contact information
+ * @param passwordHash hashed password for authentication
+ * @param registrationDate when the user registered
+ * @param isActive whether the user account is active
  */
-class AdminUser(
+case class AdminUser(
   userId: String,
   username: String,
   email: String,
   name: String,
   contactInfo: String,
-  passwordHash: String = ""
-) extends User(userId, username, email, name, contactInfo, passwordHash) {
+  passwordHash: String = "",
+  registrationDate: LocalDateTime = LocalDateTime.now(),
+  isActive: Boolean = true
+) extends User {
   
-  override def getUserRole: String = "Administrator"
+  override def userRole: String = "Administrator"
   
   override def hasAdminPrivileges: Boolean = true
   
+  override def updateProfile(newName: String, newContactInfo: String): Try[User] = {
+    Try(this.copy(name = newName, contactInfo = newContactInfo))
+  }
+  
+  override def setPassword(newPassword: String): Try[User] = {
+    if (PasswordHasher.isPasswordValid(newPassword)) {
+      Try(this.copy(passwordHash = PasswordHasher.hashPassword(newPassword)))
+    } else {
+      Failure(new IllegalArgumentException("Password does not meet security requirements"))
+    }
+  }
+  
+  override def withPasswordHash(hash: String): User = {
+    this.copy(passwordHash = hash)
+  }
+  
+  override def toggleActiveStatus: User = {
+    this.copy(isActive = !isActive)
+  }
+  
   /**
-   * Admin-specific functionality
+   * Admin-specific functionality - pure functions that return action descriptions
    */
-  def moderateContent(contentId: String): Unit = {
-    // Implementation for content moderation
+  def createModerationAction(contentId: String): String = {
+    s"Content moderation action created for content $contentId by admin $userId"
   }
   
-  def deleteInappropriateContent(contentId: String): Unit = {
-    // Implementation for content deletion
+  def createDeletionAction(contentId: String): String = {
+    s"Content deletion action created for content $contentId by admin $userId"
   }
   
-  def manageUsers(): Unit = {
-    // Implementation for user management
+  def createUserManagementAction(targetUserId: String, action: String): String = {
+    s"User management action '$action' created for user $targetUserId by admin $userId"
   }
 }

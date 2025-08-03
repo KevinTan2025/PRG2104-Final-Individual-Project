@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.utils.WarningAlertController" styleClass="warning-alert-dialog">
+   <children>
+      <HBox fx:id="hboxHeader" styleClass="alert-header">
+         <children>
+            <Label fx:id="lblIcon" styleClass="alert-icon" text="⚠" />
+            <Label fx:id="lblTitle" styleClass="alert-title" text="Warning" />
+         </children>
+      </HBox>
+      <VBox fx:id="vboxContent" styleClass="alert-content">
+         <children>
+            <Label fx:id="lblMessage" styleClass="alert-message" text="Warning message" wrapText="true" />
+         </children>
+      </VBox>
+      <HBox fx:id="hboxButtons" styleClass="alert-buttons">
+         <children>
+            <Button fx:id="btnOk" styleClass="btn-warning" text="OK" onAction="#handleOkAction" />
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <String fx:value="@WarningAlert.css" />
+   </stylesheets>
+</VBox>

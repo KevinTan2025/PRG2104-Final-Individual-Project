@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="grdMainLayout" hgap="10.0" vgap="15.0">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+   <children>
+      <Label fx:id="lblTitleLabel" styleClass="field-label" text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+      <TextField fx:id="txtTitle" prefWidth="300.0" promptText="Post title" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+      
+      <Label fx:id="lblTypeLabel" styleClass="field-label" text="Type:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+      <ComboBox fx:id="cmbType" prefWidth="300.0" promptText="Select type" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      
+      <Label fx:id="lblQuantityLabel" styleClass="field-label" text="Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+      <TextField fx:id="txtQuantity" prefWidth="300.0" promptText="Quantity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+      <Label fx:id="lblLocationLabel" styleClass="field-label" text="Location:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+      <TextField fx:id="txtLocation" prefWidth="300.0" promptText="Location" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      
+      <Label fx:id="lblDescriptionLabel" styleClass="field-label" text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+      <TextArea fx:id="txtDescription" prefRowCount="3" prefWidth="300.0" promptText="Description" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      
+      <CheckBox fx:id="chkHasExpiry" onAction="#handleExpiryCheckChange" text="Has expiry date" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+      <DatePicker fx:id="dpExpiry" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      
+      <HBox fx:id="hboxButtons" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+         <children>
+            <Button fx:id="btnCreate" onAction="#handleCreate" styleClass="create-button" text="Create" />
+            <Button fx:id="btnCancel" onAction="#handleCancel" styleClass="cancel-button" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <URL value="@FoodPostDialog.css" />
+   </stylesheets>
+</GridPane>

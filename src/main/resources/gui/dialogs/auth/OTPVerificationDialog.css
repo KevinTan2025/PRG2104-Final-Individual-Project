@@ -1,0 +1,227 @@
+/* Main Container Styles */
+.main-container {
+    -fx-background-color: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    -fx-alignment: center;
+    -fx-spacing: 20;
+    -fx-padding: 30;
+}
+
+/* Header Styles */
+.email-icon {
+    -fx-font-size: 32px;
+}
+
+.title-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Email Info Styles */
+.email-prompt {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+.user-email {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2196F3;
+}
+
+/* OTP Input Styles */
+.otp-prompt {
+    -fx-font-size: 12px;
+    -fx-text-fill: #495057;
+}
+
+.otp-input-field {
+    -fx-font-size: 20px;
+    -fx-text-alignment: center;
+    -fx-font-family: 'Courier New';
+    -fx-font-weight: bold;
+    -fx-background-color: #fff3cd;
+    -fx-border-color: #ffc107;
+    -fx-border-width: 2;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8;
+}
+
+.otp-input-field:focused {
+    -fx-border-color: #ff9800;
+    -fx-background-color: #fffbf0;
+}
+
+/* Button Styles */
+.verify-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.verify-button:hover {
+    -fx-background-color: #218838;
+}
+
+.resend-button {
+    -fx-background-color: #17a2b8;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.resend-button:hover {
+    -fx-background-color: #138496;
+}
+
+.cancel-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+/* Separator Styles */
+#sepDivider {
+    -fx-background-color: #dee2e6;
+}
+
+/* Email Simulation Dialog Styles (for separate dialog) */
+.email-dialog-container {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-spacing: 15;
+}
+
+.email-header {
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
+.email-header-icon {
+    -fx-font-size: 24px;
+}
+
+.email-sender-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.email-sender-address {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+.email-details {
+    -fx-spacing: 8;
+}
+
+.email-detail-label {
+    -fx-font-weight: bold;
+    -fx-min-width: 60;
+}
+
+.email-detail-value {
+    -fx-text-fill: #666;
+}
+
+.email-to-value {
+    -fx-text-fill: #2196F3;
+}
+
+.email-body {
+    -fx-background-color: white;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-spacing: 15;
+}
+
+.email-body-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.email-body-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+.otp-code-container {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #6c757d;
+    -fx-border-width: 2;
+    -fx-border-style: dashed;
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 20 10;
+}
+
+.otp-code-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+.otp-code-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e74c3c;
+    -fx-font-family: 'Courier New';
+}
+
+.copy-otp-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.copy-otp-button:hover {
+    -fx-background-color: #45a049;
+}
+
+.copy-otp-button-copied {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.email-footer-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+.email-signature {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}
+
+.email-disclaimer {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+}
+
+.close-email-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16;
+}
+
+.close-email-button:hover {
+    -fx-background-color: #5a6268;
+}

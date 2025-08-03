@@ -1,0 +1,165 @@
+/* Simple Food Sharing Tab Styles */
+.simple-food-sharing-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Layout Containers */
+.button-row {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 0 0 5 5;
+    -fx-background-radius: 5 5 0 0;
+}
+
+.search-row {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Unified Button Styles */
+.create-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 80;
+}
+
+.create-button:hover {
+    -fx-background-color: #218838;
+}
+
+.create-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.refresh-button, .filter-button, .search-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 70;
+}
+
+.refresh-button:hover, .filter-button:hover, .search-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.refresh-button:pressed, .filter-button:pressed, .search-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.accept-button {
+    -fx-background-color: #ffc107;
+    -fx-text-fill: #212529;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+    -fx-min-width: 70;
+}
+
+.accept-button:hover {
+    -fx-background-color: #e0a800;
+}
+
+.accept-button:pressed {
+    -fx-background-color: #d39e00;
+}
+
+/* Form Controls */
+.type-filter-combo {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10;
+    -fx-min-width: 100;
+}
+
+.type-filter-combo:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 2, 0, 0, 0);
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10;
+    -fx-prompt-text-fill: #6c757d;
+}
+
+.search-field:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 2, 0, 0, 0);
+}
+
+/* Customized List View */
+.food-posts-list {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.food-posts-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f1f3f4;
+}
+
+.food-posts-list .list-cell:last-child {
+    -fx-border-width: 0;
+}
+
+.food-posts-list .list-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.food-posts-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.food-posts-list .list-cell:selected:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* Post Type and Status Styling */
+.food-posts-list .list-cell .label {
+    -fx-text-fill: inherit;
+}
+
+/* Minimalist design adjustments */
+.simple-food-sharing-tab .button-row,
+.simple-food-sharing-tab .search-row {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 1, 0, 0, 1);
+}
+
+/* Responsive design for smaller components */
+@media (max-width: 800px) {
+    .button-row {
+        -fx-spacing: 5;
+    }
+    
+    .create-button, .refresh-button, .filter-button, .search-button, .accept-button {
+        -fx-min-width: 60;
+        -fx-padding: 4 8;
+        -fx-font-size: 12px;
+    }
+    
+    .search-field {
+        -fx-pref-width: 200;
+    }
+}

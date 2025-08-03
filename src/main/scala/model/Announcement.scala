@@ -6,35 +6,23 @@ import java.time.LocalDateTime
  * Trait for content that can be liked and commented on
  */
 trait Likeable {
-  var likes: Int = 0
-  var comments: List[Comment] = List.empty
+  val likes: Int
+  val comments: List[Comment]
   
-  def addLike(): Unit = {
-    likes += 1
-  }
-  
-  def removeLike(): Unit = {
-    if (likes > 0) likes -= 1
-  }
-  
-  def addComment(comment: Comment): Unit = {
-    comments = comment :: comments
-  }
+  def addLike(): Likeable
+  def removeLike(): Likeable
+  def addComment(comment: Comment): Likeable
 }
 
 /**
  * Trait for content that can be moderated
  */
 trait Moderatable {
-  var isModerated: Boolean = false
-  var moderatedBy: Option[String] = None
-  var moderationDate: Option[LocalDateTime] = None
+  val isModerated: Boolean
+  val moderatedBy: Option[String]
+  val moderationDate: Option[LocalDateTime]
   
-  def moderate(adminId: String): Unit = {
-    isModerated = true
-    moderatedBy = Some(adminId)
-    moderationDate = Some(LocalDateTime.now())
-  }
+  def moderate(adminId: String): Moderatable
 }
 
 /**
@@ -43,13 +31,44 @@ trait Moderatable {
  * @param authorId ID of the comment author
  * @param content comment content
  * @param timestamp when the comment was created
+ * @param likes number of likes
+ * @param comments nested comments (replies)
+ * @param isModerated whether the comment is moderated
+ * @param moderatedBy ID of the moderator
+ * @param moderationDate when the comment was moderated
  */
 case class Comment(
   commentId: String,
   authorId: String,
   content: String,
-  timestamp: LocalDateTime = LocalDateTime.now()
-) extends Likeable with Moderatable
+  timestamp: LocalDateTime = LocalDateTime.now(),
+  likes: Int = 0,
+  comments: List[Comment] = List.empty,
+  isModerated: Boolean = false,
+  moderatedBy: Option[String] = None,
+  moderationDate: Option[LocalDateTime] = None
+) extends Likeable with Moderatable {
+  
+  def addLike(): Comment = {
+    this.copy(likes = likes + 1)
+  }
+  
+  def removeLike(): Comment = {
+    this.copy(likes = if (likes > 0) likes - 1 else 0)
+  }
+  
+  def addComment(comment: Comment): Comment = {
+    this.copy(comments = comment :: comments)
+  }
+  
+  def moderate(adminId: String): Comment = {
+    this.copy(
+      isModerated = true,
+      moderatedBy = Some(adminId),
+      moderationDate = Some(LocalDateTime.now())
+    )
+  }
+}
 
 /**
  * Announcement class for community announcements
@@ -58,6 +77,14 @@ case class Comment(
  * @param title announcement title
  * @param content announcement content
  * @param announcementType type of announcement (food_distribution, events, tips)
+ * @param timestamp when the announcement was created
+ * @param isActive whether the announcement is active
+ * @param priority priority level of the announcement
+ * @param likes number of likes
+ * @param comments list of comments
+ * @param isModerated whether the announcement is moderated
+ * @param moderatedBy ID of the moderator
+ * @param moderationDate when the announcement was moderated
  */
 case class Announcement(
   announcementId: String,
@@ -65,18 +92,42 @@ case class Announcement(
   title: String,
   content: String,
   announcementType: AnnouncementType,
-  timestamp: LocalDateTime = LocalDateTime.now()
+  timestamp: LocalDateTime = LocalDateTime.now(),
+  isActive: Boolean = true,
+  priority: Priority = Priority.NORMAL,
+  likes: Int = 0,
+  comments: List[Comment] = List.empty,
+  isModerated: Boolean = false,
+  moderatedBy: Option[String] = None,
+  moderationDate: Option[LocalDateTime] = None
 ) extends Likeable with Moderatable {
   
-  var isActive: Boolean = true
-  var priority: Priority = Priority.NORMAL
-  
-  def deactivate(): Unit = {
-    isActive = false
+  def deactivate(): Announcement = {
+    this.copy(isActive = false)
   }
   
-  def setPriority(newPriority: Priority): Unit = {
-    priority = newPriority
+  def setPriority(newPriority: Priority): Announcement = {
+    this.copy(priority = newPriority)
+  }
+  
+  def addLike(): Announcement = {
+    this.copy(likes = likes + 1)
+  }
+  
+  def removeLike(): Announcement = {
+    this.copy(likes = if (likes > 0) likes - 1 else 0)
+  }
+  
+  def addComment(comment: Comment): Announcement = {
+    this.copy(comments = comment :: comments)
+  }
+  
+  def moderate(adminId: String): Announcement = {
+    this.copy(
+      isModerated = true,
+      moderatedBy = Some(adminId),
+      moderationDate = Some(LocalDateTime.now())
+    )
   }
 }
 

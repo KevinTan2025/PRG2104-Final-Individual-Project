@@ -1,0 +1,19 @@
+/* Announcement Tab Component Styles */
+.announcement-tab-component {
+    -fx-background-color: #f8f9fa;
+    -fx-alignment: center;
+}
+
+.component-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+    -fx-alignment: center;
+}
+
+.placeholder-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+    -fx-alignment: center;
+    -fx-font-style: italic;
+}

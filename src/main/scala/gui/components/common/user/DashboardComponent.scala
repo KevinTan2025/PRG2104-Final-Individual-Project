@@ -1,6 +1,6 @@
 package gui.components.common.user
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -21,12 +21,12 @@ import model.User
  */
 class DashboardComponent extends BaseTabComponent {
   
-  private var activityFeedComponent: EnhancedActivityFeedComponent = _
+  private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
+    new EnhancedActivityFeedComponent(service, () => refresh(), None)
   
-  override def build(): Tab = {
-    val currentUser = service.getCurrentUser
+  override def build(): ScalaFXTab = {
+    val currentUser = service.currentUserInfo
     // Home tab shows all activity types
-    activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh(), None)
     val userFeed = activityFeedComponent.build()
     val sidePanel = createUserSidePanel(currentUser)
     
@@ -44,7 +44,7 @@ class DashboardComponent extends BaseTabComponent {
       content = mainContent
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "🏠 Dashboard"
       content = scrollContent
       closable = false
@@ -123,7 +123,7 @@ class DashboardComponent extends BaseTabComponent {
             new Label(s"✉️ ${user.email}") {
               style = "-fx-text-fill: white; -fx-font-size: 12px;"
             },
-            new Label(s"🎯 Role: ${user.getUserRole}") {
+            new Label(s"🎯 Role: ${user.userRole}") {
               style = "-fx-text-fill: white; -fx-font-size: 12px;"
             },
             new Label(s"🗓️ Member since: ${user.registrationDate.toLocalDate}") {
@@ -149,7 +149,7 @@ class DashboardComponent extends BaseTabComponent {
   }
   
   private def createMyStatsCard(): VBox = {
-    val stats = service.getDashboardStatistics
+    val stats = service.dashboardStatistics
     
     new VBox {
       spacing = 10

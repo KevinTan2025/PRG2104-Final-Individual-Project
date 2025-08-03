@@ -1,0 +1,67 @@
+/* TabPaneComponent Styles - Generic base styles */
+
+.generic-tab-pane {
+    -fx-background-color: #ffffff;
+}
+
+.generic-tab-pane .tab-header-area {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.generic-tab-pane .tab-header-background {
+    -fx-background-color: #f8f9fa;
+}
+
+.generic-tab-pane .tab {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 8 16;
+}
+
+.generic-tab-pane .tab:selected {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #007bff;
+    -fx-border-width: 0 0 2 0;
+}
+
+.generic-tab-pane .tab:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.generic-tab-pane .tab .tab-label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.generic-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+.generic-tab-pane .tab-content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+/* Tab closing button styling */
+.generic-tab-pane .tab .tab-close-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 3;
+    -fx-padding: 2;
+}
+
+.generic-tab-pane .tab .tab-close-button:hover {
+    -fx-background-color: #dc3545;
+}
+
+.generic-tab-pane .tab .tab-close-button .graphic {
+    -fx-text-fill: #6c757d;
+}
+
+.generic-tab-pane .tab .tab-close-button:hover .graphic {
+    -fx-text-fill: white;
+}

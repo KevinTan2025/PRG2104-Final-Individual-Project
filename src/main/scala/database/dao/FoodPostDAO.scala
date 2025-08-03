@@ -55,14 +55,13 @@ class FoodPostDAO {
   def findAll(): List[FoodPost] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM food_posts ORDER BY created_at DESC")
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error finding all food posts: ${e.getMessage}")
@@ -77,13 +76,13 @@ class FoodPostDAO {
         postType.toString
       )
       
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error finding food posts by type: ${e.getMessage}")
@@ -98,13 +97,13 @@ class FoodPostDAO {
         status.toString
       )
       
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error finding food posts by status: ${e.getMessage}")
@@ -121,13 +120,13 @@ class FoodPostDAO {
         s"%$searchTerm%", s"%$searchTerm%", s"%$searchTerm%"
       )
       
-      val foodPosts = scala.collection.mutable.ListBuffer[FoodPost]()
-      while (rs.next()) {
-        foodPosts += resultSetToFoodPost(rs)
-      }
+      val foodPosts = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToFoodPost)
+        .toList
       
       rs.close()
-      foodPosts.toList
+      foodPosts
     } catch {
       case e: Exception =>
         println(s"Error searching food posts: ${e.getMessage}")
@@ -195,7 +194,7 @@ class FoodPostDAO {
     }
   }
   
-  def getStatistics: (Int, Int, Int) = {
+  def statistics: (Int, Int, Int) = {
     try {
       val totalRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM food_posts")
       val total = if (totalRs.next()) totalRs.getInt(1) else 0
@@ -226,7 +225,7 @@ class FoodPostDAO {
     val quantity = rs.getString("quantity")
     val location = rs.getString("location")
     val expiryDateStr = rs.getString("expiry_date")
-    val expiryDate = Option(expiryDateStr).filter(_ != null).map(DatabaseConnection.parseDateTime)
+    val expiryDate = Option(expiryDateStr).filter(_.nonEmpty).map(DatabaseConnection.parseDateTime)
     val status = FoodPostStatus.valueOf(rs.getString("status"))
     val acceptedBy = Option(rs.getString("accepted_by"))
     val isModerated = rs.getBoolean("is_moderated")
@@ -234,17 +233,22 @@ class FoodPostDAO {
     val likes = rs.getInt("likes")
     val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
     
-    val foodPost = FoodPost(postId, authorId, title, description, postType, quantity, location, expiryDate, createdAt)
-    
-    // Set additional properties from database
-    foodPost.status = status
-    foodPost.acceptedBy = acceptedBy
-    foodPost.likes = likes
-    foodPost.isModerated = isModerated
-    if (moderatorIdStr != null) {
-      foodPost.moderatedBy = Some(moderatorIdStr)
-    }
-    
-    foodPost
+    // Create FoodPost with all properties from database
+    FoodPost(
+      postId = postId,
+      authorId = authorId,
+      title = title,
+      description = description,
+      postType = postType,
+      quantity = quantity,
+      location = location,
+      expiryDate = expiryDate,
+      timestamp = createdAt,
+      status = status,
+      acceptedBy = acceptedBy,
+      likes = likes,
+      isModerated = isModerated,
+      moderatedBy = if (moderatorIdStr != null) Some(moderatorIdStr) else None
+    )
   }
 }

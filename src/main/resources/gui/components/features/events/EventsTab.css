@@ -1,0 +1,181 @@
+/* Events Tab Styles */
+.events-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Control Containers */
+.top-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}
+
+.search-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Button Styles */
+.create-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.create-button:hover {
+    -fx-background-color: #218838;
+}
+
+.create-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.rsvp-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.rsvp-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.rsvp-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.cancel-rsvp-button {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.cancel-rsvp-button:hover {
+    -fx-background-color: #c82333;
+}
+
+.cancel-rsvp-button:pressed {
+    -fx-background-color: #bd2130;
+}
+
+.my-events-button {
+    -fx-background-color: #6f42c1;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.my-events-button:hover {
+    -fx-background-color: #5a32a3;
+}
+
+.my-events-button:pressed {
+    -fx-background-color: #4e2a8e;
+}
+
+.view-all-button, .refresh-button, .search-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.view-all-button:hover, .refresh-button:hover, .search-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+.view-all-button:pressed, .refresh-button:pressed, .search-button:pressed {
+    -fx-background-color: #545b62;
+}
+
+/* Read-only mode button styles */
+.create-button.readonly, .rsvp-button.readonly, .cancel-rsvp-button.readonly, .my-events-button.readonly {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+}
+
+.create-button.readonly:hover, .rsvp-button.readonly:hover, .cancel-rsvp-button.readonly:hover, .my-events-button.readonly:hover {
+    -fx-background-color: #5a6268;
+}
+
+/* Search Field */
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+    -fx-min-width: 300;
+    -fx-prompt-text-fill: #6c757d;
+}
+
+.search-field:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 3, 0, 0, 0);
+}
+
+/* Events List */
+.events-list {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.events-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.events-list .list-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.events-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.events-list .list-cell:selected:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* Event item styling */
+.events-list .list-cell .label {
+    -fx-text-fill: inherit;
+}
+
+/* Event status indicators */
+.event-upcoming {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.event-past {
+    -fx-text-fill: #6c757d;
+}
+
+.event-full {
+    -fx-text-fill: #dc3545;
+}
+
+/* Participant count styling */
+.participant-count {
+    -fx-text-fill: #6f42c1;
+    -fx-font-weight: bold;
+}

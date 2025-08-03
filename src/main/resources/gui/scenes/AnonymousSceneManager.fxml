@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="bpAnonymousLayout" prefHeight="700.0" prefWidth="1000.0" styleClass="scene-root anonymous-scene">
+   <stylesheets>
+      <String fx:value="@SceneManager.css" />
+   </stylesheets>
+   <top>
+      <fx:include fx:id="anonymousMenuBarContainer" source="../components/layout/AnonymousMenuBarComponent.fxml" />
+   </top>
+   <center>
+      <fx:include fx:id="anonymousTabContainer" source="../components/layout/AnonymousMainTabPane.fxml" />
+   </center>
+</BorderPane>

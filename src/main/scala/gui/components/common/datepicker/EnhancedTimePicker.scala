@@ -9,6 +9,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.text.{Font, FontWeight}
 import scalafx.stage.{Modality, Stage}
 import scalafx.scene.Scene
+import scalafx.beans.property.ObjectProperty
 import java.time.{LocalTime}
 import java.time.format.DateTimeFormatter
 
@@ -17,7 +18,7 @@ import java.time.format.DateTimeFormatter
  */
 class EnhancedTimePicker(placeholderText: String = "Select time") {
   
-  private var selectedTime: Option[LocalTime] = None
+  private val selectedTimeProperty = ObjectProperty[Option[LocalTime]](None)
   private val timeField = new TextField {
     promptText = placeholderText
     editable = false
@@ -35,17 +36,17 @@ class EnhancedTimePicker(placeholderText: String = "Select time") {
     alignment = Pos.CenterLeft
   }
   
-  def getValue: Option[LocalTime] = selectedTime
+  def getValue: Option[LocalTime] = selectedTimeProperty.value
   
   def setValue(time: LocalTime): Unit = {
-    selectedTime = Some(time)
+    selectedTimeProperty.value = Some(time)
     updateDisplayText()
   }
   
   def getText: String = timeField.text.value
   
   private def updateDisplayText(): Unit = {
-    selectedTime match {
+    selectedTimeProperty.value match {
       case Some(time) => 
         timeField.text = time.format(DateTimeFormatter.ofPattern("HH:mm"))
       case None => 
@@ -59,7 +60,7 @@ class EnhancedTimePicker(placeholderText: String = "Select time") {
     dialog.initModality(Modality.ApplicationModal)
     dialog.resizable = false
     
-    val currentTime = selectedTime.getOrElse(LocalTime.now())
+    val currentTime = selectedTimeProperty.value.getOrElse(LocalTime.now())
     
     val hourSpinner = new Spinner[Integer](0, 23, currentTime.getHour) {
       prefWidth = 70
@@ -103,7 +104,7 @@ class EnhancedTimePicker(placeholderText: String = "Select time") {
       onAction = _ => {
         val hour = hourSpinner.value.value.intValue()
         val minute = minuteSpinner.value.value.intValue()
-        selectedTime = Some(LocalTime.of(hour, minute))
+        selectedTimeProperty.value = Some(LocalTime.of(hour, minute))
         updateDisplayText()
         dialog.close()
       }

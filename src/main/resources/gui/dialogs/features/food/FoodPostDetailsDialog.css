@@ -1,0 +1,116 @@
+/* Header Section Styles */
+.header-section {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.title-label {
+    -fx-text-fill: #495057;
+}
+
+/* Post Type Label Styles */
+.post-type-label {
+    -fx-text-fill: white;
+    -fx-padding: 5 10;
+    -fx-background-radius: 15;
+}
+
+.post-type-offer {
+    -fx-background-color: #28a745;
+}
+
+.post-type-request {
+    -fx-background-color: #007bff;
+}
+
+/* Status Label Styles */
+.status-label {
+    -fx-text-fill: white;
+    -fx-padding: 5 10;
+    -fx-background-radius: 15;
+}
+
+.status-pending {
+    -fx-background-color: #ffc107;
+}
+
+.status-accepted {
+    -fx-background-color: #28a745;
+}
+
+.status-completed {
+    -fx-background-color: #6c757d;
+}
+
+.status-cancelled {
+    -fx-background-color: #dc3545;
+}
+
+/* Detail Labels and Values */
+.detail-label {
+    -fx-text-fill: #495057;
+}
+
+.detail-value {
+    -fx-text-fill: #6c757d;
+}
+
+/* Section Titles */
+.section-title {
+    -fx-text-fill: #495057;
+}
+
+/* Description Text Area */
+.description-text {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+}
+
+/* No Comments Label */
+.no-comments-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+}
+
+/* Button Styles */
+.accept-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+}
+
+.accept-button:hover {
+    -fx-background-color: #218838;
+}
+
+.complete-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+}
+
+.complete-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.close-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+}
+
+.close-button:hover {
+    -fx-background-color: #545b62;
+}
+
+/* Main Layout */
+#bpMainLayout {
+    -fx-background-color: white;
+}
+
+/* Comments ListView */
+#lstComments {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+}

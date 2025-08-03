@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="vboxMainContainer" alignment="CENTER" spacing="20.0" styleClass="welcome-content" 
+      stylesheets="@WelcomeAuthDialog.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gui.dialogs.auth.WelcomeAuthDialogController">
+   <padding>
+      <Insets bottom="30.0" left="30.0" right="30.0" top="20.0" />
+   </padding>
+   <children>
+      <Label fx:id="lblTitle" styleClass="title-label" text="Community Platform" />
+      <Label fx:id="lblWelcomeIcon" styleClass="welcome-icon" text="🏠" />
+      <Label fx:id="lblWelcomeText" styleClass="welcome-text" text="Connect with your community" wrapText="true" />
+      <Separator fx:id="sepWelcome1" maxWidth="200.0" styleClass="welcome-separator" />
+      <Button fx:id="btnWelcomeLogin" onAction="#handleWelcomeLogin" prefHeight="45.0" prefWidth="280.0" styleClass="welcome-login-button" text="Log In" />
+      <Button fx:id="btnWelcomeRegister" onAction="#handleWelcomeRegister" prefHeight="45.0" prefWidth="280.0" styleClass="welcome-register-button" text="Create New Account" />
+      <Separator fx:id="sepWelcome2" maxWidth="150.0" styleClass="welcome-separator" />
+      <Button fx:id="btnWelcomeGuest" onAction="#handleWelcomeGuest" prefHeight="35.0" prefWidth="280.0" styleClass="welcome-guest-button" text="Continue as Guest" />
+   </children>
+</VBox>

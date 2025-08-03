@@ -1,6 +1,6 @@
 package gui.components.features.foodstock
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -39,13 +39,12 @@ class FoodStockTab extends BaseTabComponent {
     prefWidth = 250
   }
   
-  private var stocksList: ListView[String] = _
+  private lazy val stocksList: ListView[String] = new ListView[String]() {
+    prefHeight = 400
+  }
   
-  override def build(): Tab = {
-    // Enhanced stock list with better styling - initialize first
-    stocksList = new ListView[String]() {
-      prefHeight = 400
-    }
+  override def build(): ScalaFXTab = {
+    // Enhanced stock list with better styling
     
     // Now we can safely refresh stocks
     refreshStocks()
@@ -181,7 +180,7 @@ class FoodStockTab extends BaseTabComponent {
       )
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "📦 Food Inventory"
       content = new ScrollPane {
         content = mainContent
@@ -202,14 +201,14 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def refreshStocks(): Unit = {
-    val stocks = service.getAllFoodStocks
+    val stocks = service.allFoodStocks
     updateStocksList(stocks)
   }
   
   private def updateStocksList(stocks: List[FoodStock]): Unit = {
     if (stocksList != null) {
       val items = stocks.map { stock =>
-        val status = stock.getStockStatus
+        val status = stock.stockStatus
         val statusIcon = status match {
           case StockStatus.IN_STOCK => "✅"
           case StockStatus.LOW_STOCK => "⚠️"
@@ -217,7 +216,7 @@ class FoodStockTab extends BaseTabComponent {
           case StockStatus.EXPIRED => "💀"
         }
         
-        val expiryInfo = stock.getDaysUntilExpiry match {
+        val expiryInfo = stock.daysUntilExpiry match {
           case Some(days) if days <= 0 => " (EXPIRED)"
           case Some(days) if days <= 7 => s" (${days}d left)"
           case Some(days) => s" (${days}d left)"
@@ -299,11 +298,11 @@ class FoodStockTab extends BaseTabComponent {
   private def handleViewHistory(): Unit = {
     getSelectedStock() match {
       case Some(stock) =>
-        val movements = service.getStockMovements(stock.stockId)
+        val movements = service.stockMovements(stock.stockId)
         val historyText = if (movements.nonEmpty) {
           movements.map { movement =>
             s"${movement.timestamp.toLocalDate} ${movement.timestamp.toLocalTime.toString.take(8)} - " +
-            s"${movement.getDescription} by ${movement.userId}"
+            s"${movement.description} by ${movement.userId}"
           }.mkString("\n")
         } else {
           "No movement history available."
@@ -319,18 +318,22 @@ class FoodStockTab extends BaseTabComponent {
     val category = categoryCombo.value.value
     val status = statusCombo.value.value
     
-    var filteredStocks = service.getAllFoodStocks
+    val allStocks = service.allFoodStocks
     
-    // Filter by category
-    if (category != "All") {
+    // Filter by category using functional approach
+    val categoryFiltered = if (category != "All") {
       val categoryEnum = FoodCategory.valueOf(category)
-      filteredStocks = filteredStocks.filter(_.category == categoryEnum)
+      allStocks.filter(_.category == categoryEnum)
+    } else {
+      allStocks
     }
     
     // Filter by status
-    if (status != "All") {
+    val filteredStocks = if (status != "All") {
       val statusEnum = StockStatus.valueOf(status)
-      filteredStocks = filteredStocks.filter(_.getStockStatus == statusEnum)
+      categoryFiltered.filter(_.stockStatus == statusEnum)
+    } else {
+      categoryFiltered
     }
     
     updateStocksList(filteredStocks)
@@ -352,7 +355,7 @@ class FoodStockTab extends BaseTabComponent {
       return
     }
     
-    val stocks = service.getAllFoodStocks
+    val stocks = service.allFoodStocks
     val exportDialog = new ExportStockDialog(stocks)
     exportDialog.showAndWait()
   }
@@ -369,36 +372,41 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def getSelectedStock(): Option[FoodStock] = {
-    if (stocksList != null) {
-      val selectedIndex = stocksList.selectionModel().selectedIndex.value
+    Option(stocksList).flatMap { list =>
+      val selectedIndex = list.selectionModel().selectedIndex.value
       if (selectedIndex >= 0) {
-        val allStocks = service.getAllFoodStocks
+        val allStocks = service.allFoodStocks
         // Apply current filters to get the displayed list
         val category = categoryCombo.value.value
         val status = statusCombo.value.value
         val searchTerm = searchField.text.value.trim
         
-        var filteredStocks = allStocks
-        
-        if (category != "All") {
+        // Apply filters functionally
+        val categoryFiltered = if (category != "All") {
           val categoryEnum = FoodCategory.valueOf(category)
-          filteredStocks = filteredStocks.filter(_.category == categoryEnum)
+          allStocks.filter(_.category == categoryEnum)
+        } else {
+          allStocks
         }
         
-        if (status != "All") {
+        val statusFiltered = if (status != "All") {
           val statusEnum = StockStatus.valueOf(status)
-          filteredStocks = filteredStocks.filter(_.getStockStatus == statusEnum)
+          categoryFiltered.filter(_.stockStatus == statusEnum)
+        } else {
+          categoryFiltered
         }
         
-        if (searchTerm.nonEmpty) {
-          filteredStocks = service.searchFoodStocks(searchTerm)
+        val filteredStocks = if (searchTerm.nonEmpty) {
+          service.searchFoodStocks(searchTerm)
+        } else {
+          statusFiltered
         }
         
         if (selectedIndex < filteredStocks.length) {
           Some(filteredStocks(selectedIndex))
         } else None
       } else None
-    } else None
+    }
   }
   
   private def createSidePanel(): VBox = {
@@ -415,7 +423,7 @@ class FoodStockTab extends BaseTabComponent {
   }
   
   private def createStockStatsCard(): VBox = {
-    val (total, lowStock, outOfStock, expired) = service.getStockStatistics
+    val (total, lowStock, outOfStock, expired) = service.stockStatistics
     
     new VBox {
       spacing = 10

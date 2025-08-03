@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="vboxModerationContainer" prefHeight="400.0" prefWidth="500.0" spacing="10.0" styleClass="admin-dialog-container" stylesheets="@AdminDialogs.css">
+   <children>
+      <Label fx:id="lblModerationCount" styleClass="admin-stats-label admin-bold-label" text="Content requiring moderation: 0" />
+      <ListView fx:id="lstModerationContent" prefHeight="300.0" prefWidth="460.0" styleClass="admin-moderation-list" />
+      <HBox fx:id="hboxModerationButtons" spacing="10.0" styleClass="admin-button-container">
+         <children>
+            <Button fx:id="btnModerateSelected" mnemonicParsing="false" onAction="#handleModerateSelected" styleClass="admin-primary-button" text="Moderate Selected" />
+            <Button fx:id="btnRefresh" mnemonicParsing="false" onAction="#handleRefresh" styleClass="admin-secondary-button" text="Refresh" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

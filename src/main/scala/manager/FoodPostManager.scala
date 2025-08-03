@@ -2,6 +2,7 @@ package manager
 
 import model._
 import java.time.LocalDateTime
+import scala.jdk.CollectionConverters._
 
 /**
  * Manager class for handling food sharing operations
@@ -21,16 +22,16 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param postType the type to filter by
    * @return list of food posts of the specified type
    */
-  def getFoodPostsByType(postType: FoodPostType): List[FoodPost] = {
-    items.values.filter(_.postType == postType).toList.sortBy(_.timestamp).reverse
+  def foodPostsByType(postType: FoodPostType): List[FoodPost] = {
+    items.values().asScala.filter(_.postType == postType).toList.sortBy(_.timestamp).reverse
   }
   
   /**
    * Get active food posts (pending or accepted)
    * @return list of active food posts
    */
-  def getActiveFoodPosts: List[FoodPost] = {
-    items.values.filter(_.isActive).toList.sortBy(_.timestamp).reverse
+  def activeFoodPosts: List[FoodPost] = {
+    items.values().asScala.filter(_.isActive).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -38,8 +39,8 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param status the status to filter by
    * @return list of food posts with the specified status
    */
-  def getFoodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
-    items.values.filter(_.status == status).toList.sortBy(_.timestamp).reverse
+  def foodPostsByStatus(status: FoodPostStatus): List[FoodPost] = {
+    items.values().asScala.filter(_.status == status).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -47,8 +48,8 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param authorId the author ID to filter by
    * @return list of food posts by the specified author
    */
-  def getFoodPostsByAuthor(authorId: String): List[FoodPost] = {
-    items.values.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
+  def foodPostsByAuthor(authorId: String): List[FoodPost] = {
+    items.values().asScala.filter(_.authorId == authorId).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -58,7 +59,7 @@ class FoodPostManager extends Manager[FoodPost] {
    */
   def searchFoodPosts(searchTerm: String): List[FoodPost] = {
     val term = searchTerm.toLowerCase
-    items.values.filter { post =>
+    items.values().asScala.filter { post =>
       post.title.toLowerCase.contains(term) || 
       post.description.toLowerCase.contains(term) ||
       post.location.toLowerCase.contains(term)
@@ -70,8 +71,8 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param location the location to filter by
    * @return list of food posts in the specified location
    */
-  def getFoodPostsByLocation(location: String): List[FoodPost] = {
-    items.values.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.timestamp).reverse
+  def foodPostsByLocation(location: String): List[FoodPost] = {
+    items.values().asScala.filter(_.location.toLowerCase.contains(location.toLowerCase)).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -79,9 +80,9 @@ class FoodPostManager extends Manager[FoodPost] {
    * @param hours number of hours to look ahead
    * @return list of food posts expiring soon
    */
-  def getExpiringSoon(hours: Int = 24): List[FoodPost] = {
+  def expiringSoon(hours: Int = 24): List[FoodPost] = {
     val cutoffTime = LocalDateTime.now().plusHours(hours)
-    items.values.filter { post =>
+    items.values().asScala.filter { post =>
       post.expiryDate.exists(_.isBefore(cutoffTime)) && post.isActive
     }.toList.sortBy(_.expiryDate)
   }
@@ -109,7 +110,8 @@ class FoodPostManager extends Manager[FoodPost] {
   def completeFoodPost(postId: String): Boolean = {
     get(postId) match {
       case Some(post) if post.status == FoodPostStatus.ACCEPTED =>
-        post.complete()
+        val updatedPost = post.complete()
+        add(post.postId, updatedPost)
         true
       case _ => false
     }
@@ -123,7 +125,8 @@ class FoodPostManager extends Manager[FoodPost] {
   def cancelFoodPost(postId: String): Boolean = {
     get(postId) match {
       case Some(post) =>
-        post.cancel()
+        val updatedPost = post.cancel()
+        add(post.postId, updatedPost)
         true
       case None => false
     }
@@ -162,8 +165,8 @@ class FoodPostManager extends Manager[FoodPost] {
    * Get statistics for food sharing
    * @return tuple of (total posts, active posts, completed posts, total helped)
    */
-  def getStatistics: (Int, Int, Int, Int) = {
-    val allPosts = items.values.toList
+  def statistics: (Int, Int, Int, Int) = {
+    val allPosts = items.values().asScala.toList
     val activePosts = allPosts.count(_.isActive)
     val completedPosts = allPosts.count(_.status == FoodPostStatus.COMPLETED)
     val totalHelped = allPosts.count(_.status == FoodPostStatus.COMPLETED)

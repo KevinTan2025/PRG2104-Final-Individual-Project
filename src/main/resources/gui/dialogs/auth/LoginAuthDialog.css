@@ -1,0 +1,64 @@
+/* Login Dialog Styles */
+.login-content {
+    -fx-background-color: white;
+    -fx-alignment: center;
+    -fx-spacing: 15;
+    -fx-padding: 20 40 40 40;
+}
+
+.back-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1877f2;
+    -fx-font-size: 14px;
+}
+
+.back-button:hover {
+    -fx-background-color: #f0f8ff;
+}
+
+.form-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.auth-input-field {
+    -fx-font-size: 14px;
+    -fx-padding: 12;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #ddd;
+    -fx-prompt-text-fill: #999999;
+}
+
+.auth-input-field:focused {
+    -fx-border-color: #1877f2;
+}
+
+.login-button {
+    -fx-background-color: #1877f2;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+}
+
+.login-button:hover {
+    -fx-background-color: #166fe5;
+}
+
+.demo-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #666;
+    -fx-text-alignment: center;
+}
+
+.link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1877f2;
+    -fx-font-size: 12px;
+}
+
+.link-button:hover {
+    -fx-background-color: #f0f8ff;
+}

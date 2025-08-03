@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+
+<TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="tabPaneMain" styleClass="main-tab-pane" tabClosingPolicy="UNAVAILABLE">
+   <tabs>
+      <Tab fx:id="tabDashboard" closable="false" text="Dashboard">
+         <content>
+            <VBox fx:id="vboxDashboardContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblDashboardTitle" styleClass="tab-title" text="Dashboard" />
+                  <Label fx:id="lblDashboardPlaceholder" styleClass="placeholder-text" text="Dashboard content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAnnouncements" closable="false" text="Announcements">
+         <content>
+            <VBox fx:id="vboxAnnouncementsContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblAnnouncementsTitle" styleClass="tab-title" text="Announcements" />
+                  <Label fx:id="lblAnnouncementsPlaceholder" styleClass="placeholder-text" text="Announcements content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabFoodSharing" closable="false" text="Food Sharing">
+         <content>
+            <VBox fx:id="vboxFoodSharingContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblFoodSharingTitle" styleClass="tab-title" text="Food Sharing" />
+                  <Label fx:id="lblFoodSharingPlaceholder" styleClass="placeholder-text" text="Food sharing content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabFoodStock" closable="false" text="Food Stock">
+         <content>
+            <VBox fx:id="vboxFoodStockContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblFoodStockTitle" styleClass="tab-title" text="Food Stock" />
+                  <Label fx:id="lblFoodStockPlaceholder" styleClass="placeholder-text" text="Food stock content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabDiscussion" closable="false" text="Discussion">
+         <content>
+            <VBox fx:id="vboxDiscussionContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblDiscussionTitle" styleClass="tab-title" text="Discussion" />
+                  <Label fx:id="lblDiscussionPlaceholder" styleClass="placeholder-text" text="Discussion content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabEvents" closable="false" text="Events">
+         <content>
+            <VBox fx:id="vboxEventsContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblEventsTitle" styleClass="tab-title" text="Events" />
+                  <Label fx:id="lblEventsPlaceholder" styleClass="placeholder-text" text="Events content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabNotifications" closable="false" text="Notifications">
+         <content>
+            <VBox fx:id="vboxNotificationsContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblNotificationsTitle" styleClass="tab-title" text="Notifications" />
+                  <Label fx:id="lblNotificationsPlaceholder" styleClass="placeholder-text" text="Notifications content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+      <Tab fx:id="tabAppInfo" closable="false" text="App Info">
+         <content>
+            <VBox fx:id="vboxAppInfoContent" alignment="CENTER" spacing="20.0" styleClass="tab-content">
+               <children>
+                  <Label fx:id="lblAppInfoTitle" styleClass="tab-title" text="App Info" />
+                  <Label fx:id="lblAppInfoPlaceholder" styleClass="placeholder-text" text="App info content will be loaded here" />
+               </children>
+            </VBox>
+         </content>
+      </Tab>
+   </tabs>
+   <stylesheets>
+      <String fx:value="@MainTabPane.css" />
+   </stylesheets>
+</TabPane>

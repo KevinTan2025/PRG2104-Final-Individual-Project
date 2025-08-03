@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="vboxMainContainer" alignment="CENTER" spacing="15.0" styleClass="login-content" 
+      stylesheets="@LoginAuthDialog.css"
+      xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="gui.dialogs.auth.LoginAuthDialogController">
+   <padding>
+      <Insets bottom="40.0" left="40.0" right="40.0" top="20.0" />
+   </padding>
+   <children>
+      <HBox fx:id="hboxLoginBack" alignment="CENTER_LEFT">
+         <children>
+            <Button fx:id="btnLoginBack" onAction="#handleLoginBack" styleClass="back-button" text="← Back" />
+         </children>
+      </HBox>
+      <Label fx:id="lblLoginTitle" styleClass="form-title" text="Log in to your account" />
+      
+      <!-- Username Section -->
+      <VBox fx:id="vboxUsernameSection" spacing="3.0">
+         <children>
+            <TextField fx:id="txtLoginUsername" prefHeight="40.0" prefWidth="300.0" promptText="Username or Email" styleClass="auth-input-field" />
+            <Label fx:id="lblLoginUsernameStatus" styleClass="status-label" text="" />
+         </children>
+      </VBox>
+      
+      <!-- Password Section -->
+      <VBox fx:id="vboxPasswordSection" spacing="3.0">
+         <children>
+            <PasswordField fx:id="txtLoginPassword" prefHeight="40.0" prefWidth="300.0" promptText="Password" styleClass="auth-input-field" />
+            <Label fx:id="lblLoginPasswordStatus" styleClass="status-label" text="" />
+         </children>
+      </VBox>
+      
+      <!-- Login Error Status -->
+      <Label fx:id="lblLoginErrorStatus" styleClass="status-label" text="" />
+      
+      <Button fx:id="btnLogin" onAction="#handleLogin" prefHeight="45.0" prefWidth="280.0" styleClass="login-button" text="Log In" />
+      <Label fx:id="lblLoginDemo" styleClass="demo-text" text="Demo: admin/Admin123* or john_doe/Password123!" wrapText="true" />
+      <Button fx:id="btnLoginToRegister" onAction="#handleLoginToRegister" styleClass="link-button" text="Don't have an account? Sign up" />
+   </children>
+</VBox>

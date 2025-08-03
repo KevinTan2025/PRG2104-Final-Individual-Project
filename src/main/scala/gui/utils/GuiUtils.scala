@@ -3,19 +3,21 @@ package gui.utils
 import scalafx.scene.control.Alert
 import scalafx.scene.control.Alert.AlertType
 import scalafx.stage.Stage
+import scalafx.application.Platform
+import scalafx.beans.property.ObjectProperty
 
 /**
  * Utility class for common GUI operations
  */
 object GuiUtils {
   
-  private var mainStage: Option[Stage] = None
+  private val mainStageProperty = ObjectProperty[Option[Stage]](None)
   
-  def setMainStage(stage: Stage): Unit = {
-    mainStage = Some(stage)
+  def mainStage_=(stage: Stage): Unit = {
+    mainStageProperty.value = Some(stage)
   }
   
-  def getMainStage: Option[Stage] = mainStage
+  def mainStage: Option[Stage] = mainStageProperty.value
   
   /**
    * Show an information alert

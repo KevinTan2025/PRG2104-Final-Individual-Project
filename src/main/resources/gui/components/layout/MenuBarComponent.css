@@ -1,0 +1,48 @@
+/* MenuBarComponent Styles */
+
+.main-menu-bar {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.main-menu-bar .menu {
+    -fx-background-color: transparent;
+}
+
+.main-menu-bar .menu:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.main-menu-bar .menu:showing {
+    -fx-background-color: #e9ecef;
+}
+
+.main-menu-bar .menu .label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 14px;
+}
+
+.main-menu-bar .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8 16;
+}
+
+.main-menu-bar .menu-item:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.main-menu-bar .menu-item .label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 13px;
+}
+
+.main-menu-bar .separator {
+    -fx-background-color: #dee2e6;
+}
+
+/* User menu specific styling */
+.main-menu-bar .menu:nth-child(2) .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #007bff;
+}

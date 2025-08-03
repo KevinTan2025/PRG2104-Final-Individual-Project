@@ -13,21 +13,21 @@ class EnhancedTextField(placeholderText: String) extends TextField {
   // Use the built-in promptText property for proper placeholder behavior
   promptText = placeholderText
   
-  // Track if user has actually typed anything
-  private var hasUserInput = false
+  // Track if user has actually typed anything using property
+  private val hasUserInputProperty = scalafx.beans.property.BooleanProperty(false)
   
   // Base style - will be overridden by parent components if needed
   private val basePromptTextStyle = "-fx-prompt-text-fill: #999999;"
   
-  // Store the external style to preserve it during focus changes
-  private var externalStyle: String = ""
+  // Store the external style to preserve it during focus changes using property
+  private val externalStyleProperty = StringProperty("")
   
   // Handle focus events for visual feedback while preserving external styles
   focused.onChange { (_, _, newValue) =>
     val promptTextColor = if (newValue) "#BBBBBB" else "#999999"
     // Combine external style with prompt text color
-    if (externalStyle.nonEmpty) {
-      style = s"$externalStyle -fx-prompt-text-fill: $promptTextColor;"
+    if (externalStyleProperty.value.nonEmpty) {
+      style = s"${externalStyleProperty.value} -fx-prompt-text-fill: $promptTextColor;"
     } else {
       style = s"-fx-prompt-text-fill: $promptTextColor;"
     }
@@ -35,7 +35,7 @@ class EnhancedTextField(placeholderText: String) extends TextField {
   
   // Override style property to preserve external styles
   override def style_=(value: String): Unit = {
-    externalStyle = value
+    externalStyleProperty.value = value
     // Apply the style immediately with current prompt text color
     val promptTextColor = if (focused.value) "#BBBBBB" else "#999999"
     super.style_=(s"$value -fx-prompt-text-fill: $promptTextColor;")
@@ -43,22 +43,22 @@ class EnhancedTextField(placeholderText: String) extends TextField {
   
   // Track actual user input
   text.onChange { (_, _, newValue) =>
-    hasUserInput = newValue.trim.nonEmpty
+    hasUserInputProperty.value = newValue.trim.nonEmpty
   }
   
   /**
    * Get the actual user input
    */
-  def getUserInput: String = {
+  def userInput: String = {
     text.value.trim
   }
   
   /**
    * Set the user input programmatically
    */
-  def setUserInput(value: String): Unit = {
+  def userInput_=(value: String): Unit = {
     text = value.trim
-    hasUserInput = value.trim.nonEmpty
+    hasUserInputProperty.value = value.trim.nonEmpty
   }
   
   /**
@@ -66,11 +66,11 @@ class EnhancedTextField(placeholderText: String) extends TextField {
    */
   def clearInput(): Unit = {
     text = ""
-    hasUserInput = false
+    hasUserInputProperty.value = false
   }
   
   /**
    * Check if user has entered any input
    */
-  def hasInput: Boolean = hasUserInput
+  def hasInput: Boolean = hasUserInputProperty.value
 }

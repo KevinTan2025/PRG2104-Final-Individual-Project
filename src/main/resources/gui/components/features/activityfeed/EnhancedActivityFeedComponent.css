@@ -1,0 +1,202 @@
+/* Enhanced Activity Feed Component Styles */
+.enhanced-activity-feed {
+    -fx-background-color: #f0f2f5;
+}
+
+/* Header Section */
+.header-section {
+    -fx-alignment: center;
+}
+
+.feed-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1877f2;
+}
+
+.feed-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #65676b;
+}
+
+/* Feed Container */
+.feed-container {
+    -fx-background-color: transparent;
+}
+
+/* Activity Feed Card Styles */
+.activity-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+    -fx-padding: 16;
+    -fx-spacing: 12;
+}
+
+/* Card Header */
+.card-header {
+    -fx-alignment: center-left;
+    -fx-spacing: 10;
+}
+
+.category-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.category-announcement {
+    -fx-text-fill: #1877f2;
+}
+
+.category-food-sharing {
+    -fx-text-fill: #28a745;
+}
+
+.category-event {
+    -fx-text-fill: #e74c3c;
+}
+
+.category-discussion {
+    -fx-text-fill: #6f42c1;
+}
+
+.time-ago-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #8a8d91;
+}
+
+/* Card Content */
+.card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1c1e21;
+    -fx-wrap-text: true;
+}
+
+.card-content {
+    -fx-font-size: 14px;
+    -fx-text-fill: #050505;
+    -fx-wrap-text: true;
+}
+
+/* Author Info */
+.author-info {
+    -fx-alignment: center-left;
+    -fx-spacing: 5;
+}
+
+.author-by-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #65676b;
+}
+
+.author-name-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1877f2;
+}
+
+/* Additional Info */
+.additional-info {
+    -fx-spacing: 5;
+}
+
+.event-datetime-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #e74c3c;
+}
+
+.location-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #65676b;
+}
+
+.expiry-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #f39c12;
+}
+
+/* Interaction Buttons */
+.interaction-buttons {
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+}
+
+.interaction-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 6;
+    -fx-text-fill: #65676b;
+    -fx-cursor: hand;
+    -fx-padding: 6 12;
+}
+
+.interaction-button:hover {
+    -fx-background-color: #f0f2f5;
+}
+
+.like-button-liked {
+    -fx-background-color: #e3f2fd;
+    -fx-text-fill: #1877f2;
+    -fx-border-color: #1877f2;
+    -fx-border-width: 1;
+}
+
+.like-button-liked:hover {
+    -fx-background-color: #bbdefb;
+}
+
+/* Empty State */
+.empty-state {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 40;
+}
+
+.empty-state-icon {
+    -fx-font-size: 48px;
+}
+
+.empty-state-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #65676b;
+}
+
+.empty-state-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #8a8d91;
+}
+
+/* Error State */
+.error-state {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 40;
+}
+
+.error-state-icon {
+    -fx-font-size: 48px;
+}
+
+.error-state-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e74c3c;
+}
+
+.try-again-button {
+    -fx-background-color: #1877f2;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 8 16;
+}
+
+.try-again-button:hover {
+    -fx-background-color: #166fe5;
+}
+
+.try-again-button:pressed {
+    -fx-background-color: #1464d0;
+}

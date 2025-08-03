@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+
+<GridPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" hgap="15.0" vgap="15.0">
+   <padding>
+      <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+   </padding>
+   <columnConstraints>
+      <ColumnConstraints prefWidth="180.0" />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <Label fx:id="lblFoodName" styleClass="field-label" text="Food Name:" />
+      <TextField fx:id="txtFoodName" prefWidth="350.0" promptText="Food item name" GridPane.columnIndex="1" />
+      
+      <Label fx:id="lblCategory" styleClass="field-label" text="Category:" GridPane.rowIndex="1" />
+      <ComboBox fx:id="cmbCategory" prefWidth="350.0" value="OTHER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <items>
+            <FXCollections fx:factory="observableArrayList">
+               <String fx:value="VEGETABLES" />
+               <String fx:value="FRUITS" />
+               <String fx:value="GRAINS" />
+               <String fx:value="DAIRY" />
+               <String fx:value="MEAT" />
+               <String fx:value="BEVERAGES" />
+               <String fx:value="CANNED_GOODS" />
+               <String fx:value="SNACKS" />
+               <String fx:value="OTHER" />
+            </FXCollections>
+         </items>
+      </ComboBox>
+      
+      <Label fx:id="lblQuantity" styleClass="field-label" text="Current Quantity:" GridPane.rowIndex="2" />
+      <TextField fx:id="txtQuantity" prefWidth="350.0" promptText="Current quantity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      
+      <Label fx:id="lblUnit" styleClass="field-label" text="Unit:" GridPane.rowIndex="3" />
+      <TextField fx:id="txtUnit" prefWidth="350.0" promptText="Unit (kg, pieces, bottles, etc.)" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      
+      <Label fx:id="lblThreshold" styleClass="field-label" text="Minimum Threshold:" GridPane.rowIndex="4" />
+      <TextField fx:id="txtThreshold" prefWidth="350.0" promptText="Minimum threshold" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      
+      <Label fx:id="lblLocation" styleClass="field-label" text="Location:" GridPane.rowIndex="5" />
+      <TextField fx:id="txtLocation" prefWidth="350.0" promptText="Storage location" text="Main Storage" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      
+      <Label fx:id="lblPackaging" styleClass="field-label" text="Packaging:" GridPane.rowIndex="6" />
+      <CheckBox fx:id="chkIsPackaged" styleClass="packaging-checkbox" text="Is packaged food" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+      
+      <Label fx:id="lblExpiry" styleClass="field-label" text="Expiry Date:" GridPane.rowIndex="7" />
+      <VBox fx:id="vboxExpiry" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+         <children>
+            <CheckBox fx:id="chkHasExpiry" styleClass="expiry-checkbox" text="Has expiry date" />
+            <DatePicker fx:id="dpExpiry" disable="true" />
+         </children>
+      </VBox>
+      
+      <Label fx:id="lblNotes" styleClass="field-label" text="Notes:" GridPane.rowIndex="8" />
+      <TextArea fx:id="txtNotes" prefRowCount="3" prefWidth="350.0" promptText="Notes (optional)" text="Initial stock entry" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+      
+      <Label GridPane.rowIndex="9" />
+      <HBox fx:id="hboxButtons" alignment="CENTER_RIGHT" spacing="15.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+         <children>
+            <Button fx:id="btnSave" onAction="#handleSave" prefWidth="100.0" styleClass="save-button" text="Add" />
+            <Button fx:id="btnCancel" onAction="#handleCancel" prefWidth="100.0" styleClass="cancel-button" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+   <stylesheets>
+      <URL value="@FoodStockDialog.css" />
+   </stylesheets>
+</GridPane>

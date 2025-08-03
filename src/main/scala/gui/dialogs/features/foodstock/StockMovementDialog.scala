@@ -42,8 +42,8 @@ class StockMovementDialog(
     val currentStockLabel = new Label(s"Current Stock: ${stock.currentQuantity} ${stock.unit}")
     currentStockLabel.style = "-fx-font-weight: bold; -fx-font-size: 14px;"
     
-    val stockStatusLabel = new Label(s"Status: ${stock.getStockStatus}")
-    stockStatusLabel.style = s"-fx-text-fill: ${getStatusColor(stock.getStockStatus.toString)};"
+    val stockStatusLabel = new Label(s"Status: ${stock.stockStatus}")
+    stockStatusLabel.style = s"-fx-text-fill: ${getStatusColor(stock.stockStatus.toString)};"
     
     val actionCombo = new ComboBox[String] {
       items = scalafx.collections.ObservableBuffer("Add Stock", "Remove Stock", "Adjust Stock")
@@ -80,7 +80,7 @@ class StockMovementDialog(
           return
         }
         
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(user) =>
             val success = action match {
               case "Add Stock" =>
@@ -93,9 +93,11 @@ class StockMovementDialog(
                     s"Requested quantity ($quantity) exceeds current stock (${stock.currentQuantity}). " +
                     "This will result in negative stock. Continue anyway?"
                   )
-                  if (!confirm) return
+                  if (!confirm) false
+                  else service.removeStock(stock.stockId, quantity, user.userId, notes)
+                } else {
+                  service.removeStock(stock.stockId, quantity, user.userId, notes)
                 }
-                service.removeStock(stock.stockId, quantity, user.userId, notes)
                 
               case "Adjust Stock" =>
                 if (quantity < stock.currentQuantity) {
@@ -104,9 +106,11 @@ class StockMovementDialog(
                     "Stock Reduction",
                     s"This will reduce stock by $diff ${stock.unit}. Continue?"
                   )
-                  if (!confirm) return
+                  if (!confirm) false
+                  else service.adjustStock(stock.stockId, quantity, user.userId, notes)
+                } else {
+                  service.adjustStock(stock.stockId, quantity, user.userId, notes)
                 }
-                service.adjustStock(stock.stockId, quantity, user.userId, notes)
                 
               case _ => false
             }
@@ -151,7 +155,7 @@ class StockMovementDialog(
         new Label(s"Minimum Threshold: ${stock.minimumThreshold} ${stock.unit}"),
         new Label(s"Location: ${stock.location}"),
         stock.expiryDate.map { expiry =>
-          val daysLeft = stock.getDaysUntilExpiry.getOrElse(0)
+          val daysLeft = stock.daysUntilExpiry.getOrElse(0)
           new Label(s"Expires in: $daysLeft days") {
             style = if (daysLeft <= 7) "-fx-text-fill: #dc3545;" else "-fx-text-fill: #28a745;"
           }

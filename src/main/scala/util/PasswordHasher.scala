@@ -39,14 +39,14 @@ object PasswordHasher {
     md.update(saltBytes)
     val passwordBytes = password.getBytes("UTF-8")
     
-    // Apply multiple iterations for security
-    var hash = md.digest(passwordBytes)
-    for (_ <- 1 until ITERATIONS) {
+    // Apply multiple iterations for security using functional approach
+    val initialHash = md.digest(passwordBytes)
+    val finalHash = (1 until ITERATIONS).foldLeft(initialHash) { (currentHash, _) =>
       md.reset()
-      hash = md.digest(hash)
+      md.digest(currentHash)
     }
     
-    Base64.getEncoder.encodeToString(hash)
+    Base64.getEncoder.encodeToString(finalHash)
   }
   
   /**
@@ -100,7 +100,7 @@ object PasswordHasher {
    * Get password requirements description
    * @return string describing password requirements
    */
-  def getPasswordRequirements: String = {
+  def passwordRequirements: String = {
     "Password must be at least 8 characters long and contain at least one letter, one digit, and one special character."
   }
 }

@@ -57,13 +57,13 @@ class StockMovementDAO {
         stockId
       )
       
-      val movements = scala.collection.mutable.ListBuffer[StockMovement]()
-      while (rs.next()) {
-        movements += resultSetToStockMovement(rs)
-      }
+      val movements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToStockMovement)
+        .toList
       
       rs.close()
-      movements.toList
+      movements
     } catch {
       case e: Exception =>
         println(s"Error finding stock movements by stock ID: ${e.getMessage}")
@@ -78,13 +78,14 @@ class StockMovementDAO {
         userId
       )
       
-      val movements = scala.collection.mutable.ListBuffer[StockMovement]()
-      while (rs.next()) {
-        movements += resultSetToStockMovement(rs)
-      }
+      // Use functional approach to build list
+      val movements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToStockMovement)
+        .toList
       
       rs.close()
-      movements.toList
+      movements
     } catch {
       case e: Exception =>
         println(s"Error finding stock movements by user ID: ${e.getMessage}")
@@ -98,13 +99,14 @@ class StockMovementDAO {
         "SELECT * FROM stock_movements ORDER BY timestamp DESC"
       )
       
-      val movements = scala.collection.mutable.ListBuffer[StockMovement]()
-      while (rs.next()) {
-        movements += resultSetToStockMovement(rs)
-      }
+      // Use functional approach to build list
+      val movements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToStockMovement)
+        .toList
       
       rs.close()
-      movements.toList
+      movements
     } catch {
       case e: Exception =>
         println(s"Error finding all stock movements: ${e.getMessage}")
@@ -121,13 +123,14 @@ class StockMovementDAO {
         startDateStr, endDateStr
       )
       
-      val movements = scala.collection.mutable.ListBuffer[StockMovement]()
-      while (rs.next()) {
-        movements += resultSetToStockMovement(rs)
-      }
+      // Use functional approach to build list
+      val movements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToStockMovement)
+        .toList
       
       rs.close()
-      movements.toList
+      movements
     } catch {
       case e: Exception =>
         println(s"Error finding stock movements by date range: ${e.getMessage}")
@@ -142,13 +145,14 @@ class StockMovementDAO {
         actionType.toString
       )
       
-      val movements = scala.collection.mutable.ListBuffer[StockMovement]()
-      while (rs.next()) {
-        movements += resultSetToStockMovement(rs)
-      }
+      // Use functional approach to build list
+      val movements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToStockMovement)
+        .toList
       
       rs.close()
-      movements.toList
+      movements
     } catch {
       case e: Exception =>
         println(s"Error finding stock movements by action type: ${e.getMessage}")
@@ -182,26 +186,23 @@ class StockMovementDAO {
     }
   }
   
-  def getStatistics: Map[String, Int] = {
+  def statistics: Map[String, Int] = {
     try {
-      val stats = scala.collection.mutable.Map[String, Int]()
-      
-      // Total movements
       val totalRs = DatabaseConnection.executeQuery("SELECT COUNT(*) FROM stock_movements")
-      stats("totalMovements") = if (totalRs.next()) totalRs.getInt(1) else 0
+      val totalMovements = if (totalRs.next()) totalRs.getInt(1) else 0
       totalRs.close()
       
-      // Movements by type
-      StockActionType.values.foreach { actionType =>
+      val typeStats = StockActionType.values.map { actionType =>
         val typeRs = DatabaseConnection.executeQuery(
           "SELECT COUNT(*) FROM stock_movements WHERE action_type = ?",
           actionType.toString
         )
-        stats(actionType.toString) = if (typeRs.next()) typeRs.getInt(1) else 0
+        val count = if (typeRs.next()) typeRs.getInt(1) else 0
         typeRs.close()
-      }
+        actionType.toString -> count
+      }.toMap
       
-      stats.toMap
+      Map("totalMovements" -> totalMovements) ++ typeStats
     } catch {
       case e: Exception =>
         println(s"Error getting stock movement statistics: ${e.getMessage}")

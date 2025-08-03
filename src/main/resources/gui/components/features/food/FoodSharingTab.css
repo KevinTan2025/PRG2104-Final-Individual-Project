@@ -1,0 +1,171 @@
+/* Food Sharing Tab Styles */
+.food-sharing-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Control Containers */
+.top-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);
+}
+
+.search-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Buttons */
+.create-button {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.create-button:hover {
+    -fx-background-color: #218838;
+}
+
+.create-button:pressed {
+    -fx-background-color: #1e7e34;
+}
+
+.filter-button, .search-button, .refresh-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.filter-button:hover, .search-button:hover, .refresh-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.filter-button:pressed, .search-button:pressed, .refresh-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.accept-button {
+    -fx-background-color: #ffc107;
+    -fx-text-fill: #212529;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.accept-button:hover {
+    -fx-background-color: #e0a800;
+}
+
+.accept-button:pressed {
+    -fx-background-color: #d39e00;
+}
+
+/* Read-only mode button styles */
+.create-button.readonly, .accept-button.readonly {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+}
+
+.create-button.readonly:hover, .accept-button.readonly:hover {
+    -fx-background-color: #5a6268;
+}
+
+/* Form Controls */
+.filter-combo {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+    -fx-min-width: 120;
+}
+
+.filter-combo:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 3, 0, 0, 0);
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 8 12;
+    -fx-min-width: 300;
+    -fx-prompt-text-fill: #6c757d;
+}
+
+.search-field:focused {
+    -fx-border-color: #007bff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,123,255,0.25), 3, 0, 0, 0);
+}
+
+/* Food Posts List */
+.food-posts-list {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.food-posts-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 12 16;
+    -fx-font-size: 14px;
+}
+
+.food-posts-list .list-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.food-posts-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.food-posts-list .list-cell:selected:hover {
+    -fx-background-color: #0056b3;
+}
+
+/* Food Post Status Indicators */
+.food-posts-list .list-cell .label {
+    -fx-text-fill: inherit;
+}
+
+/* Post type indicators in list items */
+.post-offer {
+    -fx-text-fill: #28a745;
+    -fx-font-weight: bold;
+}
+
+.post-request {
+    -fx-text-fill: #dc3545;
+    -fx-font-weight: bold;
+}
+
+/* Status indicators */
+.status-pending {
+    -fx-text-fill: #ffc107;
+}
+
+.status-accepted {
+    -fx-text-fill: #28a745;
+}
+
+.status-completed {
+    -fx-text-fill: #6c757d;
+}
+
+.status-cancelled {
+    -fx-text-fill: #dc3545;
+}

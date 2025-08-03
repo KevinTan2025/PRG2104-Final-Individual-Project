@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <VBox fx:id="vboxHeader" spacing="10.0" styleClass="header-section">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Label fx:id="lblTopicTitle" styleClass="topic-title" text="Discussion Topic Title" />
+            <Label fx:id="lblCategory" styleClass="category-label" text="Category: GENERAL" />
+            <Label fx:id="lblAuthorInfo" styleClass="author-info" text="Posted by: Author on 2024-01-01 12:00" />
+            <Label fx:id="lblStats" styleClass="stats-label" text="👍 0 likes • 💬 0 replies" />
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ScrollPane fx:id="spMainContent" fitToWidth="true">
+         <content>
+            <VBox fx:id="vboxMainContent">
+               <children>
+                  <VBox fx:id="vboxDescription" spacing="10.0" styleClass="description-section">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <Label fx:id="lblDescriptionHeader" styleClass="section-header" text="Description:" />
+                        <Label fx:id="lblDescription" styleClass="description-text" text="Topic description content" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <Separator fx:id="sepReplies" />
+                  <VBox fx:id="vboxReplies" spacing="15.0" styleClass="replies-section">
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <Label fx:id="lblRepliesHeader" styleClass="section-header" text="Replies (0):" />
+                        <ScrollPane fx:id="spReplies" fitToWidth="true" prefHeight="200.0">
+                           <content>
+                              <VBox fx:id="vboxReplyList" spacing="10.0" />
+                           </content>
+                        </ScrollPane>
+                        <Label fx:id="lblNoReplies" styleClass="no-replies-text" text="No replies yet. Be the first to reply!" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <bottom>
+      <HBox fx:id="hboxActionButtons" alignment="CENTER_RIGHT" spacing="10.0" styleClass="action-buttons">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Button fx:id="btnLike" onAction="#handleLike" styleClass="like-button" text="👍 Like Topic" />
+            <Button fx:id="btnReply" onAction="#handleReply" styleClass="reply-button" text="💬 Add Reply" />
+            <Button fx:id="btnRefresh" onAction="#handleRefresh" styleClass="refresh-button" text="🔄 Refresh" />
+            <Button fx:id="btnClose" onAction="#handleClose" styleClass="close-button" text="Close" />
+         </children>
+      </HBox>
+   </bottom>
+   <stylesheets>
+      <URL value="@DiscussionTopicDetailsDialog.css" />
+   </stylesheets>
+</BorderPane>

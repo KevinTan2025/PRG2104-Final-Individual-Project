@@ -2,6 +2,7 @@ package manager
 
 import model._
 import java.time.LocalDateTime
+import scala.jdk.CollectionConverters._
 
 /**
  * Manager class for handling notification operations
@@ -22,7 +23,7 @@ class NotificationManager extends Manager[Notification] {
    * @return list of notifications for the user
    */
   def getNotificationsForUser(userId: String): List[Notification] = {
-    items.values.filter(_.recipientId == userId).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(_.recipientId == userId).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -31,7 +32,7 @@ class NotificationManager extends Manager[Notification] {
    * @return list of unread notifications for the user
    */
   def getUnreadNotifications(userId: String): List[Notification] = {
-    items.values.filter(n => n.recipientId == userId && !n.isRead).toList.sortBy(_.timestamp).reverse
+    items.values().asScala.filter(n => n.recipientId == userId && !n.isRead).toList.sortBy(_.timestamp).reverse
   }
   
   /**
@@ -41,7 +42,7 @@ class NotificationManager extends Manager[Notification] {
    * @return list of notifications of the specified type for the user
    */
   def getNotificationsByType(userId: String, notificationType: NotificationType): List[Notification] = {
-    items.values.filter(n => n.recipientId == userId && n.notificationType == notificationType)
+    items.values().asScala.filter(n => n.recipientId == userId && n.notificationType == notificationType)
       .toList.sortBy(_.timestamp).reverse
   }
   
@@ -65,7 +66,7 @@ class NotificationManager extends Manager[Notification] {
    * @return number of notifications marked as read
    */
   def markAllAsRead(userId: String): Int = {
-    val userNotifications = items.values.filter(_.recipientId == userId)
+    val userNotifications = items.values().asScala.filter(_.recipientId == userId)
     val unreadCount = userNotifications.count(!_.isRead)
     userNotifications.foreach(_.markAsRead())
     unreadCount
@@ -76,8 +77,8 @@ class NotificationManager extends Manager[Notification] {
    * @param userId the user ID
    * @return number of unread notifications
    */
-  def getUnreadCount(userId: String): Int = {
-    items.values.count(n => n.recipientId == userId && !n.isRead)
+  def unreadCount(userId: String): Int = {
+    items.values().asScala.count(n => n.recipientId == userId && !n.isRead)
   }
   
   /**
@@ -87,7 +88,7 @@ class NotificationManager extends Manager[Notification] {
    */
   def cleanupOldNotifications(days: Int = 30): Int = {
     val cutoffDate = LocalDateTime.now().minusDays(days)
-    val oldNotifications = items.filter(_._2.timestamp.isBefore(cutoffDate))
+    val oldNotifications = items.asScala.filter(_._2.timestamp.isBefore(cutoffDate))
     oldNotifications.foreach { case (id, _) => remove(id) }
     oldNotifications.size
   }

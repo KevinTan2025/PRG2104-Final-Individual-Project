@@ -1,6 +1,6 @@
 package gui.components.features.events
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.Insets
 import scalafx.event.ActionEvent
@@ -23,7 +23,7 @@ class EventsTab(
     promptText = "Search events..."
   }
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     refreshEvents()
     
     val createEventButton = new Button("Create Event") {
@@ -106,7 +106,7 @@ class EventsTab(
       center = eventsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = if (readOnlyMode) "📅 Events" else "Events"
       content = mainContent
       closable = false
@@ -122,7 +122,7 @@ class EventsTab(
   }
   
   private def refreshEvents(): Unit = {
-    val events = service.getUpcomingEvents
+    val events = service.upcomingEvents
     val items = events.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
     eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
@@ -130,7 +130,7 @@ class EventsTab(
   private def handleRSVP(): Unit = {
     val selectedIndex = eventsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val events = service.getUpcomingEvents
+      val events = service.upcomingEvents
       if (selectedIndex < events.length) {
         val event = events(selectedIndex)
         if (service.rsvpToEvent(event.eventId)) {
@@ -148,7 +148,7 @@ class EventsTab(
   private def handleCancelRSVP(): Unit = {
     val selectedIndex = eventsList.selectionModel().selectedIndex.value
     if (selectedIndex >= 0) {
-      val events = service.getUpcomingEvents
+      val events = service.upcomingEvents
       if (selectedIndex < events.length) {
         val event = events(selectedIndex)
         if (service.cancelRsvp(event.eventId)) {
@@ -164,9 +164,9 @@ class EventsTab(
   }
   
   private def handleViewMyEvents(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
-        val myEvents = service.getMyEvents(user.userId)
+        val myEvents = service.myEvents(user.userId)
         val items = myEvents.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
         eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
       case None =>

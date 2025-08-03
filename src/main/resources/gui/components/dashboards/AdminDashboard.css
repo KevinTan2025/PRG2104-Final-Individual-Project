@@ -1,0 +1,181 @@
+/* Admin Dashboard Styles */
+
+/* Main Dashboard Container */
+.admin-dashboard-scroll {
+    -fx-background-color: #f8f9fa;
+}
+
+.admin-dashboard-content {
+    -fx-background-color: transparent;
+}
+
+/* Welcome Section */
+.welcome-section {
+    -fx-background-color: linear-gradient(to right, #667eea, #764ba2);
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+}
+
+.welcome-icon {
+    -fx-font-size: 32px;
+}
+
+.welcome-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.welcome-user {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+}
+
+.welcome-description {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+}
+
+/* Section Styles */
+.system-overview-section,
+.management-section,
+.system-controls-section,
+.recent-activity-section {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Admin Stat Cards */
+.admin-stat-card {
+    -fx-background-color: white;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);
+    -fx-padding: 20;
+    -fx-pref-width: 180;
+    -fx-pref-height: 100;
+    -fx-spacing: 8;
+    -fx-alignment: center;
+}
+
+.stat-card-title {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: bold;
+}
+
+.stat-card-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.stat-blue { -fx-text-fill: #3498db; }
+.stat-green { -fx-text-fill: #2ecc71; }
+.stat-red { -fx-text-fill: #e74c3c; }
+.stat-orange { -fx-text-fill: #f39c12; }
+.stat-purple { -fx-text-fill: #9b59b6; }
+.stat-teal { -fx-text-fill: #1abc9c; }
+
+/* Management Sections */
+.management-section {
+    -fx-pref-width: 400;
+}
+
+/* Admin Buttons */
+.admin-button {
+    -fx-pref-width: 200;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.admin-button:hover {
+    -fx-opacity: 0.9;
+}
+
+.admin-button:pressed {
+    -fx-opacity: 0.8;
+}
+
+/* Button Color Variants */
+.admin-button-blue { -fx-background-color: #3498db; }
+.admin-button-red { -fx-background-color: #e74c3c; }
+.admin-button-orange { -fx-background-color: #f39c12; }
+.admin-button-purple { -fx-background-color: #9b59b6; }
+.admin-button-green { -fx-background-color: #2ecc71; }
+.admin-button-teal { -fx-background-color: #1abc9c; }
+.admin-button-orange-alt { -fx-background-color: #e67e22; }
+.admin-button-red-alt { -fx-background-color: #e74c3c; }
+.admin-button-dark { -fx-background-color: #34495e; }
+.admin-button-teal-alt { -fx-background-color: #16a085; }
+.admin-button-purple-alt { -fx-background-color: #8e44ad; }
+.admin-button-orange-dark { -fx-background-color: #d35400; }
+
+/* System Controls Buttons */
+#hboxSystemControlsButtons .admin-button {
+    -fx-pref-width: 180;
+}
+
+/* Recent Activity List */
+.activity-list {
+    -fx-pref-height: 150;
+    -fx-font-family: monospace;
+    -fx-font-size: 12px;
+}
+
+.activity-list .list-cell {
+    -fx-padding: 8;
+    -fx-background-color: transparent;
+}
+
+.activity-list .list-cell:filled:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.activity-list .list-cell:filled:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Responsive Layout */
+#hboxManagementSections {
+    -fx-alignment: top-left;
+}
+
+#hboxSystemControlsButtons {
+    -fx-alignment: center-left;
+}
+
+/* Grid Layout */
+#grdSystemStats {
+    -fx-alignment: center;
+}
+
+/* Animation Effects */
+.admin-button {
+    -fx-transition: all 0.2s ease;
+}
+
+.admin-stat-card {
+    -fx-transition: all 0.2s ease;
+}
+
+.admin-stat-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 3);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}

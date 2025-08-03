@@ -1,6 +1,6 @@
 package gui.components.features.anonymous
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.Includes._
@@ -13,11 +13,11 @@ import gui.components.features.activityfeed.EnhancedActivityFeedComponent
  */
 class AnonymousDashboardComponent(onLoginPrompt: () => Unit) extends BaseTabComponent {
   
-  private var activityFeedComponent: EnhancedActivityFeedComponent = _
+  private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
+    new EnhancedActivityFeedComponent(service, () => refresh(), None)
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     // Anonymous home tab shows all activity types
-    activityFeedComponent = new EnhancedActivityFeedComponent(service, () => refresh(), None)
     val activityFeed = activityFeedComponent.build()
     
     val mainContent = new HBox {
@@ -34,7 +34,7 @@ class AnonymousDashboardComponent(onLoginPrompt: () => Unit) extends BaseTabComp
       content = mainContent
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "🏠 Home"
       content = scrollContent
       closable = false

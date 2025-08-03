@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="app-info-tab">
+   <content>
+      <VBox spacing="20.0" styleClass="main-content">
+         <children>
+            <!-- Header -->
+            <VBox spacing="10.0" styleClass="header-section">
+               <children>
+                  <Text fx:id="txtAppName" text="Community Engagement Platform" styleClass="app-title" />
+                  <Text fx:id="txtAppVersion" text="Version 1.0.0" styleClass="app-version" />
+               </children>
+            </VBox>
+            
+            <Separator styleClass="section-separator" />
+            
+            <!-- Application Information -->
+            <VBox spacing="15.0" styleClass="info-section">
+               <children>
+                  <Text text="Application Information" styleClass="section-title" />
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Name:" styleClass="info-label" minWidth="120.0" />
+                        <Label fx:id="lblAppName" text="Community Engagement Platform" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Version:" styleClass="info-label" minWidth="120.0" />
+                        <Label fx:id="lblVersion" text="1.0.0" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Build Date:" styleClass="info-label" minWidth="120.0" />
+                        <Label fx:id="lblBuildDate" text="2025-07-17" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <VBox spacing="5.0" styleClass="description-box">
+                     <children>
+                        <Label text="Description:" styleClass="info-label" />
+                        <TextArea fx:id="txtDescription" editable="false" prefRowCount="3" wrapText="true" styleClass="description-area" 
+                                  text="A platform to facilitate communication and collaboration among community members for ending hunger, achieving food security, improving nutrition, and promoting sustainable agriculture (UN Goal 2)." />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+            
+            <Separator styleClass="section-separator" />
+            
+            <!-- Author Information -->
+            <VBox spacing="15.0" styleClass="info-section">
+               <children>
+                  <Text text="Author Information" styleClass="section-title" />
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Developer:" styleClass="info-label" minWidth="120.0" />
+                        <Label text="Kevin Tan" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Email:" styleClass="info-label" minWidth="120.0" />
+                        <Label text="me@kevintan.pro" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Institution:" styleClass="info-label" minWidth="120.0" />
+                        <Label text="Sunway University Malaysia" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Course:" styleClass="info-label" minWidth="120.0" />
+                        <Label text="PRG2104 - Object-Oriented Programming" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            
+            <Separator styleClass="section-separator" />
+            
+            <!-- Legal Information -->
+            <VBox spacing="15.0" styleClass="info-section">
+               <children>
+                  <Text text="Legal Information" styleClass="section-title" />
+                  <HBox spacing="10.0" styleClass="info-row">
+                     <children>
+                        <Label text="Copyright:" styleClass="info-label" minWidth="120.0" />
+                        <Label text="© 2025 Kevin Tan" styleClass="info-value" wrapText="true" />
+                     </children>
+                  </HBox>
+                  <VBox spacing="5.0" styleClass="description-box">
+                     <children>
+                        <Label text="Disclaimer:" styleClass="info-label" />
+                        <TextArea editable="false" prefRowCount="3" wrapText="true" styleClass="description-area" 
+                                  text="This application is developed for educational purposes as part of the PRG2104 course. It is designed to demonstrate object-oriented programming principles using Scala and GUI development with ScalaFX." />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+         </padding>
+      </VBox>
+   </content>
+</ScrollPane>

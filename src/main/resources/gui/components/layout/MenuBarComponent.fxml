@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+
+<MenuBar xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:id="menuBar" styleClass="main-menu-bar">
+   <menus>
+      <Menu fx:id="menuFile" text="File">
+         <items>
+            <MenuItem fx:id="menuItemLogout" onAction="#handleLogout" text="Logout" />
+            <SeparatorMenuItem />
+            <MenuItem fx:id="menuItemExit" onAction="#handleExit" text="Exit" />
+         </items>
+      </Menu>
+      <Menu fx:id="menuUser" text="User Info">
+         <items>
+            <MenuItem fx:id="menuItemProfile" onAction="#handleProfile" text="Profile" />
+            <MenuItem fx:id="menuItemSettings" onAction="#handleSettings" text="Settings" />
+         </items>
+      </Menu>
+   </menus>
+   <stylesheets>
+      <String fx:value="@MenuBarComponent.css" />
+   </stylesheets>
+</MenuBar>

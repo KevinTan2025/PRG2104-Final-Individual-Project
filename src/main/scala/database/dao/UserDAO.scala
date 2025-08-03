@@ -18,7 +18,7 @@ class UserDAO {
            (user_id, username, email, name, contact_info, is_admin, password_hash, created_at, updated_at) 
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         user.userId, user.username, user.email, user.name, user.contactInfo, 
-        user.hasAdminPrivileges, user.getPasswordHash,
+        user.hasAdminPrivileges, user.passwordHash,
         DatabaseConnection.formatDateTime(user.registrationDate),
         DatabaseConnection.formatDateTime(LocalDateTime.now())
       )
@@ -96,14 +96,15 @@ class UserDAO {
   def findAll(): List[User] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM users ORDER BY created_at")
-      val users = scala.collection.mutable.ListBuffer[User]()
       
-      while (rs.next()) {
-        users += resultSetToUser(rs)
-      }
+      // Use functional approach to build list
+      val users = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToUser)
+        .toList
       
       rs.close()
-      users.toList
+      users
     } catch {
       case e: Exception =>
         println(s"Error finding all users: ${e.getMessage}")
@@ -117,7 +118,7 @@ class UserDAO {
         """UPDATE users 
            SET name = ?, contact_info = ?, password_hash = ?, updated_at = ? 
            WHERE user_id = ?""",
-        user.name, user.contactInfo, user.getPasswordHash,
+        user.name, user.contactInfo, user.passwordHash,
         DatabaseConnection.formatDateTime(LocalDateTime.now()),
         user.userId
       )

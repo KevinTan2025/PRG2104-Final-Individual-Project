@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="notifications-tab">
+   <top>
+      <VBox>
+         <children>
+            <!-- Stats Box -->
+            <HBox styleClass="stats-box">
+               <children>
+                  <Label fx:id="lblUnreadCount" text="Unread notifications: 0" styleClass="stats-label" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+            
+            <!-- Top Controls -->
+            <HBox spacing="10.0" styleClass="top-controls">
+               <children>
+                  <Button fx:id="btnMarkRead" onAction="#handleMarkRead" text="Mark as Read" styleClass="mark-read-button" />
+                  <Button fx:id="btnMarkAllRead" onAction="#handleMarkAllRead" text="Mark All as Read" styleClass="mark-all-read-button" />
+                  <Button fx:id="btnViewUnread" onAction="#handleViewUnread" text="Unread Only" styleClass="view-unread-button" />
+                  <Button fx:id="btnViewAll" onAction="#handleViewAll" text="All Notifications" styleClass="view-all-button" />
+                  <Button fx:id="btnDelete" onAction="#handleDelete" text="Delete Selected" styleClass="delete-button" />
+                  <Button fx:id="btnViewDetails" onAction="#handleViewDetails" text="View Details" styleClass="details-button" />
+                  <Button fx:id="btnRefresh" onAction="#handleRefresh" text="Refresh" styleClass="refresh-button" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <ListView fx:id="lstNotifications" styleClass="notifications-list" />
+   </center>
+</BorderPane>

@@ -1,6 +1,6 @@
 package gui.components.features.announcements
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, ListView, ScrollPane, TextField, ComboBox, CheckBox, TextArea, Separator}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -20,15 +20,15 @@ class AnnouncementsTab(
   onLoginPrompt: () => Unit = () => {}
 ) extends BaseTabComponent {
   
-  private var activityFeedComponent: EnhancedActivityFeedComponent = _
-  
-  override def build(): Tab = {
-    // Create activity feed component filtered for announcements only
-    activityFeedComponent = new EnhancedActivityFeedComponent(
+  private lazy val activityFeedComponent: EnhancedActivityFeedComponent = 
+    new EnhancedActivityFeedComponent(
       service, 
       () => refresh(), 
       Some(ActivityFeedType.ANNOUNCEMENT)
     )
+  
+  override def build(): ScalaFXTab = {
+    // Create activity feed component filtered for announcements only
     val activityFeed = activityFeedComponent.build()
     
     val sidePanel = createAnnouncementsSidePanel()
@@ -47,7 +47,7 @@ class AnnouncementsTab(
       content = mainContent
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "📢 Announcements"
       content = scrollContent
       closable = false
@@ -102,9 +102,9 @@ class AnnouncementsTab(
         new Label("📊 Announcement Stats") {
           style = "-fx-font-weight: bold; -fx-text-fill: #1877f2; -fx-font-size: 14px;"
         },
-        createStatRow("Total Announcements", service.getAnnouncements.size.toString),
-        createStatRow("This Week", service.getAnnouncements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusWeeks(1))).toString),
-        createStatRow("This Month", service.getAnnouncements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusMonths(1))).toString)
+        createStatRow("Total Announcements", service.announcements.size.toString),
+        createStatRow("This Week", service.announcements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusWeeks(1))).toString),
+        createStatRow("This Month", service.announcements.count(_.timestamp.isAfter(java.time.LocalDateTime.now().minusMonths(1))).toString)
       )
     }
   }

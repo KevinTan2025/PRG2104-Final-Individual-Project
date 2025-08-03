@@ -4,7 +4,7 @@ import database.DatabaseConnection
 import model._
 import java.time.LocalDateTime
 import java.sql.ResultSet
-import scala.collection.mutable.ListBuffer
+// Removed mutable.ListBuffer import - using functional approach
 
 /**
  * Data Access Object for Event operations
@@ -100,14 +100,13 @@ class EventDAO {
       val rs = DatabaseConnection.executeQuery(
         "SELECT * FROM events ORDER BY start_datetime ASC"
       )
-      val events = ListBuffer[Event]()
-      
-      while (rs.next()) {
-        events += mapResultSetToEvent(rs)
-      }
+      val events = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToEvent)
+        .toList
       
       rs.close()
-      events.toList
+      events
     } catch {
       case e: Exception =>
         println(s"Error finding all events: ${e.getMessage}")
@@ -121,14 +120,13 @@ class EventDAO {
       val rs = DatabaseConnection.executeQuery(
         "SELECT * FROM events WHERE start_datetime > ? ORDER BY start_datetime ASC", now
       )
-      val events = ListBuffer[Event]()
-      
-      while (rs.next()) {
-        events += mapResultSetToEvent(rs)
-      }
+      val events = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToEvent)
+        .toList
       
       rs.close()
-      events.toList
+      events
     } catch {
       case e: Exception =>
         println(s"Error finding upcoming events: ${e.getMessage}")
@@ -141,14 +139,13 @@ class EventDAO {
       val rs = DatabaseConnection.executeQuery(
         "SELECT * FROM events WHERE organizer_id = ? ORDER BY start_datetime ASC", organizerId
       )
-      val events = ListBuffer[Event]()
-      
-      while (rs.next()) {
-        events += mapResultSetToEvent(rs)
-      }
+      val events = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToEvent)
+        .toList
       
       rs.close()
-      events.toList
+      events
     } catch {
       case e: Exception =>
         println(s"Error finding events by organizer: ${e.getMessage}")
@@ -165,14 +162,13 @@ class EventDAO {
            ORDER BY start_datetime ASC""",
         searchPattern, searchPattern, searchPattern
       )
-      val events = ListBuffer[Event]()
-      
-      while (rs.next()) {
-        events += mapResultSetToEvent(rs)
-      }
+      val events = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToEvent)
+        .toList
       
       rs.close()
-      events.toList
+      events
     } catch {
       case e: Exception =>
         println(s"Error searching events: ${e.getMessage}")
@@ -198,7 +194,7 @@ class EventDAO {
       val event = findById(eventId)
       event match {
         case Some(e) if e.maxParticipants.isDefined =>
-          val currentRsvps = getRsvpCount(eventId)
+          val currentRsvps = rsvpCount(eventId)
           if (currentRsvps >= e.maxParticipants.get) {
             return false // Event is full
           }
@@ -234,7 +230,7 @@ class EventDAO {
     }
   }
   
-  def getRsvpCount(eventId: String): Int = {
+  def rsvpCount(eventId: String): Int = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT COUNT(*) FROM event_rsvps WHERE event_id = ?", eventId
@@ -249,19 +245,18 @@ class EventDAO {
     }
   }
   
-  def getEventRsvps(eventId: String): List[String] = {
+  def eventRsvps(eventId: String): List[String] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         "SELECT user_id FROM event_rsvps WHERE event_id = ?", eventId
       )
-      val userIds = ListBuffer[String]()
-      
-      while (rs.next()) {
-        userIds += rs.getString("user_id")
-      }
+      val userIds = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(_.getString("user_id"))
+        .toList
       
       rs.close()
-      userIds.toList
+      userIds
     } catch {
       case e: Exception =>
         println(s"Error getting event RSVPs: ${e.getMessage}")
@@ -269,7 +264,7 @@ class EventDAO {
     }
   }
   
-  def getUserEvents(userId: String): List[Event] = {
+  def userEvents(userId: String): List[Event] = {
     try {
       val rs = DatabaseConnection.executeQuery(
         """SELECT e.* FROM events e
@@ -278,14 +273,13 @@ class EventDAO {
            ORDER BY e.start_datetime ASC""",
         userId
       )
-      val events = ListBuffer[Event]()
-      
-      while (rs.next()) {
-        events += mapResultSetToEvent(rs)
-      }
+      val events = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(mapResultSetToEvent)
+        .toList
       
       rs.close()
-      events.toList
+      events
     } catch {
       case e: Exception =>
         println(s"Error getting user events: ${e.getMessage}")
@@ -304,8 +298,11 @@ class EventDAO {
     val maxParticipants = Option(rs.getObject("max_participants")).map(_.asInstanceOf[Int])
     val likes = rs.getInt("likes")
     
-    // Create event
-    val event = Event(
+    // Get RSVPs for this event
+    val participants = eventRsvps(eventId)
+    
+    // Create event with all properties from database
+    Event(
       eventId = eventId,
       organizerId = organizerId,
       title = title,
@@ -313,16 +310,9 @@ class EventDAO {
       location = location,
       startDateTime = startDateTime,
       endDateTime = endDateTime,
-      maxParticipants = maxParticipants
+      maxParticipants = maxParticipants,
+      participants = participants,
+      likes = likes
     )
-    
-    // Get RSVPs for this event and set them directly
-    val participants = getEventRsvps(eventId)
-    event.participants = participants
-    
-    // Set likes count
-    (0 until likes).foreach(_ => event.addLike())
-    
-    event
   }
 }

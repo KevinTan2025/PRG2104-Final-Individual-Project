@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" styleClass="simple-announcements-tab">
+   <children>
+      <HBox spacing="10.0" styleClass="button-row">
+         <children>
+            <Button fx:id="btnCreate" onAction="#handleCreate" text="Create" styleClass="create-button" />
+            <Button fx:id="btnRefresh" onAction="#handleRefresh" text="Refresh" styleClass="refresh-button" />
+            <Button fx:id="btnComment" onAction="#handleComment" text="Comment" styleClass="comment-button" />
+            <Button fx:id="btnLike" onAction="#handleLike" text="Like" styleClass="like-button" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <HBox spacing="10.0" styleClass="search-row">
+         <children>
+            <TextField fx:id="txtSearchField" promptText="Search announcements..." styleClass="search-field" prefWidth="250.0" />
+            <Button fx:id="btnSearch" onAction="#handleSearch" text="Search" styleClass="search-button" />
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <ListView fx:id="lstAnnouncements" prefHeight="450.0" prefWidth="650.0" styleClass="announcements-list" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>

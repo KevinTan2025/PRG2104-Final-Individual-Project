@@ -6,16 +6,17 @@ import scalafx.scene.Scene
 import scalafx.stage.{Stage, Modality}
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.text.{Font, FontWeight}
+import scalafx.beans.property.ObjectProperty
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.language.implicitConversions
 
 class EnhancedDatePicker {
-  private var selectedDate: Option[LocalDate] = None
-  private var displayMonth: LocalDate = LocalDate.now().withDayOfMonth(1)
+  private val selectedDateProperty = ObjectProperty[Option[LocalDate]](None)
+  private val displayMonthProperty = ObjectProperty[LocalDate](LocalDate.now().withDayOfMonth(1))
   
   private def updateDisplayText(): Unit = {
-    dateField.text = selectedDate.map(_.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+    dateField.text = selectedDateProperty.value.map(_.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
       .getOrElse("")
   }
   
@@ -36,11 +37,11 @@ class EnhancedDatePicker {
     alignment = Pos.CenterLeft
   }
   
-  def getValue: Option[LocalDate] = selectedDate
+  def getValue: Option[LocalDate] = selectedDateProperty.value
   
   def setValue(date: LocalDate): Unit = {
-    selectedDate = Some(date)
-    displayMonth = date.withDayOfMonth(1)
+    selectedDateProperty.value = Some(date)
+    displayMonthProperty.value = date.withDayOfMonth(1)
     updateDisplayText()
   }
   
@@ -57,7 +58,7 @@ class EnhancedDatePicker {
   }
   
   private def updateCalendar(): Unit = {
-    monthLabel.text = displayMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+    monthLabel.text = displayMonthProperty.value.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
     calendarGrid.children.clear()
     
     // Add day headers
@@ -71,43 +72,51 @@ class EnhancedDatePicker {
       }, col, 0)
     }
     
-    // Add calendar days
-    val firstDay = displayMonth.withDayOfMonth(1)
+    // Add calendar days using functional approach
+    val firstDay = displayMonthProperty.value.withDayOfMonth(1)
     val startDayOfWeek = firstDay.getDayOfWeek.getValue % 7 // Convert to Sunday = 0
-    val daysInMonth = displayMonth.lengthOfMonth()
+    val daysInMonth = displayMonthProperty.value.lengthOfMonth()
     
-    var dayCount = 1
-    for (row <- 1 to 6) {
-      for (col <- 0 to 6) {
-        val cellIndex = (row - 1) * 7 + col
-        if (cellIndex >= startDayOfWeek && dayCount <= daysInMonth) {
-          val day = dayCount
-          val dayButton = new Button(day.toString) {
-            prefWidth = 35
-            prefHeight = 35
-            val cellDate = displayMonth.withDayOfMonth(day)
-            val isToday = cellDate.equals(LocalDate.now())
-            val isSelected = selectedDate.contains(cellDate)
-            
-            style = if (isSelected) {
-              "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6;"
-            } else if (isToday) {
-              "-fx-background-color: #e3f2fd; -fx-text-fill: #1877f2; -fx-background-radius: 6;"
-            } else {
-              "-fx-background-color: white; -fx-text-fill: #1c1e21; -fx-background-radius: 6;"
-            }
-            
-            onAction = _ => {
-              selectedDate = Some(cellDate)
-              updateDisplayText()
-              dialog.close()
-            }
+    // Generate all calendar cells functionally
+    val calendarCells = for {
+      row <- 1 to 6
+      col <- 0 to 6
+    } yield {
+      val cellIndex = (row - 1) * 7 + col
+      val dayNumber = cellIndex - startDayOfWeek + 1
+      
+      if (cellIndex >= startDayOfWeek && dayNumber <= daysInMonth) {
+        val cellDate = displayMonthProperty.value.withDayOfMonth(dayNumber)
+        val isToday = cellDate.equals(LocalDate.now())
+        val isSelected = selectedDateProperty.value.contains(cellDate)
+        
+        val dayButton = new Button(dayNumber.toString) {
+          prefWidth = 35
+          prefHeight = 35
+          
+          style = if (isSelected) {
+            "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6;"
+          } else if (isToday) {
+            "-fx-background-color: #e3f2fd; -fx-text-fill: #1877f2; -fx-background-radius: 6;"
+          } else {
+            "-fx-background-color: white; -fx-text-fill: #1c1e21; -fx-background-radius: 6;"
           }
-          calendarGrid.add(dayButton, col, row)
-          dayCount += 1
+          
+          onAction = _ => {
+            selectedDateProperty.value = Some(cellDate)
+            updateDisplayText()
+            dialog.close()
+          }
         }
+        
+        calendarGrid.add(dayButton, col, row)
+        Some(dayButton)
+      } else {
+        None
       }
     }
+    
+    // All buttons are now added to the grid
   }
   
   private val monthLabel = new Label {
@@ -118,7 +127,7 @@ class EnhancedDatePicker {
   private val prevButton = new Button("◀") {
     style = "-fx-background-color: #f0f2f5; -fx-background-radius: 6;"
     onAction = _ => {
-      displayMonth = displayMonth.minusMonths(1)
+      displayMonthProperty.value = displayMonthProperty.value.minusMonths(1)
       updateCalendar()
     }
   }
@@ -126,7 +135,7 @@ class EnhancedDatePicker {
   private val nextButton = new Button("▶") {
     style = "-fx-background-color: #f0f2f5; -fx-background-radius: 6;"
     onAction = _ => {
-      displayMonth = displayMonth.plusMonths(1)
+      displayMonthProperty.value = displayMonthProperty.value.plusMonths(1)
       updateCalendar()
     }
   }
@@ -135,8 +144,8 @@ class EnhancedDatePicker {
     style = "-fx-background-color: #1877f2; -fx-text-fill: white; -fx-background-radius: 6;"
     onAction = _ => {
       val today = LocalDate.now()
-      selectedDate = Some(today)
-      displayMonth = today.withDayOfMonth(1)
+      selectedDateProperty.value = Some(today)
+      displayMonthProperty.value = today.withDayOfMonth(1)
       updateCalendar()
       updateDisplayText()
       dialog.close()

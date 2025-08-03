@@ -1,0 +1,68 @@
+/* AnonymousMenuBarComponent Styles */
+
+.anonymous-menu-container {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.anonymous-menu-bar {
+    -fx-background-color: transparent;
+}
+
+.anonymous-menu-bar .menu {
+    -fx-background-color: transparent;
+}
+
+.anonymous-menu-bar .menu:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.anonymous-menu-bar .menu:showing {
+    -fx-background-color: #e9ecef;
+}
+
+.anonymous-menu-bar .menu .label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 14px;
+}
+
+.anonymous-menu-bar .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 8 16;
+}
+
+.anonymous-menu-bar .menu-item:hover {
+    -fx-background-color: #e9ecef;
+}
+
+.anonymous-menu-bar .menu-item .label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 13px;
+}
+
+.anonymous-menu-bar .separator {
+    -fx-background-color: #dee2e6;
+}
+
+/* Status container styling */
+.status-container {
+    -fx-background-color: transparent;
+}
+
+.anonymous-status-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-style: italic;
+    -fx-font-size: 12px;
+}
+
+/* Account menu specific styling */
+.anonymous-menu-bar .menu:nth-child(1) .label {
+    -fx-text-fill: #007bff;
+    -fx-font-weight: bold;
+}
+
+/* Help menu specific styling */
+.anonymous-menu-bar .menu:nth-child(2) .label {
+    -fx-text-fill: #28a745;
+}

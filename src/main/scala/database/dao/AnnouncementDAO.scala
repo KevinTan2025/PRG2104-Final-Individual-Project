@@ -54,14 +54,15 @@ class AnnouncementDAO {
   def findAll(): List[Announcement] = {
     try {
       val rs = DatabaseConnection.executeQuery("SELECT * FROM announcements ORDER BY created_at DESC")
-      val announcements = scala.collection.mutable.ListBuffer[Announcement]()
       
-      while (rs.next()) {
-        announcements += resultSetToAnnouncement(rs)
-      }
+      // Use functional approach to build list
+      val announcements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToAnnouncement)
+        .toList
       
       rs.close()
-      announcements.toList
+      announcements
     } catch {
       case e: Exception =>
         println(s"Error finding all announcements: ${e.getMessage}")
@@ -78,13 +79,13 @@ class AnnouncementDAO {
         s"%$searchTerm%", s"%$searchTerm%"
       )
       
-      val announcements = scala.collection.mutable.ListBuffer[Announcement]()
-      while (rs.next()) {
-        announcements += resultSetToAnnouncement(rs)
-      }
+      val announcements = Iterator.continually(rs)
+        .takeWhile(_.next())
+        .map(resultSetToAnnouncement)
+        .toList
       
       rs.close()
-      announcements.toList
+      announcements
     } catch {
       case e: Exception =>
         println(s"Error searching announcements: ${e.getMessage}")
@@ -167,16 +168,19 @@ class AnnouncementDAO {
     val createdAt = DatabaseConnection.parseDateTime(rs.getString("created_at"))
     
     // Create announcement with database values
-    val announcement = Announcement(announcementId, authorId, title, content, announcementType, createdAt)
-    
-    // Set additional properties from database
-    announcement.likes = rs.getInt("likes")
-    announcement.isModerated = rs.getBoolean("is_moderated")
     val moderatorIdStr = rs.getString("moderator_id")
-    if (moderatorIdStr != null) {
-      announcement.moderatedBy = Some(moderatorIdStr)
-    }
+    val moderatedBy = Option(moderatorIdStr)
     
-    announcement
+    Announcement(
+      announcementId = announcementId,
+      authorId = authorId,
+      title = title,
+      content = content,
+      announcementType = announcementType,
+      timestamp = createdAt,
+      likes = rs.getInt("likes"),
+      isModerated = rs.getBoolean("is_moderated"),
+      moderatedBy = moderatedBy
+    )
   }
 }

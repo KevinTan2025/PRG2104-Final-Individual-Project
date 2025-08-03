@@ -17,7 +17,7 @@ class ProfileDialog {
   private val service = CommunityEngagementService.getInstance
   
   def showAndWait(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val dialog = new Dialog[Unit]()
         dialog.title = "User Profile"
@@ -37,7 +37,7 @@ class ProfileDialog {
           editable = false  // Email usually shouldn't be changed
         }
         
-        val roleLabel = new Label(user.getUserRole) {
+        val roleLabel = new Label(user.userRole) {
           style = "-fx-font-weight: bold;"
         }
         
@@ -67,7 +67,7 @@ class ProfileDialog {
             } else if (newPass != confirmPass) {
               GuiUtils.showError("Password Mismatch", "New password and confirmation do not match.")
             } else if (!util.PasswordHasher.isPasswordValid(newPass)) {
-              GuiUtils.showError("Invalid Password", util.PasswordHasher.getPasswordRequirements)
+              GuiUtils.showError("Invalid Password", util.PasswordHasher.passwordRequirements)
             } else {
               if (service.resetPassword(currentPass, newPass)) {
                 GuiUtils.showInfo("Success", "Password changed successfully!")

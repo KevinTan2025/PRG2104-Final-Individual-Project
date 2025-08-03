@@ -3,7 +3,7 @@ package gui
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, TabPane => ScalaFXTabPane, Button, Label, TextField, PasswordField, CheckBox, ComboBox, ListView, TableView, TableColumn, Alert, ButtonType, Dialog, DialogPane, TextArea, Hyperlink, ProgressIndicator, Separator, MenuBar, Menu, MenuItem, SeparatorMenuItem, ContextMenu, Tooltip, ScrollPane}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
@@ -17,6 +17,17 @@ object CommunityEngagementApp extends JFXApp3 {
   
   // Service instance
   private val service = CommunityEngagementService.getInstance
+  
+  // Pending registration data for OTP verification
+  private val pendingRegistration: java.util.concurrent.atomic.AtomicReference[Option[RegistrationData]] = new java.util.concurrent.atomic.AtomicReference(None)
+  
+  case class RegistrationData(
+    username: String,
+    email: String,
+    name: String,
+    contact: String,
+    password: String
+  )
   
   // Main application stage
   override def start(): Unit = {
@@ -111,23 +122,12 @@ object CommunityEngagementApp extends JFXApp3 {
     val passwordField = new PasswordField { promptText = "Password (8+ chars, letter, digit, special char)" }
     val confirmPasswordField = new PasswordField { promptText = "Confirm Password" }
     
-    // Pending registration data for OTP verification
-    var pendingRegistration: Option[RegistrationData] = None
-    
-    case class RegistrationData(
-      username: String,
-      email: String,
-      name: String,
-      contact: String,
-      password: String
-    )
-    
     val registerButton = new Button("Register") {
       onAction = (_: ActionEvent) => {
-        val username = usernameField.getUserInput
-        val email = emailField.getUserInput
-        val name = nameField.getUserInput
-        val contact = contactField.getUserInput
+        val username = usernameField.userInput
+        val email = emailField.userInput
+        val name = nameField.userInput
+        val contact = contactField.userInput
         val password = passwordField.text.value
         val confirmPassword = confirmPasswordField.text.value
         
@@ -139,19 +139,19 @@ object CommunityEngagementApp extends JFXApp3 {
         } else if (password != confirmPassword) {
           showAlert(Alert.AlertType.Error, "Password Mismatch", "Password and confirmation do not match.")
         } else if (!util.PasswordHasher.isPasswordValid(password)) {
-          showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+          showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.passwordRequirements)
         } else if (!service.isUsernameAvailable(username)) {
           showAlert(Alert.AlertType.Error, "Username Taken", s"The username '$username' is already taken. Please choose a different one.")
         } else if (!service.isEmailAvailable(email)) {
           showAlert(Alert.AlertType.Error, "Email Already Registered", s"The email '$email' is already registered. Please use a different email or try logging in.")
         } else {
           // Store registration data and start OTP verification
-          pendingRegistration = Some(RegistrationData(username, email, name, contact, password))
+          pendingRegistration.set(Some(RegistrationData(username, email, name, contact, password)))
           
           val otpDialog = new gui.dialogs.auth.OTPVerificationDialog(stage, email)
           otpDialog.show(
             onSuccess = () => {
-              pendingRegistration match {
+              pendingRegistration.get() match {
                 case Some(data) =>
                   if (service.registerUser(data.username, data.email, data.name, data.contact, data.password, isAdmin = false)) {
                     showAlert(Alert.AlertType.Information, "Registration Successful", "Account created successfully! You can now log in.")
@@ -166,13 +166,13 @@ object CommunityEngagementApp extends JFXApp3 {
                   } else {
                     showAlert(Alert.AlertType.Error, "Registration Failed", "An error occurred during registration. Please try again.")
                   }
-                  pendingRegistration = None
+                  pendingRegistration.set(None)
                 case None =>
                   showAlert(Alert.AlertType.Error, "Registration Error", "Registration data not found. Please try again.")
               }
             },
             onFailure = () => {
-              pendingRegistration = None
+              pendingRegistration.set(None)
               showAlert(Alert.AlertType.Warning, "Registration Cancelled", "Email verification was cancelled. Please try again.")
             }
           )
@@ -220,7 +220,7 @@ object CommunityEngagementApp extends JFXApp3 {
    * Create the main application scene
    */
   private def createMainScene(): Scene = {
-    val tabPane = new TabPane {
+    val tabPane = new ScalaFXTabPane {
       tabs = Seq(
         createDashboardTab(),
         createAnnouncementsTab(),
@@ -263,8 +263,8 @@ object CommunityEngagementApp extends JFXApp3 {
       )
     }
     
-    val userInfo = service.getCurrentUser match {
-      case Some(user) => s"${user.name} (${user.getUserRole})"
+    val userInfo = service.currentUserInfo match {
+      case Some(user) => s"${user.name} (${user.userRole})"
       case None => "Guest"
     }
     
@@ -291,9 +291,9 @@ object CommunityEngagementApp extends JFXApp3 {
   /**
    * Create the dashboard tab based on user role
    */
-  private def createDashboardTab(): Tab = {
-    service.getCurrentUser match {
-      case Some(user) if user.getUserRole == "AdminUser" =>
+  private def createDashboardTab(): ScalaFXTab = {
+    service.currentUserInfo match {
+      case Some(user) if user.userRole == "Administrator" =>
         new gui.components.dashboards.AdminDashboard(service).build()
       case _ =>
         new gui.components.dashboards.UserDashboard(service).build()
@@ -303,11 +303,11 @@ object CommunityEngagementApp extends JFXApp3 {
   /**
    * Create the announcements tab
    */
-  private def createAnnouncementsTab(): Tab = {
+  private def createAnnouncementsTab(): ScalaFXTab = {
     val announcementsList = new ListView[String]()
     
     val refreshAnnouncements = () => {
-      val announcements = service.getAnnouncements
+      val announcements = service.announcements
       val items = announcements.map(a => s"[${a.announcementType}] ${a.title} - ${a.timestamp.toLocalDate}")
       announcementsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -345,7 +345,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = announcementsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val announcements = service.getAnnouncements
+          val announcements = service.announcements
           if (selectedIndex < announcements.length) {
             val announcement = announcements(selectedIndex)
             val dialog = createCommentDialog(announcement.title)
@@ -369,7 +369,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = announcementsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val announcements = service.getAnnouncements
+          val announcements = service.announcements
           if (selectedIndex < announcements.length) {
             val announcement = announcements(selectedIndex)
             if (service.likeAnnouncement(announcement.announcementId)) {
@@ -391,7 +391,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = announcementsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Announcements"
       content = tabContent
       closable = false
@@ -447,7 +447,7 @@ object CommunityEngagementApp extends JFXApp3 {
         service.createAnnouncement(titleField.text.value, contentArea.text.value, announcementType)
         "created"
       } else {
-        null
+        ""
       }
     }
     
@@ -484,7 +484,7 @@ object CommunityEngagementApp extends JFXApp3 {
       if (dialogButton == ButtonType.OK) {
         contentArea.text()
       } else {
-        null
+        "" // Return empty string instead of null
       }
     }
     
@@ -494,11 +494,11 @@ object CommunityEngagementApp extends JFXApp3 {
   /**
    * Create the food sharing tab
    */
-  private def createFoodSharingTab(): Tab = {
+  private def createFoodSharingTab(): ScalaFXTab = {
     val foodPostsList = new ListView[String]()
     
     val refreshFoodPosts = () => {
-      val posts = service.getFoodPosts
+      val posts = service.foodPosts
       val items = posts.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
       foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -528,7 +528,7 @@ object CommunityEngagementApp extends JFXApp3 {
         } else {
           import model.FoodPostType
           val postType = if (filterType == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-          val filtered = service.getFoodPostsByType(postType)
+          val filtered = service.foodPostsByType(postType)
           val items = filtered.map(p => s"[${p.postType}] ${p.title} - ${p.location} (${p.status})")
           foodPostsList.items = scalafx.collections.ObservableBuffer(items: _*)
         }
@@ -540,11 +540,11 @@ object CommunityEngagementApp extends JFXApp3 {
         val selectedIndex = foodPostsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
           val posts = if (filterCombo.value.value == "All") {
-            service.getFoodPosts
+            service.foodPosts
           } else {
             import model.FoodPostType
             val postType = if (filterCombo.value.value == "OFFER") FoodPostType.OFFER else FoodPostType.REQUEST
-            service.getFoodPostsByType(postType)
+            service.foodPostsByType(postType)
           }
           if (selectedIndex < posts.length) {
             val post = posts(selectedIndex)
@@ -597,7 +597,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = foodPostsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Food Sharing"
       content = mainContent
       closable = false
@@ -681,19 +681,19 @@ object CommunityEngagementApp extends JFXApp3 {
         )
         "created"
       } else {
-        null
+        "" // Return empty string instead of null
       }
     }
     
     dialog
   }
   
-  private def createDiscussionTab(): Tab = {
+  private def createDiscussionTab(): ScalaFXTab = {
     val topicsList = new ListView[String]()
     
     val refreshTopics = () => {
-      val topics = service.getDiscussionTopics
-      val items = topics.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
+      val topics = service.discussionTopics
+      val items = topics.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies")
       topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
     
@@ -732,8 +732,8 @@ object CommunityEngagementApp extends JFXApp3 {
             case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
             case _ => DiscussionCategory.GENERAL
           }
-          val filtered = service.getTopicsByCategory(cat)
-          val items = filtered.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
+          val filtered = service.topicsByCategory(cat)
+          val items = filtered.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies")
           topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
         }
       }
@@ -744,7 +744,7 @@ object CommunityEngagementApp extends JFXApp3 {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
           val topics = if (categoryCombo.value.value == "All") {
-            service.getDiscussionTopics
+            service.discussionTopics
           } else {
             import model.DiscussionCategory
             val cat = categoryCombo.value.value match {
@@ -755,7 +755,7 @@ object CommunityEngagementApp extends JFXApp3 {
               case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
               case _ => DiscussionCategory.GENERAL
             }
-            service.getTopicsByCategory(cat)
+            service.topicsByCategory(cat)
           }
           
           if (selectedIndex < topics.length) {
@@ -783,7 +783,7 @@ object CommunityEngagementApp extends JFXApp3 {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
           val topics = if (categoryCombo.value.value == "All") {
-            service.getDiscussionTopics
+            service.discussionTopics
           } else {
             import model.DiscussionCategory
             val cat = categoryCombo.value.value match {
@@ -794,7 +794,7 @@ object CommunityEngagementApp extends JFXApp3 {
               case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
               case _ => DiscussionCategory.GENERAL
             }
-            service.getTopicsByCategory(cat)
+            service.topicsByCategory(cat)
           }
           
           if (selectedIndex < topics.length) {
@@ -816,7 +816,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val topics = service.getDiscussionTopics
+          val topics = service.discussionTopics
           if (selectedIndex < topics.length) {
             val topic = topics(selectedIndex)
             if (service.moderateContent(topic.topicId, "topic")) {
@@ -837,7 +837,7 @@ object CommunityEngagementApp extends JFXApp3 {
         val searchTerm = searchField.text.value
         if (searchTerm.nonEmpty) {
           val results = service.searchTopics(searchTerm)
-          val items = results.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies")
+          val items = results.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies")
           topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
         } else {
           refreshTopics()
@@ -864,7 +864,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = topicsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Discussion Forum"
       content = mainContent
       closable = false
@@ -924,7 +924,7 @@ object CommunityEngagementApp extends JFXApp3 {
         service.createDiscussionTopic(titleField.text.value, descriptionArea.text.value, category)
         "created"
       } else {
-        null
+        "" // Return empty string instead of null
       }
     }
     
@@ -968,11 +968,11 @@ object CommunityEngagementApp extends JFXApp3 {
     dialog
   }
   
-  private def createEventsTab(): Tab = {
+  private def createEventsTab(): ScalaFXTab = {
     val eventsList = new ListView[String]()
     
     val refreshEvents = () => {
-      val events = service.getUpcomingEvents
+      val events = service.upcomingEvents
       val items = events.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
       eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
     }
@@ -993,7 +993,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = eventsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val events = service.getUpcomingEvents
+          val events = service.upcomingEvents
           if (selectedIndex < events.length) {
             val event = events(selectedIndex)
             if (service.rsvpToEvent(event.eventId)) {
@@ -1013,7 +1013,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = eventsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val events = service.getUpcomingEvents
+          val events = service.upcomingEvents
           if (selectedIndex < events.length) {
             val event = events(selectedIndex)
             if (service.cancelRsvp(event.eventId)) {
@@ -1031,9 +1031,9 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val viewMyEventsButton = new Button("My Events") {
       onAction = (_: ActionEvent) => {
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(user) =>
-            val myEvents = service.getMyEvents(user.userId)
+            val myEvents = service.myEvents(user.userId)
             val items = myEvents.map(e => s"${e.title} - ${e.location} (${e.startDateTime.toLocalDate}) - ${e.participants.size} participants")
             eventsList.items = scalafx.collections.ObservableBuffer(items: _*)
           case None =>
@@ -1084,7 +1084,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = eventsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = "Events"
       content = mainContent
       closable = false
@@ -1178,11 +1178,11 @@ object CommunityEngagementApp extends JFXApp3 {
     dialog
   }
   
-  private def createNotificationsTab(): Tab = {
+  private def createNotificationsTab(): ScalaFXTab = {
     val notificationsList = new ListView[String]()
     
     val refreshNotifications = () => {
-      val notifications = service.getNotifications
+      val notifications = service.notifications
       val items = notifications.map { n =>
         val readStatus = if (n.isRead) "✓" else "●"
         s"$readStatus [${n.notificationType}] ${n.title} - ${n.timestamp.toLocalDate}"
@@ -1196,7 +1196,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = notificationsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val notifications = service.getNotifications
+          val notifications = service.notifications
           if (selectedIndex < notifications.length) {
             val notification = notifications(selectedIndex)
             if (service.markNotificationAsRead(notification.notificationId)) {
@@ -1211,7 +1211,7 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val markAllReadButton = new Button("Mark All as Read") {
       onAction = (_: ActionEvent) => {
-        service.getCurrentUser match {
+        service.currentUserInfo match {
           case Some(user) =>
             val count = service.markAllNotificationsAsRead
             showAlert(Alert.AlertType.Information, "Success", s"Marked $count notifications as read.")
@@ -1224,7 +1224,7 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val viewUnreadButton = new Button("Unread Only") {
       onAction = (_: ActionEvent) => {
-        val unread = service.getUnreadNotifications
+        val unread = service.unreadNotifications
         val items = unread.map { n =>
           val readStatus = if (n.isRead) "✓" else "●"
           s"$readStatus [${n.notificationType}] ${n.title} - ${n.timestamp.toLocalDate}"
@@ -1243,7 +1243,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = notificationsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val notifications = service.getNotifications
+          val notifications = service.notifications
           if (selectedIndex < notifications.length) {
             val notification = notifications(selectedIndex)
             if (service.deleteNotification(notification.notificationId)) {
@@ -1261,7 +1261,7 @@ object CommunityEngagementApp extends JFXApp3 {
       onAction = (_: ActionEvent) => {
         val selectedIndex = notificationsList.selectionModel().selectedIndex.value
         if (selectedIndex >= 0) {
-          val notifications = service.getNotifications
+          val notifications = service.notifications
           if (selectedIndex < notifications.length) {
             val notification = notifications(selectedIndex)
             showNotificationDetails(notification)
@@ -1273,7 +1273,7 @@ object CommunityEngagementApp extends JFXApp3 {
     }
     
     // Stats display
-    val unreadCount = service.getUnreadNotificationCount
+    val unreadCount = service.unreadNotificationCount
     val statsLabel = new Label(s"Unread notifications: $unreadCount") {
       style = "-fx-font-weight: bold; -fx-text-fill: #2196F3;"
     }
@@ -1296,7 +1296,7 @@ object CommunityEngagementApp extends JFXApp3 {
       center = notificationsList
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = s"Notifications ($unreadCount)"
       content = mainContent
       closable = false
@@ -1340,7 +1340,7 @@ ${notification.message}
    * Show profile management dialog
    */
   private def showProfileDialog(): Unit = {
-    service.getCurrentUser match {
+    service.currentUserInfo match {
       case Some(user) =>
         val dialog = new Dialog[Unit]()
         dialog.title = "User Profile"
@@ -1362,7 +1362,7 @@ ${notification.message}
           editable = false  // Email usually shouldn't be changed
         }
         
-        val roleLabel = new Label(user.getUserRole) {
+        val roleLabel = new Label(user.userRole) {
           style = "-fx-font-weight: bold;"
         }
         
@@ -1392,7 +1392,7 @@ ${notification.message}
             } else if (newPass != confirmPass) {
               showAlert(Alert.AlertType.Error, "Password Mismatch", "New password and confirmation do not match.")
             } else if (!util.PasswordHasher.isPasswordValid(newPass)) {
-              showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.getPasswordRequirements)
+              showAlert(Alert.AlertType.Error, "Invalid Password", util.PasswordHasher.passwordRequirements)
             } else {
               if (service.resetPassword(currentPass, newPass)) {
                 showAlert(Alert.AlertType.Information, "Success", "Password changed successfully!")
@@ -1478,8 +1478,8 @@ ${notification.message}
     dialog.headerText = "All registered users"
     
     val usersList = new ListView[String]()
-    val users = service.getAllUsers
-    val items = users.map(u => s"${u.username} (${u.name}) - ${u.getUserRole} - ${if (u.isActive) "Active" else "Inactive"}")
+    val users = service.allUsers
+    val items = users.map(u => s"${u.username} (${u.name}) - ${u.userRole} - ${if (u.isActive) "Active" else "Inactive"}")
     usersList.items = scalafx.collections.ObservableBuffer(items: _*)
     
     val vbox = new VBox {
@@ -1507,8 +1507,8 @@ ${notification.message}
     dialog.title = "System Statistics"
     dialog.headerText = "Detailed platform statistics"
     
-    val stats = service.getDashboardStatistics
-    val detailedStats = service.getDetailedStatistics
+    val stats = service.dashboardStatistics
+    val detailedStats = service.detailedStatistics
     
     val statsText = s"""
 Platform Overview:
@@ -1556,7 +1556,7 @@ User Activity:
     dialog.headerText = "Moderate platform content"
     
     val contentList = new ListView[String]()
-    val moderationItems = service.getContentForModeration
+    val moderationItems = service.contentForModeration
     val items = moderationItems.map { case (id, contentType, title) =>
       s"[$contentType] $title (ID: $id)"
     }

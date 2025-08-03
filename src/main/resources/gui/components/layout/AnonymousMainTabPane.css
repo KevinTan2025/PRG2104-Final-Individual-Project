@@ -1,0 +1,167 @@
+/* AnonymousMainTabPane Styles */
+
+.anonymous-tab-pane {
+    -fx-background-color: #ffffff;
+}
+
+.anonymous-tab-pane .tab-header-area {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+    -fx-opacity: 0.9;
+}
+
+.anonymous-tab-pane .tab-header-background {
+    -fx-background-color: #f8f9fa;
+}
+
+.anonymous-tab-pane .tab {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1 0 0;
+    -fx-padding: 8 16;
+    -fx-opacity: 0.8;
+}
+
+.anonymous-tab-pane .tab:selected {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #6c757d;
+    -fx-border-width: 0 0 2 0;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:hover {
+    -fx-background-color: #e9ecef;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab .tab-label {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.anonymous-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #495057;
+    -fx-font-weight: bold;
+}
+
+.anonymous-tab-pane .tab-content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+/* Anonymous mode visual indicators */
+.anonymous-tab-pane .tab::before {
+    -fx-content: "🔍 ";
+}
+
+/* Individual tab styling for anonymous mode */
+.anonymous-tab-pane .tab:nth-child(1) .tab-label {
+    /* Dashboard tab */
+    -fx-text-fill: #28a745;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(1):selected .tab-label {
+    -fx-text-fill: #28a745;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:nth-child(2) .tab-label {
+    /* Announcements tab - read only */
+    -fx-text-fill: #17a2b8;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(2):selected .tab-label {
+    -fx-text-fill: #17a2b8;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:nth-child(3) .tab-label {
+    /* Food Sharing tab - read only */
+    -fx-text-fill: #fd7e14;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(3):selected .tab-label {
+    -fx-text-fill: #fd7e14;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:nth-child(4) .tab-label {
+    /* Food Stock tab */
+    -fx-text-fill: #6f42c1;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(4):selected .tab-label {
+    -fx-text-fill: #6f42c1;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:nth-child(5) .tab-label {
+    /* Discussion tab - read only */
+    -fx-text-fill: #e83e8c;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(5):selected .tab-label {
+    -fx-text-fill: #e83e8c;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:nth-child(6) .tab-label {
+    /* Events tab - read only */
+    -fx-text-fill: #20c997;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(6):selected .tab-label {
+    -fx-text-fill: #20c997;
+    -fx-opacity: 1.0;
+}
+
+.anonymous-tab-pane .tab:nth-child(7) .tab-label {
+    /* App Info tab */
+    -fx-text-fill: #6c757d;
+    -fx-opacity: 0.7;
+}
+
+.anonymous-tab-pane .tab:nth-child(7):selected .tab-label {
+    -fx-text-fill: #6c757d;
+    -fx-opacity: 1.0;
+}
+
+/* Read-only mode styling */
+.anonymous-tab-pane .tab.read-only {
+    -fx-opacity: 0.6;
+}
+
+.anonymous-tab-pane .tab.read-only .tab-label::after {
+    -fx-content: " (Read Only)";
+    -fx-font-size: 10px;
+    -fx-text-fill: #dc3545;
+}
+
+/* Anonymous tab content styling */
+.anonymous-tab-content {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 40;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+}
+
+.anonymous-tab-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6c757d;
+}
+
+.anonymous-placeholder-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #868e96;
+    -fx-font-style: italic;
+}

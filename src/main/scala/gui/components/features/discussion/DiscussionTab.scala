@@ -1,10 +1,11 @@
 package gui.components.features.discussion
 
-import scalafx.scene.control._
+import scalafx.scene.control.{Tab => ScalaFXTab, _}
 import scalafx.scene.layout._
 import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
 import scalafx.Includes._
+import scalafx.beans.property.ObjectProperty
 import gui.utils.GuiUtils
 import gui.components.common.public.BaseTabComponent
 import gui.dialogs.features.discussion.{DiscussionTopicDialog, DiscussionTopicDetailsDialog}
@@ -21,7 +22,7 @@ class DiscussionTab(
   
   private val service = CommunityEngagementService.getInstance
   private val topicsList = new ListView[String]()
-  private var currentTopics: List[DiscussionTopic] = List.empty
+  private val currentTopicsProperty = ObjectProperty[List[DiscussionTopic]](List.empty[DiscussionTopic])
   private val categoryCombo = new ComboBox[String] {
     items = scalafx.collections.ObservableBuffer(
       "All", "NUTRITION", "SUSTAINABLE_AGRICULTURE", "FOOD_SECURITY", 
@@ -33,7 +34,7 @@ class DiscussionTab(
     promptText = "Search topics..."
   }
   
-  override def build(): Tab = {
+  override def build(): ScalaFXTab = {
     refreshTopics()
     
     val createTopicButton = new Button("Create Topic") {
@@ -108,15 +109,15 @@ class DiscussionTab(
     topicsList.onMouseClicked = (event) => {
       if (event.clickCount == 2) {
         val selectedIndex = topicsList.selectionModel().selectedIndex.value
-        if (selectedIndex >= 0 && selectedIndex < currentTopics.length) {
-          val selectedTopic = currentTopics(selectedIndex)
+        if (selectedIndex >= 0 && selectedIndex < currentTopicsProperty.value.length) {
+          val selectedTopic = currentTopicsProperty.value(selectedIndex)
           val detailsDialog = new DiscussionTopicDetailsDialog(selectedTopic, () => refreshTopics())
           detailsDialog.showAndWait()
         }
       }
     }
     
-    new Tab {
+    new ScalaFXTab {
       text = if (readOnlyMode) "💬 Discussion Forum" else "Discussion Forum"
       content = mainContent
       closable = false
@@ -132,19 +133,19 @@ class DiscussionTab(
   }
   
   private def refreshTopics(): Unit = {
-    currentTopics = service.getDiscussionTopics
+    currentTopicsProperty.value = service.discussionTopics
     updateListView()
   }
   
   private def updateListView(): Unit = {
-    val items = currentTopics.map(t => s"[${t.category}] ${t.title} - ${t.getReplyCount} replies • ${t.likes} likes")
+    val items = currentTopicsProperty.value.map(t => s"[${t.category}] ${t.title} - ${t.replyCount} replies • ${t.likes} likes")
     topicsList.items = scalafx.collections.ObservableBuffer(items: _*)
   }
   
   private def handleCategoryFilter(): Unit = {
     val category = categoryCombo.value.value
     if (category == "All") {
-      currentTopics = service.getDiscussionTopics
+      currentTopicsProperty.value = service.discussionTopics
     } else {
       import model.DiscussionCategory
       val cat = category match {
@@ -155,15 +156,15 @@ class DiscussionTab(
         case "COOKING_TIPS" => DiscussionCategory.COOKING_TIPS
         case _ => DiscussionCategory.GENERAL
       }
-      currentTopics = service.getTopicsByCategory(cat)
+      currentTopicsProperty.value = service.topicsByCategory(cat)
     }
     updateListView()
   }
   
   private def handleAddReply(): Unit = {
     val selectedIndex = topicsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0 && selectedIndex < currentTopics.length) {
-      val selectedTopic = currentTopics(selectedIndex)
+    if (selectedIndex >= 0 && selectedIndex < currentTopicsProperty.value.length) {
+      val selectedTopic = currentTopicsProperty.value(selectedIndex)
       val detailsDialog = new DiscussionTopicDetailsDialog(selectedTopic, () => refreshTopics())
       detailsDialog.showAndWait()
     } else {
@@ -173,9 +174,9 @@ class DiscussionTab(
   
   private def handleLikeTopic(): Unit = {
     val selectedIndex = topicsList.selectionModel().selectedIndex.value
-    if (selectedIndex >= 0 && selectedIndex < currentTopics.length) {
-      val selectedTopic = currentTopics(selectedIndex)
-      service.getCurrentUser match {
+    if (selectedIndex >= 0 && selectedIndex < currentTopicsProperty.value.length) {
+      val selectedTopic = currentTopicsProperty.value(selectedIndex)
+      service.currentUserInfo match {
         case Some(_) =>
           if (service.likeTopic(selectedTopic.topicId)) {
             GuiUtils.showInfo("Success", "Topic liked!")
@@ -194,7 +195,7 @@ class DiscussionTab(
   private def handleSearchTopics(): Unit = {
     val searchTerm = searchField.text.value
     if (searchTerm.nonEmpty) {
-      currentTopics = service.searchTopics(searchTerm)
+      currentTopicsProperty.value = service.searchTopics(searchTerm)
       updateListView()
     } else {
       refreshTopics()

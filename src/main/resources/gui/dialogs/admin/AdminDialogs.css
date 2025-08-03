@@ -1,0 +1,198 @@
+/* Admin Dialog Container Styles */
+.admin-dialog-container {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* Admin Statistics Labels */
+.admin-stats-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #495057;
+    -fx-font-family: "System";
+}
+
+.admin-bold-label {
+    -fx-font-weight: bold;
+}
+
+/* Admin Lists Styling */
+.admin-users-list {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.admin-users-list .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #212529;
+    -fx-padding: 8px 12px;
+    -fx-border-color: transparent transparent #e9ecef transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.admin-users-list .list-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.admin-users-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.admin-moderation-list {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.admin-moderation-list .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #212529;
+    -fx-padding: 8px 12px;
+    -fx-border-color: transparent transparent #e9ecef transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.admin-moderation-list .list-cell:selected {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+}
+
+.admin-moderation-list .list-cell:hover {
+    -fx-background-color: #fff3cd;
+}
+
+/* Admin TextArea Styling */
+.admin-stats-textarea {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-font-family: "Courier New", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #212529;
+    -fx-padding: 10px;
+}
+
+.admin-stats-textarea .content {
+    -fx-background-color: white;
+}
+
+/* Admin Button Container */
+.admin-button-container {
+    -fx-alignment: center-left;
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px 0 0 0;
+}
+
+/* Admin Button Styles */
+.admin-primary-button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.admin-primary-button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.admin-primary-button:pressed {
+    -fx-background-color: #004085;
+}
+
+.admin-secondary-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.admin-secondary-button:hover {
+    -fx-background-color: #545b62;
+}
+
+.admin-secondary-button:pressed {
+    -fx-background-color: #3d4142;
+}
+
+/* Admin Table and Grid Styling */
+.admin-table-view {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.admin-table-view .column-header {
+    -fx-background-color: #e9ecef;
+    -fx-text-fill: #495057;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1px 1px 0;
+}
+
+.admin-table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #212529;
+    -fx-border-color: transparent transparent #e9ecef transparent;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.admin-table-view .table-row-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+}
+
+.admin-table-view .table-row-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+/* Admin Form Styling */
+.admin-form-container {
+    -fx-background-color: white;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.admin-form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.admin-form-field {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 14px;
+}
+
+.admin-form-field:focused {
+    -fx-border-color: #007bff;
+    -fx-border-width: 2px;
+}
