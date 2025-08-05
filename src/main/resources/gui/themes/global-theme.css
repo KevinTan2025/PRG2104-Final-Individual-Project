@@ -405,7 +405,8 @@
 
 /* Category labels should keep their original colors for visual distinction */
 .root.dark-theme .category-label {
-    /* Keep original color - no override needed */
+    /* Ensure category colors remain visible in dark mode */
+    -fx-text-fill: inherit !important;
 }
 
 /* Side panel and general background cards */
