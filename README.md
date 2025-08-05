@@ -1457,7 +1457,7 @@ class OTPService {
 
 #### **User Dashboard**
 
-![User Dashboard](images/user.png)
+<img src="images/user.png" alt="User Dashboard" style="width: 50%; height: auto;">
 
 **Personal Analytics:**
 
@@ -1468,7 +1468,7 @@ class OTPService {
 
 #### **Admin Control Panel**
 
-![Admin Panel](images/admin.png)
+<img src="images/admin.png" alt="Admin Panel" style="width: 50%; height: auto;">
 
 **Administrative Power:**
 
