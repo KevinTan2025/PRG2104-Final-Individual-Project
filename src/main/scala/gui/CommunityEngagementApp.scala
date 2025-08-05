@@ -9,6 +9,7 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.event.ActionEvent
 import scalafx.Includes._
 import service.CommunityEngagementService
+import gui.utils.ThemeManager
 
 /**
  * Main GUI application class for the Community Engagement Platform
@@ -37,6 +38,8 @@ object CommunityEngagementApp extends JFXApp3 {
       minWidth = 800
       minHeight = 600
     }
+    // 设置GuiUtils的mainStage引用
+    gui.utils.GuiUtils.mainStage = stage
     stage.centerOnScreen()
   }
   
@@ -105,10 +108,12 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val rootPane = new BorderPane {
       center = loginBox
-      style = "-fx-background-color: #f5f5f5;"
+      style = ThemeManager.getComponentStyle("background")
     }
     
-    new Scene(rootPane, 800, 600)
+    val scene = new Scene(rootPane, 800, 600)
+    ThemeManager.applyThemeToScene(scene)
+    scene
   }
   
   /**
@@ -210,10 +215,12 @@ object CommunityEngagementApp extends JFXApp3 {
     
     val rootPane = new BorderPane {
       center = formBox
-      style = "-fx-background-color: #f5f5f5;"
+      style = ThemeManager.getComponentStyle("background")
     }
     
-    new Scene(rootPane, 800, 600)
+    val scene = new Scene(rootPane, 800, 600)
+    ThemeManager.applyThemeToScene(scene)
+    scene
   }
   
   /**
@@ -236,9 +243,12 @@ object CommunityEngagementApp extends JFXApp3 {
     val rootPane = new BorderPane {
       top = menuBar
       center = tabPane
+      style = ThemeManager.getComponentStyle("background")
     }
     
-    new Scene(rootPane, 1000, 700)
+    val scene = new Scene(rootPane, 1000, 700)
+    ThemeManager.applyThemeToScene(scene)
+    scene
   }
   
   /**
@@ -283,8 +293,38 @@ object CommunityEngagementApp extends JFXApp3 {
       )
     }
     
+    // Theme menu to toggle between dark and light modes
+    val themeMenu = new Menu("Theme") {
+      items = Seq(
+        new MenuItem("Toggle Dark/Light Mode") {
+          onAction = (_: ActionEvent) => {
+            ThemeManager.toggleTheme()
+            // Recreate scene to apply new theme
+            stage.scene = createMainScene()
+            showAlert(Alert.AlertType.Information, "Theme Changed", 
+              s"Switched to ${if (ThemeManager.isDarkMode.value) "Dark" else "Light"} mode")
+          }
+        },
+        new SeparatorMenuItem(),
+        new MenuItem("Light Mode") {
+          onAction = (_: ActionEvent) => {
+            ThemeManager.setDarkMode(false)
+            stage.scene = createMainScene()
+            showAlert(Alert.AlertType.Information, "Theme Changed", "Switched to Light mode")
+          }
+        },
+        new MenuItem("Dark Mode") {
+          onAction = (_: ActionEvent) => {
+            ThemeManager.setDarkMode(true)
+            stage.scene = createMainScene()
+            showAlert(Alert.AlertType.Information, "Theme Changed", "Switched to Dark mode")
+          }
+        }
+      )
+    }
+    
     new MenuBar {
-      menus = Seq(fileMenu, userMenu)
+      menus = Seq(fileMenu, themeMenu, userMenu)
     }
   }
   
@@ -296,7 +336,7 @@ object CommunityEngagementApp extends JFXApp3 {
       case Some(user) if user.userRole == "Administrator" =>
         new gui.components.dashboards.AdminDashboard(service).build()
       case _ =>
-        new gui.components.dashboards.UserDashboard(service).build()
+        new gui.components.dashboards.UserDashboard(service).buildTab()
     }
   }
 

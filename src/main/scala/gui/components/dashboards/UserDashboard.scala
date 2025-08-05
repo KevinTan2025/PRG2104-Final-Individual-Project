@@ -10,14 +10,15 @@ import gui.dialogs.features.events._
 import gui.dialogs.features.food._
 import gui.dialogs.common._
 import gui.utils.GuiUtils
+import gui.components.common.public.ThemeableComponent
 import service.CommunityEngagementService
 
 /**
  * User-focused dashboard with personal stats and community interaction
  */
-class UserDashboard(service: CommunityEngagementService) {
+class UserDashboard(override val service: CommunityEngagementService) extends ThemeableComponent {
 
-  def build(): ScalaFXTab = {
+  def build(): Region = {
     // Use placeholder stats for now
     val stats = Map(
       "postsShared" -> 23,
@@ -34,10 +35,9 @@ class UserDashboard(service: CommunityEngagementService) {
     val dashboardContent = new VBox {
       spacing = 20
       padding = Insets(20)
+      style = gui.utils.ThemeManager.getComponentStyle("background")
       children = Seq(
-        new Label("🏠 User Dashboard") {
-          style = "-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;"
-        },
+        createThemedLabel("🏠 User Dashboard", isPrimary = true, fontSize = "24px", isBold = true),
         personalStatsSection,
         new HBox {
           spacing = 20
@@ -47,14 +47,24 @@ class UserDashboard(service: CommunityEngagementService) {
       )
     }
     
+    val scrollPane = new ScrollPane {
+      content = dashboardContent
+      fitToWidth = true
+      hbarPolicy = ScrollPane.ScrollBarPolicy.Never
+      vbarPolicy = ScrollPane.ScrollBarPolicy.AsNeeded
+      style = gui.utils.ThemeManager.getComponentStyle("background")
+    }
+    
+    // 应用主题到整个组件
+    applyTheme(scrollPane)
+    scrollPane
+  }
+  
+  // 为了兼容性，保留原来的build方法返回Tab
+  def buildTab(): ScalaFXTab = {
     new ScalaFXTab {
       text = "Dashboard"
-      content = new ScrollPane {
-        content = dashboardContent
-        fitToWidth = true
-        hbarPolicy = ScrollPane.ScrollBarPolicy.Never
-        vbarPolicy = ScrollPane.ScrollBarPolicy.AsNeeded
-      }
+      content = build()
       closable = false
     }
   }
@@ -63,10 +73,10 @@ class UserDashboard(service: CommunityEngagementService) {
     new HBox {
       spacing = 20
       children = Seq(
-        createStatCard("📦 Posts Shared", stats("postsShared").toString, "#e8f5e8"),
-        createStatCard("👨‍👩‍👧‍👦 Families Helped", stats("helpedFamilies").toString, "#e3f2fd"),
-        createStatCard("📅 Events Joined", stats("eventsJoined").toString, "#fff3e0"),
-        createStatCard("⭐ Community Points", stats("communityPoints").toString, "#f3e5f5")
+        createThemedStatCard("📦 Posts Shared", stats("postsShared").toString, "success"),
+        createThemedStatCard("👨‍👩‍👧‍👦 Families Helped", stats("helpedFamilies").toString, "info"),
+        createThemedStatCard("📅 Events Joined", stats("eventsJoined").toString, "warning"),
+        createThemedStatCard("⭐ Community Points", stats("communityPoints").toString, "primary")
       )
     }
   }

@@ -1,0 +1,438 @@
+/* Global Theme Styles */
+
+/* Light Theme (Default) */
+.root {
+    -fx-background-color: #f5f5f5;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Dark Theme */
+.root.dark-theme {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #ffffff;
+}
+
+/* Background Colors */
+.root .background-primary {
+    -fx-background-color: #f5f5f5;
+}
+
+.root.dark-theme .background-primary {
+    -fx-background-color: #2b2b2b;
+}
+
+.root .background-secondary {
+    -fx-background-color: #ffffff;
+}
+
+.root.dark-theme .background-secondary {
+    -fx-background-color: #3c3c3c;
+}
+
+/* Text Colors */
+.root .text-primary {
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .text-primary {
+    -fx-text-fill: #ffffff;
+}
+
+.root .text-secondary {
+    -fx-text-fill: #6c757d;
+}
+
+.root.dark-theme .text-secondary {
+    -fx-text-fill: #b0b0b0;
+}
+
+/* Menu Bar Styles */
+.root .menu-bar {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+}
+
+.root.dark-theme .menu-bar {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+}
+
+.root .menu-bar .menu {
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .menu-bar .menu {
+    -fx-text-fill: #ffffff;
+}
+
+.root .menu-bar .menu .label {
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .menu-bar .menu .label {
+    -fx-text-fill: #ffffff;
+}
+
+.root .menu-bar .menu:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.root.dark-theme .menu-bar .menu:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+/* Context Menu Styles */
+.root .context-menu {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+}
+
+.root.dark-theme .context-menu {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+}
+
+.root .menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+}
+
+.root .menu-item:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+.root.dark-theme .menu-item:hover {
+    -fx-background-color: #4a4a4a;
+}
+
+.root .menu-item .label {
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .menu-item .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Tab Pane Styles */
+.root .tab-pane {
+    -fx-background-color: #ffffff;
+}
+
+.root.dark-theme .tab-pane {
+    -fx-background-color: #2b2b2b;
+}
+
+.root .tab-pane .tab-header-area {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+}
+
+.root.dark-theme .tab-pane .tab-header-area {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+}
+
+.root .tab-pane .tab {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #495057;
+}
+
+.root.dark-theme .tab-pane .tab {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #b0b0b0;
+}
+
+.root .tab-pane .tab:selected {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #007bff;
+}
+
+.root.dark-theme .tab-pane .tab:selected {
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #4dabf7;
+}
+
+.root .tab-pane .tab .tab-label {
+    -fx-text-fill: #495057;
+}
+
+.root.dark-theme .tab-pane .tab .tab-label {
+    -fx-text-fill: #b0b0b0;
+}
+
+.root .tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #007bff;
+}
+
+.root.dark-theme .tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #4dabf7;
+}
+
+/* Button Styles */
+.root .button {
+    -fx-background-color: #007bff;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #007bff;
+}
+
+.root.dark-theme .button {
+    -fx-background-color: #4a4a4a;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+}
+
+.root .button:hover {
+    -fx-background-color: #0056b3;
+}
+
+.root.dark-theme .button:hover {
+    -fx-background-color: #5a5a5a;
+}
+
+/* Text Field Styles */
+.root .text-field {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2c3e50;
+    -fx-border-color: #ced4da;
+}
+
+.root.dark-theme .text-field {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+}
+
+.root .text-field:focused {
+    -fx-border-color: #007bff;
+}
+
+.root.dark-theme .text-field:focused {
+    -fx-border-color: #4dabf7;
+}
+
+/* Text Area Styles */
+.root .text-area {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2c3e50;
+    -fx-border-color: #ced4da;
+}
+
+.root.dark-theme .text-area {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+}
+
+.root .text-area .content {
+    -fx-background-color: #ffffff;
+}
+
+.root.dark-theme .text-area .content {
+    -fx-background-color: #3c3c3c;
+}
+
+/* ComboBox Styles */
+.root .combo-box {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #2c3e50;
+    -fx-border-color: #ced4da;
+}
+
+.root.dark-theme .combo-box {
+    -fx-background-color: #3c3c3c;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #555555;
+}
+
+/* List View Styles */
+.root .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+}
+
+.root.dark-theme .list-view {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+}
+
+.root .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+}
+
+.root .list-view .list-cell:selected {
+    -fx-background-color: #007bff;
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark-theme .list-view .list-cell:selected {
+    -fx-background-color: #4dabf7;
+    -fx-text-fill: #000000;
+}
+
+/* Label Styles */
+.root .label {
+    -fx-text-fill: #2c3e50;
+}
+
+.root.dark-theme .label {
+    -fx-text-fill: #ffffff;
+}
+
+/* Scroll Pane Styles */
+.root .scroll-pane {
+    -fx-background-color: #ffffff;
+}
+
+.root.dark-theme .scroll-pane {
+    -fx-background-color: #2b2b2b;
+}
+
+.root .scroll-pane .viewport {
+    -fx-background-color: #ffffff;
+}
+
+.root.dark-theme .scroll-pane .viewport {
+    -fx-background-color: #2b2b2b;
+}
+
+.root .scroll-pane .content {
+    -fx-background-color: #ffffff;
+}
+
+.root.dark-theme .scroll-pane .content {
+    -fx-background-color: #2b2b2b;
+}
+
+/* Separator Styles */
+.root .separator .line {
+    -fx-border-color: #dee2e6;
+}
+
+.root.dark-theme .separator .line {
+    -fx-border-color: #555555;
+}
+
+/* Specific Component Overrides */
+.root .discussion-tab,
+.root .events-tab,
+.root .food-sharing-tab {
+    -fx-background-color: #f8f9fa;
+}
+
+.root.dark-theme .discussion-tab,
+.root.dark-theme .events-tab,
+.root.dark-theme .food-sharing-tab {
+    -fx-background-color: #2b2b2b;
+}
+
+.root .top-controls,
+.root .search-controls {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+}
+
+.root.dark-theme .top-controls,
+.root.dark-theme .search-controls {
+    -fx-background-color: #3c3c3c;
+    -fx-border-color: #555555;
+}
+
+/* High Contrast Styles for Dark Mode */
+/* App Info Tab Styles - Only for background areas, not post content */
+.root.dark-theme .app-info-tab {
+    -fx-background-color: #2b2b2b !important;
+}
+
+.root.dark-theme .app-info-tab > .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Announcement Tab Styles - Only for background areas, not post content */
+.root.dark-theme .announcements-tab {
+    -fx-background-color: #2b2b2b !important;
+}
+
+.root.dark-theme .announcements-tab > .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Community Activity Feed Styles - Only for background areas, not post content */
+.root.dark-theme .dashboard-tab {
+    -fx-background-color: #2b2b2b !important;
+}
+
+.root.dark-theme .dashboard-tab > .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Post Content Cards - Keep white background with dark text for readability */
+.root.dark-theme .activity-feed-container,
+.root.dark-theme .stats-card,
+.root.dark-theme .trending-card,
+.root.dark-theme .events-card,
+.root.dark-theme .categories-card,
+.root.dark-theme .quick-actions-card,
+.root.dark-theme .activity-card {
+    -fx-background-color: #ffffff !important;
+    -fx-border-color: #555555 !important;
+}
+
+/* Post content text should remain dark for contrast against white background */
+.root.dark-theme .activity-feed-container .label,
+.root.dark-theme .stats-card .label,
+.root.dark-theme .trending-card .label,
+.root.dark-theme .events-card .label,
+.root.dark-theme .categories-card .label,
+.root.dark-theme .quick-actions-card .label,
+.root.dark-theme .card-title,
+.root.dark-theme .card-content,
+.root.dark-theme .author-by-label,
+.root.dark-theme .author-name-label,
+.root.dark-theme .time-ago-label {
+    -fx-text-fill: #1c1e21 !important;
+}
+
+/* Category labels should keep their original colors for visual distinction */
+.root.dark-theme .category-label {
+    /* Keep original color - no override needed */
+}
+
+/* Side panel and general background cards */
+.root.dark-theme .card,
+.root.dark-theme .content-card {
+    -fx-background-color: #3c3c3c !important;
+    -fx-border-color: #555555 !important;
+}
+
+.root.dark-theme .card .label,
+.root.dark-theme .content-card .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Title and Header Styles for background areas only */
+.root.dark-theme .title,
+.root.dark-theme .header {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Stats and Information Text for background areas */
+.root.dark-theme .stats-text,
+.root.dark-theme .info-text {
+    -fx-text-fill: #e0e0e0 !important;
+}
+
+/* Secondary Text with Better Contrast for background areas */
+.root.dark-theme .secondary-text {
+    -fx-text-fill: #c0c0c0 !important;
+}

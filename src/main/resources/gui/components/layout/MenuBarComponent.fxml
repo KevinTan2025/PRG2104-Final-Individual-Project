@@ -13,6 +13,14 @@
             <MenuItem fx:id="menuItemExit" onAction="#handleExit" text="Exit" />
          </items>
       </Menu>
+      <Menu fx:id="menuTheme" text="Theme">
+         <items>
+            <MenuItem fx:id="menuItemToggleTheme" onAction="#handleToggleTheme" text="Toggle Dark/Light Mode" />
+            <SeparatorMenuItem />
+            <MenuItem fx:id="menuItemLightMode" onAction="#handleLightMode" text="Light Mode" />
+            <MenuItem fx:id="menuItemDarkMode" onAction="#handleDarkMode" text="Dark Mode" />
+         </items>
+      </Menu>
       <Menu fx:id="menuUser" text="User Info">
          <items>
             <MenuItem fx:id="menuItemProfile" onAction="#handleProfile" text="Profile" />

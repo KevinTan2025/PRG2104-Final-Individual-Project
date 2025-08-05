@@ -114,7 +114,7 @@ class EnhancedActivityFeedComponent(
     val card = new VBox {
       spacing = 12
       padding = Insets(16)
-      style = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);"
+      styleClass += "activity-card"
     }
     
     // Header with category and time
@@ -125,11 +125,12 @@ class EnhancedActivityFeedComponent(
         new Label(s"${item.categoryIcon} ${item.categoryName}") {
           font = Font.font("System", FontWeight.Bold, 13)
           textFill = Color.web(item.categoryColor)
+          styleClass += "category-label"
         },
         new Region { HBox.setHgrow(this, scalafx.scene.layout.Priority.Always) },
         new Label(item.timeAgo) {
           font = Font.font("System", 11)
-          textFill = Color.web("#8a8d91")
+          styleClass += "time-ago-label"
         }
       )
     }
@@ -137,29 +138,30 @@ class EnhancedActivityFeedComponent(
     // Title
     val title = new Label(item.title) {
       font = Font.font("System", FontWeight.Bold, 16)
-      textFill = Color.web("#1c1e21")
       wrapText = true
+      styleClass += "card-title"
     }
     
     // Content
     val content = new Label(item.content) {
       font = Font.font("System", 14)
-      textFill = Color.web("#050505")
       wrapText = true
+      styleClass += "card-content"
     }
     
     // Author info
     val authorInfo = new HBox {
       spacing = 5
       alignment = Pos.CenterLeft
+      styleClass += "author-info"
       children = Seq(
         new Label("by") {
           font = Font.font("System", 12)
-          textFill = Color.web("#65676b")
+          styleClass += "author-by-label"
         },
         new Label(item.authorName) {
           font = Font.font("System", FontWeight.Bold, 12)
-          textFill = Color.web("#1877f2")
+          styleClass += "author-name-label"
         }
       )
     }

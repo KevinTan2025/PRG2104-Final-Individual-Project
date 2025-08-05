@@ -19,6 +19,14 @@
                   <MenuItem fx:id="menuItemBackToLogin" onAction="#handleBackToLogin" text="🏠 Back to Login" />
                </items>
             </Menu>
+            <Menu fx:id="menuTheme" text="🎨 Theme">
+               <items>
+                  <MenuItem fx:id="menuItemToggleTheme" onAction="#handleToggleTheme" text="🌓 Toggle Dark/Light Mode" />
+                  <SeparatorMenuItem />
+                  <MenuItem fx:id="menuItemLightMode" onAction="#handleLightMode" text="☀️ Light Mode" />
+                  <MenuItem fx:id="menuItemDarkMode" onAction="#handleDarkMode" text="🌙 Dark Mode" />
+               </items>
+            </Menu>
             <Menu fx:id="menuHelp" text="ℹ️ Help">
                <items>
                   <MenuItem fx:id="menuItemAboutAnonymous" onAction="#handleAboutAnonymous" text="About Anonymous Mode" />
